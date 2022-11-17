@@ -3,8 +3,19 @@ from pyperclip import copy, paste
 #clipboard.copy("goosfrabe")  # now the clipboard content will be string "abc"
 text = paste()  # text will have the content of clipboard
 
+def chk_sLink():
+    isthere = os.path.exists(r"C:\Program Files\Streamlink\bin\streamlink.exe")
+    if isthere is False:
+        print("\nYou do not seem to have streamLink installed.\nPlease Visit:\nhttps://github.com/streamlink/windows-builds/releases/latest\nto download Streamlink and install it\n")
+
+chk_sLink()
+
 sizes = ["worst", "160p", "360p", "480p", "720p", "720p60", "1080p", "1080p60", "source", "best"]
 name_of_File = input("Enter File Name:\n")
+
+# dir_path = ""
+
+
 file_path = fr'"E:\DeleteStreams\New folder\{name_of_File}.mp4"'
 
 
