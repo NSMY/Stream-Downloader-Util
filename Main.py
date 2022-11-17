@@ -17,7 +17,7 @@ def check_size(Vid_size):
 Fake_ = ""
 while True:
     if Fake_ == "":  
-        Size_string = input("Please enter size of Vid, worst, 160p, 360p, 480p, 720p, 720p60, 1080p60, source, best:\n")  #stores Input into size_string Variable
+        Size_string = input("Please enter size of Vid, worst, 160p, 360p, 480p, 720p, 720p60, 1080p60, source, best:\n").lower()  #stores Input into size_string Variable
         cmd_Str = check_size(Size_string)       #Runs Check_Size with Size_string {inputDATA} and Returns(stores) check-size if/else into cmd_Str Var
         Fake_ = "1"
     
