@@ -1,7 +1,7 @@
 HOW/WHY
 
-# streamlink.Python.Twitch.Automated.Download
-automated python script to fetch your clipboard(URL) then download (Twitch moatly for me) streams/video via Streamlink, asking what to name/what size
+# Automated Python Downloader using StreamLink
+automated python script to fetch your clipboard(URL) then download (Twitch mostly for me) streams/video via Streamlink, asking what to name/what size
 
 This is MY FIRST Ever script written 3 days into python be easy on me ;)
 
