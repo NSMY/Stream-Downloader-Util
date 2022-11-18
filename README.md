@@ -1,3 +1,5 @@
+HOW/WHY
+
 # streamlink.Python.Twitch.Automated.Download
 automated python script to fetch your clipboard(URL) then download Twitch streams via Streamlink, asking what to name/what size
 
