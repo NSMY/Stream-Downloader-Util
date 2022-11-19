@@ -160,18 +160,22 @@ import os
 #     print("passer")
 
 
-def chk_inst():
-    chks = os.path.isfile(r"C:\Program Files\Streamlink\bin\streamlink.exe")
-    chks2 = os.path.exists(r"C:\Program Files (x86)\Streamlink\bin\streamlink.exe")
-    return chks, chks2
+# def chk_inst():
+#     chks = os.path.isfile(r"C:\Program Files\Streamlink\bin\streamlink.exe")
+#     chks2 = os.path.exists(r"C:\Program Files (x86)\Streamlink\bin\streamlink.exe")
+#     return chks, chks2
 
-kii = chk_inst()
+# kii = chk_inst()
 
-if True in kii:
-    print('bloop')
+# if True in kii:
+#     print('bloop')
 
 
-if chk_inst == 7:
-    print("seven")
-else:
-    print("passer")
+# if chk_inst == 7:
+#     print("seven")
+# else:
+#     print("passer")
+
+import subprocess
+
+subprocess.run({fr"C:\Program Files\Avidemux 2.7 VC++ 64bits\avidemux.exe"})
