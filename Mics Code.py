@@ -135,3 +135,15 @@ import os
 # os.system('start cmd /K python bb.py')
 
 
+# import streamlink
+
+# streams = streamlink.streams("hls://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8")
+
+import subprocess
+
+
+p = subprocess.Popen([r"C:\\Program Files\\Avidemux 2.7 VC++ 64bits\\avidemux.exe", r"E:\\DeleteStreams\\New folder\\wtsFM.mp4"])
+# ... do other things while notepad is running
+returncode = p.wait() # wait for notepad to exit
+
+
