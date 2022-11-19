@@ -77,7 +77,7 @@ sizes = ["worst", "160p", "360p", "480p", "720p", "720p60", "1080p", "1080p60","
 def check_size(Vid_size):
     # print(Vid_size in sizes) Checks if True/False
     if Vid_size in sizes:
-        return fr'cd {sLink_pth} && streamlink "{url_}" {Vid_size} --hls-segment-threads 5 -o {file_path}'
+        return fr'cd {sLink_pth} && streamlink "{url_}" {Vid_size} --hls-segment-threads 5 -o "{file_path}"'
     else:
         return ("Enter a Valid Size")     
 Fake_ = ""
