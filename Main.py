@@ -17,8 +17,7 @@ check_in = 0
 isthere = False
 isthere_86 = False
 while True:
-    isthere = os.path.exists(r"C:\Program Files\Streamlink\bin\streamlink.exe")
-    time.sleep(1)
+    isthere = os.path.isfile(r"C:\Program Files\Streamlink\bin\streamlink.exe")
     isthere_86 = os.path.exists(r"C:\Program Files (x86)\Streamlink\bin\streamlink.exe")
     if check_in == 0 and isthere is False:
         if isthere_86 is False:
@@ -38,12 +37,21 @@ while True:
             time.sleep(7)
             got_it = input("\nHas Streamlink been installed yet?\ny/n?:").lower()
             if got_it in acptLst and isthere is False or isthere_86 is False:
-                got_it = input("\nHaven't Found Stream Link In File Path\nC.Program.Files.Streamlink.bin      Are you sure? y/n?:").lower()
-            elif got_it not in acptLst:
+                lie_chk = input("\nHaven't Found Stream Link In File Path\nC.Program.Files.Streamlink.bin      Are you sure? y/n?:").lower()
+            elif lie_chk not in acptLst:
                 print("\nWaiting!......")
                 time.sleep(20)
+        else:
+            break
     else:
         break
+
+# choses directory of streamlink ----
+if isthere is True:
+    sLink_pth = r'C:\\Program Files\\Streamlink\\bin\\'
+elif isthere_86 is True:
+    sLink_pth = r'C:\\Program Files (x86)\\Streamlink\\bin\\'
+
 
 
 #opens Windows Save Folder and stores chosen path
@@ -69,7 +77,7 @@ sizes = ["worst", "160p", "360p", "480p", "720p", "720p60", "1080p", "1080p60","
 def check_size(Vid_size):
     # print(Vid_size in sizes) Checks if True/False
     if Vid_size in sizes:
-        return fr'cd C:\Program Files\Streamlink\bin && streamlink "{url_}" {Vid_size} --hls-segment-threads 5 -o {file_path}'
+        return fr'cd {sLink_pth} && streamlink "{url_}" {Vid_size} --hls-segment-threads 5 -o {file_path}'
     else:
         return ("Enter a Valid Size")     
 Fake_ = ""
