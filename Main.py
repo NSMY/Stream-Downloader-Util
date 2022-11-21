@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import subprocess
 from pyperclip import copy, paste
 import webbrowser
 from tkinter import filedialog
@@ -87,6 +88,10 @@ file_path = saveFile()
 if len(file_path) ==0: #closes Program if No Save path is Entered
     sys.exit ()
 
+# Get Quality Settings
+ress = subprocess.run(f'cd {stream_lnk_Path} && streamlink {url_}', shell=True, stdout=subprocess.PIPE, text=True)
+print(ress.stdout)
+
 sizes = ["worst", "160p", "360p", "480p", "720p", "720p60", "1080p", "1080p60","160p30", "360p30", "480p30", "720p30", "720p30", "1080p30", "source", "best"]
 
 #old Code
@@ -102,7 +107,7 @@ def check_size(Vid_size):
 Fake_ = ""
 while True:
     if Fake_ == "":  
-        Size_string = input("Please enter Resolution you want to download:\nworst, 160p, 360p, 480p, 720p, 720p60, 1080p60, source, best:\n").lower()  #stores Input into size_string Variable
+        Size_string = input("Please enter Resolution you want to download: ").lower()  #stores Input into size_string Variable
         cmd_Str = check_size(Size_string)       #Runs Check_Size with Size_string {inputDATA} and Returns(stores) check-size if/else into cmd_Str Var
         Fake_ = "1"
     
