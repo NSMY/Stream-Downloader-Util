@@ -280,15 +280,19 @@
 import subprocess
 
 
-# ccd = subprocess.call('cd C:\\Program Files\\Streamlink\\bin', shell=True)
-# stream = subprocess.Popen("streamlink https://www.twitch.tv/videos/1658617982", stdout=subprocess.PIPE, universal_newlines=True)
-# out = stream.communicate()
 
-# ress = ('out: {0}'.format(out))
-# ress1 = ress.replace("\\n", "")
-# ress2 = ress1.replace("'", "")
+ccd = subprocess.call('cd C:\\Program Files\\Streamlink\\bin', shell=True)
+stream = subprocess.Popen("streamlink https://youtu.be/D6Hak9kx_D0", stdout=subprocess.PIPE, universal_newlines=True)
+out = stream.communicate()
 
-# ress3 = ress2.split()
+ress = ('out: {0}'.format(out))
+ress1 = ress.replace("\\n", "")
+ress2 = ress1.replace("'", "")
+
+ress3 = ress2.split()
+sss = str(ress3[10:-1])
+print(sss)
+# print(str(ress3[10:-1]))
 # # ress3.sort[8]
 # print(stream)
 # print(ress)
@@ -297,15 +301,15 @@ import subprocess
 # print(ress3)
 
 
-ress = subprocess.run('cd C:\Program Files\Streamlink\\bin && streamlink https://www.twitch.tv/videos/1658617982', shell=True, stdout=subprocess.PIPE, text=True)
+# ress = subprocess.run('cd C:\Program Files\Streamlink\\bin && streamlink https://www.twitch.tv/videos/1658617982', shell=True, stdout=subprocess.PIPE, text=True)
 
-# # stream = subprocess.Popen(streamlink https://www.twitch.tv/videos/1658617982", stdout=subprocess.PIPE, universal_newlines=True)
-# # out = stream.communicate()
+# # # stream = subprocess.Popen(streamlink https://www.twitch.tv/videos/1658617982", stdout=subprocess.PIPE, universal_newlines=True)
+# # # out = stream.communicate()
 
-# ress1 = ('ress: {0}'.format(ress))
+# # ress1 = ('ress: {0}'.format(ress))
 
-ress.stdout
-ress1 = str(ress.split())
-# ress2 = ress1.split(",")
-print(ress1)
+# ress.stdout
+# ress1 = str(ress.split())
+# # ress2 = ress1.split(",")
 # print(ress1)
+# # print(ress1)
