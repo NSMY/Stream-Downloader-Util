@@ -277,24 +277,99 @@
 
 # subprocess.run({fr"C:\Program Files\Avidemux 2.7 VC++ 64bits\avidemux.exe"}) """
 
-import subprocess
+import subprocess, re, sys, time
+
+file_path = fr"C:\Users\970EVO-Gamer\Desktop\2rdfolder\4thfolder\File_Name.mp4"
+
+'''Thanks https://stackoverflow.com/questions/57562590/how-
+to-insert-a-directory-in-the-middle-of-a-file-path-in-python'''
+from pathlib import PurePath, PurePosixPath
+file_path0 = f"{file_path}"
+p = PurePath(file_path0)
+p.parts
+('dir1', 'dir2', 'dir3', 'dir4', 'file.txt')
+spam = list(p.parts)
+newpart = spam.insert(-1, 'Re_Copied')
+new_path = PurePath('').joinpath(*spam)
+PurePosixPath('dir1/dir2/new_dir/dir3/dir4/file.txt')
+
+print(new_path)
+
+
+# file_path = fr"C:\Users\970EVO-Gamer\Desktop\File_Name.mp4"
+# # process2 = subprocess.Popen(fr'cd C:\Program Files\Streamlink\ffmpeg && ffmpeg -i "E:\DeleteStreams\New folder\fasaf.mp4" -c copy "C:\Users\970EVO-Gamer\Desktop\fasaf.mp4"', shell=True)
+# new_file = f"{file_path}".replace(".mp4", ".mov")
+# new_file2 = new_file.split("\\")
+# print(new_file)
+# print(new_file2)
+# new_file2.insert(-1,"Re_Copied")
+# print(new_file2)
+# new_file3 = new_file2
+# print(new_file3)
 
 
 
-ccd = subprocess.call('cd C:\\Program Files\\Streamlink\\bin', shell=True)
-stream = subprocess.Popen("streamlink https://youtu.be/D6Hak9kx_D0", stdout=subprocess.PIPE, universal_newlines=True)
-out = stream.communicate()
 
-ress = ('out: {0}'.format(out))
-ress1 = ress.replace("\\n", "")
-ress2 = ress1.replace("'", "")
+# # jank ass code to get dynamic 
+# subprocess.call('cd C:\\Program Files\\Streamlink\\bin', shell=True)
+# stream = subprocess.Popen("streamlink https://www.youtube.com/watch?v=SNq4C988FjU", stdout=subprocess.PIPE, universal_newlines=True)
+# out = str(stream.communicate())
+# out1 = out.replace("\\n'", "")
+# string = re.sub(pattern = "[^\w\s]",
+#         repl = "",
+#         string = out1)
+# str2 = string.split()
+# sss = str(str2[10:-1])
 
-ress3 = ress2.split()
-sss = str(ress3[10:-1])
-print(sss)
+
+# print(out)
+# print(string)
+# print(sss)
+
+# def chk_if_Install():
+#     print("Re Run")
+
+# # subprocess.call('cd C:\\Program Files\\Streamlink\\bin', shell=True)
+# process = subprocess.Popen(f"cd C:\\Program Files\\Streamlink\\bin && streamlink https://www.youtube.com/watch?v=SNq4C988FjU 480p", shell=True)
+# process.wait()
+# out = str(process.communicate())
+
+# time.sleep(10)
+# exit = input("\nRe Run Program? y/n:").lower()  
+# if exit == "yes":
+#     chk_if_Install()
+# else:
+#     sys.exit ()
+
+# out1 = out.replace("\\n'", "")
+# string = re.sub(pattern = "[^\w\s]",
+#         repl = "",
+#         string = out1)
+# str2 = string.split()
+# sss = str(str2[10:-1])
+
+
+# print(out)
+# print(string)
+# print(sss)
+
+
+
+
+
+# ress = ('out: {0}'.format(out))
+
+
+# ress1 = ress.replace("\\n", "")
+# ress2 = ress1.replace("'", "")
+
+# ress3 = ress2.split()
+# sss = str(ress3[10:-1])
+# print(sss)
 # print(str(ress3[10:-1]))
 # # ress3.sort[8]
-# print(stream)
+# out1 = out.split()
+# print(out1)
 # print(ress)
 # print(ress1)
 # print(ress2)
