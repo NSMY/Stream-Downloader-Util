@@ -1,13 +1,11 @@
 HOW/WHY
 
-# Automated Python Downloader using StreamLink
+# StreamLink Dependant** Automated Downloader
 automated python script to fetch your clipboard(URL) then download (Twitch mostly for me) streams/video via Streamlink, asking what to name/what size
 
-This is MY FIRST Ever script written 3 days into python be easy on me ;)
+This is MY FIRST Ever script, written 3 days into python.
 
 Made this because i got sick of manually entering it into notpad where i had the string saved then into Cmd
-
-Do with it what you will.
 
 How it works:
 It will grab your clipboards (Copy/ctrl+c) Last entrie (so copy URL of thing you want to download first)
@@ -22,6 +20,6 @@ Asks what resolution you want to download into
 
 Then opens in cmd all the combined string to be able to download your clipboard.
 
-Yes there are other options out there easier/better but this works for me and does exactly what i want it to.
+Yes there are other options out there easier/better but this works for me and does exactly what i want it to. + i made it :)
 
  
