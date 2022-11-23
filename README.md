@@ -3,9 +3,9 @@ README.md
 HOW/WHY
 # [Streamlink][streamlink-website] Dependant** Automated Downloader
 
-automated python script to fetch your clipboard(URL) then download (Twitch mostly for me) streams/video via Streamlink, asking what to name/what size
+Automated python script to fetch your clipboard(URL) then download (Twitch vods mostly for me) streams/video via Streamlink (all restrictions still inplace Eg YT Music DMCA), asking what to name/what size.
 
-This is MY FIRST Ever script, written 3 days into python.
+This is MY FIRST Ever script, written 5 days into python.
 
 Made this because i got sick of manually entering it into notpad where i had the string saved then into Cmd
 
@@ -19,7 +19,11 @@ Asks where to save
 
 Asks what resolution you want to download into
 
-Then opens in cmd all the combined string to be able to download your clipboard.
+Downloads Video
+
+Asks if you want to Combine it (chunks problem) into another file (ffmpeg)
+
+Done, want to play again.
 
 Yes there are other options out there easier/better but this works for me and does exactly what i want it to. + i made it :)
 
