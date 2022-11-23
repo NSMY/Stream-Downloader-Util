@@ -277,23 +277,36 @@
 
 # subprocess.run({fr"C:\Program Files\Avidemux 2.7 VC++ 64bits\avidemux.exe"}) """
 
-import subprocess, re, sys, time
+import subprocess, re, sys, time, os
+import os
+os.system('cls' if os.name == 'nt' else 'clear')
+# file_path = fr"C:\Users\970EVO-Gamer\Desktop\2rdfolder\4thfolder\file.txt"
 
-file_path = fr"C:\Users\970EVO-Gamer\Desktop\2rdfolder\4thfolder\File_Name.mp4"
 
-'''Thanks https://stackoverflow.com/questions/57562590/how-
-to-insert-a-directory-in-the-middle-of-a-file-path-in-python'''
-from pathlib import PurePath, PurePosixPath
-file_path0 = f"{file_path}"
-p = PurePath(file_path0)
-p.parts
-('dir1', 'dir2', 'dir3', 'dir4', 'file.txt')
-spam = list(p.parts)
-newpart = spam.insert(-1, 'Re_Copied')
-new_path = PurePath('').joinpath(*spam)
-PurePosixPath('dir1/dir2/new_dir/dir3/dir4/file.txt')
+# #dir is not keyword
+# def makemydir(whatever):
+#     try:
+#         os.makedirs(whatever)
+#     except OSError:
+#         print("already exists")
+#         pass
+#     # let exception propagate if we just can't
+#     # cd into the specified directory
+#     os.chdir(whatever)
+# makemydir(file_path)
 
-print(new_path)
+#     '''Thanks https://stackoverflow.com/questions/57562590/how-
+# to-insert-a-directory-in-the-middle-of-a-file-path-in-python'''
+# file_path0 = f"{file_path}"
+# p = PurePath(file_path0)
+# p.parts
+# ('dir1', 'dir2', 'dir3', 'dir4', 'file.txt')
+# spam = list(p.parts)
+# newpart = spam.insert(-1, 'Re_Copied')
+# new_path = PurePath('').joinpath(*spam)
+# PurePosixPath('dir1/dir2/new_dir/dir3/dir4/file.txt')
+
+# print(new_path)
 
 
 # file_path = fr"C:\Users\970EVO-Gamer\Desktop\File_Name.mp4"
