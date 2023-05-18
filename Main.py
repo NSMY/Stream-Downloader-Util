@@ -7,6 +7,8 @@ def main_script():
     from pyperclip import copy, paste
     import webbrowser
     from tkinter import filedialog
+    import inquirer
+    from urllib.parse import urlparse
 
 
 
@@ -33,6 +35,12 @@ def main_script():
 
     #Retrieves Last item in Clipboard(ctrl v)
     #clipboard.copy("goosfrabe")  # now the clipboard content will be string "abc"
+    def is_url(variable):
+        try:
+            result = urlparse(variable)
+            return all([result.scheme, result.netloc])
+        except ValueError:
+            return False
     clp_brd = paste()  # text will have the content of clipboard
     url_ = clp_brd.replace("?filter=archives&sort=time","")
 
@@ -78,8 +86,30 @@ def main_script():
         else:
             break
 
-
     ffmpeg_path = stream_lnk_Path.replace("\\bin\\","\\ffmpeg\\")
+    
+    urlchk = is_url(url_)
+    while urlchk == False:   
+        if urlchk == False:
+            print(f"ERROR: {url_}\n")
+            rs = [
+                inquirer.List(
+                "OP",
+                message="Clipboard is NOT a URL, Copy Link Again. Recycle Program?.",
+                choices=["yes", "no"],
+                ),
+                ]
+            rs1 = inquirer.prompt(rs)
+            rs2 = ''.join([str(value) for value in rs1.values()])
+            if rs2 == "yes":
+                #rs = input('\nClipboard is NOT a URL "y" to Restart...:').lower
+                os.system('cls' if os.name == 'nt' else 'clear')
+                main_script()
+            elif rs2 == "no":
+                sys.exit ()
+        else:
+            continue
+        
     #opens Windows Save Folder browser and stores chosen path
     def saveFile():
         print("Save File To:... \n")
@@ -92,7 +122,7 @@ def main_script():
         if len(file) == 0: #closes Program if No Save path is Entered
             check = input("Canceled. Run again? y/n: ").lower()
             if check in accp_lst["yes"]:
-                saveFile()
+                main_script()
             else:
                 print("Exiting")
                 sys.exit ()
@@ -109,8 +139,23 @@ def main_script():
     res_stripped = re.sub(pattern = "[^\w\s]",
             repl = "",
             string = res_str_edt)
-    res_split = res_stripped.split()
-    res_Options = str(res_split[10:-1])
+    res_Options = res_stripped.split()[10:-1]
+    #  -Old way-
+    #res_Options = res_split[10:-1]
+    #res_Options = str(res_split[10:-1])
+    
+    
+    my_choices = list(reversed(res_Options))
+    questions = [
+        inquirer.List(
+            "size",
+            message="What size do you want?",
+            choices=my_choices,
+        ),
+    ]
+    siz_rtn = inquirer.prompt(questions)
+    siz_rtn2 = ''.join([str(value) for value in siz_rtn.values()])
+    print(siz_rtn2)
 
     #old Code
     # name_of_File = input("Enter File Name:\n")
@@ -118,23 +163,24 @@ def main_script():
 
     # print(Vid_size in sizes) Checks if True/False
     def check_size(Vid_size):
-        if Vid_size in res_Options:
-            return fr'cd {stream_lnk_Path} && streamlink "{url_}" {Vid_size} --hls-segment-threads 5 -o "{file_path}"'
+        if 1<2: #Vid_size in siz_rtn:
+            return fr'cd {stream_lnk_Path} && streamlink "{url_}" {Vid_size} --stream-segment-threads 5 -o "{file_path}"'
         else:
             return ("404") 
+        
         
         
     Fake_ = ""
     while True:
         if Fake_ == "":  
-            Size_string = input(f"Please enter Resolution you want to download, No Quote (\'\') marks EG 720p:\n\n{res_Options}: ").lower()    #stores Input into size_string Variable
-            cmd_Str = check_size(Size_string)   #Runs Check_Size with Size_string {inputDATA} and Returns(stores) check-size if/else into cmd_Str Var
+            # Size_string = input(f"Please enter Resolution you want to download, No Quote (\'\') marks EG 720p:\n\n{siz_rtn}: ").lower()    #stores Input into size_string Variable
+            cmd_Str = check_size(siz_rtn2)   #Runs Check_Size with Size_string {inputDATA} and Returns(stores) check-size if/else into cmd_Str Var
             Fake_ = "1"
         
         elif cmd_Str == "404":
             time.sleep(1)
-            Size_string = input(f"Enter a Valid Size, No Quote (\'\') marks EG 720p:\n{res_Options}: ").lower()
-            cmd_Str = check_size(Size_string)   #Runs Check_Size with Size_string {inputDATA} and Returns(stores) check-size if/else into cmd_Str Var
+            # Size_string = input(f"Enter a Valid Size, No Quote (\'\') marks EG 720p:\n{siz_rtn}: ").lower()
+            cmd_Str = check_size(siz_rtn2)   #Runs Check_Size with Size_string {inputDATA} and Returns(stores) check-size if/else into cmd_Str Var
         else:
             process = subprocess.Popen(f"{cmd_Str}", shell=True)
             process.wait()
