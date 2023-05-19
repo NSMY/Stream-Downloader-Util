@@ -9,7 +9,7 @@ def main_script():
     from tkinter import filedialog
     import inquirer
     from urllib.parse import urlparse
-
+    # import cpyVid_scritp_____1
 
 
     accp_lst = {"yes": ["y", "yes"], "no": ["n", "no"]}
@@ -43,6 +43,19 @@ def main_script():
             return False
     clp_brd = paste()  # text will have the content of clipboard
     url_ = clp_brd.replace("?filter=archives&sort=time","")
+    
+    def openFile():
+        print("Open File From:... \n")
+        file = filedialog.askopenfilename(defaultextension='.mp4',
+                                        filetypes=[
+                                            ("MP4 files", ".mp4"),
+                                            ("MOV files", ".mov"),
+                                            ("All files", ".*"),
+                                        ])
+        return file
+
+    # file_path = openFile()
+    # print(file_path)
 
 
     stream_lnk_Path = ""
@@ -85,7 +98,7 @@ def main_script():
                     
         else:
             break
-
+        
     ffmpeg_path = stream_lnk_Path.replace("\\bin\\","\\ffmpeg\\")
     
     urlchk = is_url(url_)
@@ -109,7 +122,20 @@ def main_script():
                 sys.exit ()
         else:
             continue
-        
+    
+    def mChoiseQeustion(mssg, chois):
+        questions = [
+            inquirer.List(
+                "Key",
+                message=mssg,
+                choices=chois,
+            ),
+        ]
+        answer = inquirer.prompt(questions)
+        qstnStrRtn = ''.join([str(value) for value in answer.values()])
+        return qstnStrRtn
+    
+    
     #opens Windows Save Folder browser and stores chosen path
     def saveFile():
         print("Save File To:... \n")
@@ -120,8 +146,9 @@ def main_script():
                                                 ("All files",".*"),
                                             ])
         if len(file) == 0: #closes Program if No Save path is Entered
-            check = input("Canceled. Run again? y/n: ").lower()
+            check = mChoiseQeustion("Canceled Save Path: Try again?", ["yes", "no"])
             if check in accp_lst["yes"]:
+                os.system('cls' if os.name == 'nt' else 'clear')
                 main_script()
             else:
                 print("Exiting")
@@ -144,19 +171,10 @@ def main_script():
     #res_Options = res_split[10:-1]
     #res_Options = str(res_split[10:-1])
     
-    
     my_choices = list(reversed(res_Options))
-    questions = [
-        inquirer.List(
-            "size",
-            message="What size do you want?",
-            choices=my_choices,
-        ),
-    ]
-    siz_rtn = inquirer.prompt(questions)
-    siz_rtn2 = ''.join([str(value) for value in siz_rtn.values()])
+    siz_rtn2 = mChoiseQeustion("What Size You want?",my_choices)
     print(siz_rtn2)
-
+    
     #old Code
     # name_of_File = input("Enter File Name:\n")
     # file_path = fr'"E:\DeleteStreams\New folder\{name_of_File}.mp4"'
@@ -192,9 +210,10 @@ def main_script():
         #     break
     # time.sleep(10)
 
-    convert = input("\nBecause of how Video is downloaded (Chunks) sometimes"
-                    " it's needed to combine via a Re-Copying for smooth playback."
-                    " \nDo you want to make a Copy of this file?\ny/n: ").lower()
+    print("\nBecause of how Video is downloaded (Chunks) sometimes"
+                    " Re-Muxing is needed for smooth playback."
+                    " \n(Re-Mux)Make a Copy of this file?:\n ")
+    convert = mChoiseQeustion("Convert?", ["yes", "no"])
 
     if convert in accp_lst["yes"]:
         print("\nNew File Save path....")
@@ -209,8 +228,9 @@ def main_script():
         os.system('cls' if os.name == 'nt' else 'clear')
         print("\nDone!!")
 
-    exit = input("\nRe Run Program? if Yes you need to copy the next URL"
-                " in the clipboard before answering this.\ny/n:").lower()  
+    print("\nRe Run Program? if Yes you need to copy the next URL"
+                " in the clipboard before answering this:\n")
+    exit = mChoiseQeustion("ReRun or Exit", ["yes", "no"])
     if exit in accp_lst["yes"]:
         main_script()
     else:
