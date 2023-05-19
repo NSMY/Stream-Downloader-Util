@@ -9,11 +9,11 @@ def main_script():
     from tkinter import filedialog
     import inquirer
     from urllib.parse import urlparse
-    # import cpyVid_scritp_____1
+    import cpyVid_scritp_____1 as cpvs
+
 
 
     accp_lst = {"yes": ["y", "yes"], "no": ["n", "no"]}
-
 
     # checks path ----
     def chk_if_Install():
@@ -22,7 +22,7 @@ def main_script():
         stlink.append(os.path.isfile("C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe"))
         return stlink
 
-
+    # cpvs.mux()
     def setLink_Path():
         if (chk_if_Install()[0]) == True:
             lnk_pth = "C:\\Program Files\\Streamlink\\bin\\"
@@ -109,7 +109,7 @@ def main_script():
                 inquirer.List(
                 "OP",
                 message="Clipboard is NOT a URL, Copy Link Again. Recycle Program?.",
-                choices=["yes", "no"],
+                choices=["yes", "no", "Re-Mux"],
                 ),
                 ]
             rs1 = inquirer.prompt(rs)
@@ -120,6 +120,8 @@ def main_script():
                 main_script()
             elif rs2 == "no":
                 sys.exit ()
+            elif rs2 == "Re-Mux":
+                cpvs.mux()
         else:
             continue
     
