@@ -1,68 +1,41 @@
-def main_script():
-    import re
-    import os
-    import sys
-    import time
-    import subprocess
-    from pyperclip import copy, paste
-    import webbrowser
-    from tkinter import filedialog
-    import inquirer
-    from urllib.parse import urlparse
-    import cpyVid_scritp_____1 as cpvs
+import os
+import re
+import subprocess
+import sys
+import time
+import webbrowser
+from tkinter import filedialog
+from urllib.parse import urlparse
+from datetime import datetime
+import inquirer
+from pyperclip import copy, paste
 
+import cpyVid_scritp_____1 as cpvs
+import funcs
+
+
+def main_script():
 
 
     accp_lst = {"yes": ["y", "yes"], "no": ["n", "no"]}
 
-    # checks path ----
-    def chk_if_Install():
-        stlink = []
-        stlink.append(os.path.isfile("C:\\Program Files\Streamlink\\bin\\streamlink.exe"))
-        stlink.append(os.path.isfile("C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe"))
-        return stlink
+
 
     # cpvs.mux()
-    def setLink_Path():
-        if (chk_if_Install()[0]) == True:
-            lnk_pth = "C:\\Program Files\\Streamlink\\bin\\"
-            return lnk_pth
-        elif (chk_if_Install()[1]) == True:
-            lnk_pth = "C:\\Program Files (x86)\\Streamlink\\bin\\"
-            return lnk_pth            
-        else:
-            return ("404 Not Here")
+    # setlnk = funcs.setLink_Path()
+    # print(setlnk)
 
     #Retrieves Last item in Clipboard(ctrl v)
     #clipboard.copy("goosfrabe")  # now the clipboard content will be string "abc"
-    def is_url(variable):
-        try:
-            result = urlparse(variable)
-            return all([result.scheme, result.netloc])
-        except ValueError:
-            return False
     clp_brd = paste()  # text will have the content of clipboard
     url_ = clp_brd.replace("?filter=archives&sort=time","")
-    
-    def openFile():
-        print("Open File From:... \n")
-        file = filedialog.askopenfilename(defaultextension='.mp4',
-                                        filetypes=[
-                                            ("MP4 files", ".mp4"),
-                                            ("MOV files", ".mov"),
-                                            ("All files", ".*"),
-                                        ])
-        return file
-
-    # file_path = openFile()
-    # print(file_path)
 
 
     stream_lnk_Path = ""
     swtch = 1
     #Runs Check if streamlink is installed and gives link/opens if Not
     while stream_lnk_Path != "c":
-        stream_lnk_Path = setLink_Path()
+        stream_lnk_Path = funcs.setLink_Path()
         if stream_lnk_Path == "404 Not Here" and swtch == 1:
             swtch = +2
             ipt_asw = input(f"\nYou do not seem to have streamLink installed.\n\nPlease "
@@ -79,10 +52,10 @@ def main_script():
         elif swtch >= 0 and stream_lnk_Path == "404 Not Here":
                 swtch = +2
                 got_it = input("\nHas Streamlink been installed?\ny/n?:").lower()
-                stream_lnk_Path = setLink_Path()
+                stream_lnk_Path = funcs.setLink_Path()
                 time.sleep(5)
                 if got_it in accp_lst["yes"] and stream_lnk_Path == "404 Not Here":
-                    stream_lnk_Path = setLink_Path()
+                    stream_lnk_Path = funcs.setLink_Path()
                     lie_chk = input("\nHaven't Found Streamlink In File Path C\\Program (or {x86}) \\Files\\Streamlink\\bin\\"
                                     "   Are you sure it is there?\nDo you need the website again? y/n?:").lower()
                     time.sleep(5)
@@ -98,45 +71,41 @@ def main_script():
                     
         else:
             break
-        
-    ffmpeg_path = stream_lnk_Path.replace("\\bin\\","\\ffmpeg\\")
     
-    urlchk = is_url(url_)
+
+    if funcs.has_ffmpeg_dir(stream_lnk_Path):
+        ffmpeg_path = stream_lnk_Path.replace("bin", "ffmpeg")
+    else:
+        print(f"\nThe 'ffmpeg', 'pkgs', 'Python' directory does not"
+                f" exist in the parent directory of: {stream_lnk_Path}\n"
+                    "   Please Re-Install correctly if needed")
+        time.sleep(3)
+        webbrowser.open("https://streamlink.github.io/install.html#windows-binaries")
+
+
+    urlchk = funcs.is_url(url_)
+    
     while urlchk == False:   
         if urlchk == False:
-            print(f"ERROR: {url_}\n")
+            print(f"ERROR: Clipboard: ( {url_}) Is NOT a Url.\n")
             rs = [
                 inquirer.List(
                 "OP",
-                message="Clipboard is NOT a URL, Copy Link Again. Recycle Program?.",
-                choices=["yes", "no", "Re-Mux"],
+                message="Clipboard is NOT a URL, Copied URL Again......",
+                choices=["Done", "Exit"],
                 ),
                 ]
             rs1 = inquirer.prompt(rs)
             rs2 = ''.join([str(value) for value in rs1.values()])
-            if rs2 == "yes":
+            if rs2 == "Done":
                 #rs = input('\nClipboard is NOT a URL "y" to Restart...:').lower
                 os.system('cls' if os.name == 'nt' else 'clear')
                 main_script()
-            elif rs2 == "no":
+            elif rs2 == "Exit":
                 sys.exit ()
-            elif rs2 == "Re-Mux":
-                cpvs.mux()
         else:
             continue
-    
-    def mChoiseQeustion(mssg, chois):
-        questions = [
-            inquirer.List(
-                "Key",
-                message=mssg,
-                choices=chois,
-            ),
-        ]
-        answer = inquirer.prompt(questions)
-        qstnStrRtn = ''.join([str(value) for value in answer.values()])
-        return qstnStrRtn
-    
+        
     
     #opens Windows Save Folder browser and stores chosen path
     def saveFile():
@@ -148,16 +117,16 @@ def main_script():
                                                 ("All files",".*"),
                                             ])
         if len(file) == 0: #closes Program if No Save path is Entered
-            check = mChoiseQeustion("Canceled Save Path: Try again?", ["yes", "no"])
+            check = funcs.mChoiseQeustion("Canceled Save Path: Try again?", ["yes", "no"])
             if check in accp_lst["yes"]:
                 os.system('cls' if os.name == 'nt' else 'clear')
-                main_script()
+                saveFile()
             else:
                 print("Exiting")
+                time.sleep(3)
                 sys.exit ()
         return (file)
     file_path = saveFile()
-
     print("Getting Resolutions...")
 
     # jank ass code to get dynamic resolution
@@ -174,7 +143,7 @@ def main_script():
     #res_Options = str(res_split[10:-1])
     
     my_choices = list(reversed(res_Options))
-    siz_rtn2 = mChoiseQeustion("What Size You want?",my_choices)
+    siz_rtn2 = funcs.mChoiseQeustion("What Size to Download?", my_choices)
     print(siz_rtn2)
     
     #old Code
@@ -212,30 +181,28 @@ def main_script():
         #     break
     # time.sleep(10)
 
+    print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S\n"))
+
     print("\nBecause of how Video is downloaded (Chunks) sometimes"
                     " Re-Muxing is needed for smooth playback."
                     " \n(Re-Mux)Make a Copy of this file?:\n ")
-    convert = mChoiseQeustion("Convert?", ["yes", "no"])
+    convert = funcs.mChoiseQeustion("Convert?", ["yes", "no"])
 
     if convert in accp_lst["yes"]:
-        print("\nNew File Save path....")
-        new_path = filedialog.asksaveasfilename(defaultextension='.mp4',
-                                            filetypes=[
-                                                ("MP4 files",".mp4"),    
-                                                ("MOV files",".mov"),    
-                                                ("All files",".*"),
-                                            ])
-        process2 = subprocess.Popen(f'cd "{ffmpeg_path}" &&ffmpeg -i "{file_path}" -c copy "{new_path}"', shell=True)
-        process2.wait()
-        os.system('cls' if os.name == 'nt' else 'clear')
+        cpvs.mux(ffmpegpath=ffmpeg_path, file_path_inpt=file_path)
         print("\nDone!!")
 
     print("\nRe Run Program? if Yes you need to copy the next URL"
                 " in the clipboard before answering this:\n")
-    exit = mChoiseQeustion("ReRun or Exit", ["yes", "no"])
+    exit = funcs.mChoiseQeustion("ReRun or Exit", ["yes", "no"])
     if exit in accp_lst["yes"]:
         main_script()
     else:
         sys.exit ()
 
-main_script()
+rprog = funcs.mChoiseQeustion("Download or Re-Mux", ["Download", "Remux"])
+if rprog == "Download":
+    main_script()
+elif rprog == "Remux":
+    ffpth = funcs.setLink_Path().replace("\\bin", "\\ffmpeg")
+    cpvs.mux(ffmpegpath=ffpth)
