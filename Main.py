@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 from datetime import datetime
 import inquirer
 from pyperclip import copy, paste
-
+import winsound
 import cpyVid_scritp_____1 as cpvs
 import funcs
 
@@ -20,17 +20,12 @@ def main_script():
     accp_lst = {"yes": ["y", "yes"], "no": ["n", "no"]}
 
 
-
-    # cpvs.mux()
-    # setlnk = funcs.setLink_Path()
-    # print(setlnk)
-
     #Retrieves Last item in Clipboard(ctrl v)
     #clipboard.copy("goosfrabe")  # now the clipboard content will be string "abc"
     clp_brd = paste()  # text will have the content of clipboard
     url_ = clp_brd.replace("?filter=archives&sort=time","")
-
-
+    
+    
     stream_lnk_Path = ""
     swtch = 1
     #Runs Check if streamlink is installed and gives link/opens if Not
@@ -72,17 +67,17 @@ def main_script():
         else:
             break
     
-
-    if funcs.has_ffmpeg_dir(stream_lnk_Path):
-        ffmpeg_path = stream_lnk_Path.replace("bin", "ffmpeg")
+    ffpegPath = funcs.setLink_Path(False)
+    if funcs.has_ffmpeg_dir(ffpegPath):
+        ffmpeg_path = ffpegPath.replace("bin", "ffmpeg")
     else:
         print(f"\nThe 'ffmpeg', 'pkgs', 'Python' directory does not"
                 f" exist in the parent directory of: {stream_lnk_Path}\n"
                     "   Please Re-Install correctly if needed")
         time.sleep(3)
         webbrowser.open("https://streamlink.github.io/install.html#windows-binaries")
-
-
+        
+        
     urlchk = funcs.is_url(url_)
     
     while urlchk == False:   
@@ -107,102 +102,68 @@ def main_script():
             continue
         
     
-    #opens Windows Save Folder browser and stores chosen path
-    def saveFile():
-        print("Save File To:... \n")
-        file = filedialog.asksaveasfilename(defaultextension='.mp4',
-                                            filetypes=[
-                                                ("MP4 files",".mp4"),    
-                                                ("MOV files",".mov"),    
-                                                ("All files",".*"),
-                                            ])
-        if len(file) == 0: #closes Program if No Save path is Entered
-            check = funcs.mChoiseQeustion("Canceled Save Path: Try again?", ["yes", "no"])
-            if check in accp_lst["yes"]:
-                os.system('cls' if os.name == 'nt' else 'clear')
-                saveFile()
-            else:
-                print("Exiting")
-                time.sleep(3)
-                sys.exit ()
-        return (file)
-    file_path = saveFile()
+    file_path = funcs.saveFile()
+    
+    
     print("Getting Resolutions...")
-
+    
+    
     # jank ass code to get dynamic resolution
     subprocess.call(f'cd {stream_lnk_Path}', shell=True)
-    rw_stream = subprocess.Popen(f"streamlink {url_}", stdout=subprocess.PIPE, universal_newlines=True)
-    out_pt = str(rw_stream.communicate())
-    res_str_edt = out_pt.replace("\\n'", "")
+    rw_stream = subprocess.Popen(f'cd {stream_lnk_Path} && streamlink "{url_}"', shell=True, stdout=subprocess.PIPE, universal_newlines=True)
+    rw_stream.wait()
+    out_pt = str(rw_stream.communicate()).replace("\\n'", "")
     res_stripped = re.sub(pattern = "[^\w\s]",
             repl = "",
-            string = res_str_edt)
-    res_Options = res_stripped.split()[10:-1]
-    #  -Old way-
-    #res_Options = res_split[10:-1]
-    #res_Options = str(res_split[10:-1])
+            string = out_pt)
+    res_Options = res_stripped.split()
+    result = res_Options[9:-1]
     
-    my_choices = list(reversed(res_Options))
-    siz_rtn2 = funcs.mChoiseQeustion("What Size to Download?", my_choices)
+    
+    my_choices = list(reversed(result))
+    siz_rtn2 = funcs.mChoiceQeustion("What Size to Download?", my_choices)
     print(siz_rtn2)
     
-    #old Code
-    # name_of_File = input("Enter File Name:\n")
-    # file_path = fr'"E:\DeleteStreams\New folder\{name_of_File}.mp4"'
-
-    # print(Vid_size in sizes) Checks if True/False
-    def check_size(Vid_size):
-        if 1<2: #Vid_size in siz_rtn:
-            return fr'cd {stream_lnk_Path} && streamlink "{url_}" {Vid_size} --stream-segment-threads 5 -o "{file_path}"'
-        else:
-            return ("404") 
-        
-        
-        
-    Fake_ = ""
-    while True:
-        if Fake_ == "":  
-            # Size_string = input(f"Please enter Resolution you want to download, No Quote (\'\') marks EG 720p:\n\n{siz_rtn}: ").lower()    #stores Input into size_string Variable
-            cmd_Str = check_size(siz_rtn2)   #Runs Check_Size with Size_string {inputDATA} and Returns(stores) check-size if/else into cmd_Str Var
-            Fake_ = "1"
-        
-        elif cmd_Str == "404":
-            time.sleep(1)
-            # Size_string = input(f"Enter a Valid Size, No Quote (\'\') marks EG 720p:\n{siz_rtn}: ").lower()
-            cmd_Str = check_size(siz_rtn2)   #Runs Check_Size with Size_string {inputDATA} and Returns(stores) check-size if/else into cmd_Str Var
-        else:
-            process = subprocess.Popen(f"{cmd_Str}", shell=True)
-            process.wait()
-            break
-
-    # Old script run ----
-        # else:
-        #     os.system(fr'cmd /k "{cmd_Str}"')
-        #     break
-    # time.sleep(10)
-
-    print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S\n"))
-
+    
+    def slink_Dload():
+        process = subprocess.Popen(fr'cd {stream_lnk_Path} && streamlink "{url_}" {siz_rtn2} --stream-segment-threads 5 -o "{file_path}"', shell=True, universal_newlines=True)
+        process.wait()
+    slink_Dload()
+    
+    
+    print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S------------------------------\n"))
+    
+    
+    winsound.PlaySound('C:\\Windows\\Media\\Windows Proximity Notification.wav', winsound.SND_FILENAME)
+    
+    
     print("\nBecause of how Video is downloaded (Chunks) sometimes"
                     " Re-Muxing is needed for smooth playback."
                     " \n(Re-Mux)Make a Copy of this file?:\n ")
-    convert = funcs.mChoiseQeustion("Convert?", ["yes", "no"])
-
-    if convert in accp_lst["yes"]:
+    convert = funcs.mChoiceQeustion("Convert?", ["yes", "no"])
+    if convert == "yes":
         cpvs.mux(ffmpegpath=ffmpeg_path, file_path_inpt=file_path)
         print("\nDone!!")
-
+        
+        
     print("\nRe Run Program? if Yes you need to copy the next URL"
                 " in the clipboard before answering this:\n")
-    exit = funcs.mChoiseQeustion("ReRun or Exit", ["yes", "no"])
-    if exit in accp_lst["yes"]:
+    exit = funcs.mChoiceQeustion("ReRun or Exit", ["yes", "no"])
+    if exit == "yes":
         main_script()
     else:
         sys.exit ()
-
-rprog = funcs.mChoiseQeustion("Download or Re-Mux", ["Download", "Remux"])
+        
+        
+        
+        
+funcs.initSettings()
+rprog = funcs.mChoiceQeustion("Download, Re-Mux(Copy) or Extract Streams", ["Download", "Remux", "Extract"])
 if rprog == "Download":
     main_script()
 elif rprog == "Remux":
-    ffpth = funcs.setLink_Path().replace("\\bin", "\\ffmpeg")
+    ffpth = funcs.setLink_Path(True).replace("\\bin", "\\ffmpeg")
     cpvs.mux(ffmpegpath=ffpth)
+elif rprog == "Extract":
+    from ffmpegExtract import ffmpegextract
+    ffmpegextract()
