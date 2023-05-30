@@ -3,21 +3,27 @@ import funcs
 import subprocess
 
 def ffmpegextract():
-    if funcs.loadSettings("ffprobepath") == False:
-        ZipComboran = False
-    elif funcs.loadSettings("ffprobepath") == True:
-        ZipComboran = True
     
-    if ZipComboran == False:
-        probeDir = funcs.DloadZipCombo()
-        funcs.saveSettings("ffprobepath", probeDir)
-    elif ZipComboran == True:
-        probeDir = funcs.loadSettings("ffprobepath")
+    if funcs.loadSettings("ffprobepath") == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave')):
+        probeDir = funcs.file_search("ffprobe.exe") if not os.path.isfile("C:\\ffmpeg\\ffprobe") else None
         if not probeDir:
-            probeDir = funcs.findExe("ffprobe.exe")
+            probeDir = funcs.execute_or_setting(funcs.DL_unZip_ffprobe,  key="ffprobepath")
+            os.system('cls')
+            ffmpegextract()
+        if probeDir:
+            funcs.saveSettings("ffprobepath", probeDir)
+    else:
+        probeDir = funcs.loadSettings("ffprobepath")
+        
+        
     filename = funcs.getFile()
-    mxChann = funcs.channelsSplit(probeDir, filename)
-    chan = ["All"] + mxChann
+    try:
+        mxChann = funcs.channelsSplit(probeDir, filename)
+    except subprocess.CalledProcessError as ce:
+        from Main import main_script
+        os.system('cls')
+        main_script()
+    chan = ["All"] + mxChann + ["Exit"]
 
     ffmpegDir = funcs.setLink_Path(True)
     if funcs.has_ffmpeg_dir(ffmpegDir):
@@ -27,10 +33,16 @@ def ffmpegextract():
     message = "Which audio channels would you like to extract?"
     answers = funcs.mChoiceQeustion(message, chan, "int", "channels")
     selected_channels = answers["channels"]
+    
+    if selected_channels == "Exit":
+        from Main import main_script
+        os.system('cls')
+        main_script()
 
     message = "Do you want to extract the video stream?"
     answers = funcs.mChoiceQeustion(message, ["Yes", "No"], "int")
     copy_video = answers["Key"] == "Yes"
+    
 
     # create Dir
     name = os.path.splitext(os.path.basename(filename))[0]
@@ -58,6 +70,8 @@ def ffmpegextract():
         extct = subprocess.Popen(cmd, shell=True, universal_newlines=True,cwd=ffmpeg_path)
         extct.wait()
         os.startfile(os.path.dirname(fr'{outname}'))
+    except subprocess.CalledProcessError as ce:
+        ffmpegextract()
     except:
         print("Extracting Failed")
         
@@ -73,6 +87,7 @@ def ffmpegextract():
         from Main import main_script
         main_script()
     elif closeOptions == "Extract":
+        os.system('cls')
         ffmpegextract()
     else:
         exit()

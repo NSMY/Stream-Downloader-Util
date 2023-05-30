@@ -31,14 +31,15 @@ def main_script():
     #Runs Check if streamlink is installed and gives link/opens if Not
     while stream_lnk_Path != "c":
         stream_lnk_Path = funcs.setLink_Path()
+        slinkURL = "https://github.com/streamlink/windows-builds/releases/latest"
         if stream_lnk_Path == "404 Not Here" and swtch == 1:
             swtch = +2
             ipt_asw = input(f"\nYou do not seem to have streamLink installed.\n\nPlease "
-                    "Visit: https://github.com/streamlink/windows-builds/releases/latest\nTo download "
+                    f"Visit: {slinkURL}\nTo download "
                     "Streamlink and install it.\n\n----Look For EG: streamlink-5.1.0-1-py310-x86_64.exe----\nOR"
                     "\nAuto Launch Website? y/n?: ").lower()
             if ipt_asw in accp_lst["yes"]:
-                webbrowser.open("https://github.com/streamlink/windows-builds/releases/latest")
+                webbrowser.open(slinkURL)
                 print("\nWaiting for Installation...")
                 time.sleep(15)
             else:
@@ -55,7 +56,7 @@ def main_script():
                                     "   Are you sure it is there?\nDo you need the website again? y/n?:").lower()
                     time.sleep(5)
                     if lie_chk in accp_lst["yes"]:
-                        webbrowser.open("https://github.com/streamlink/windows-builds/releases/latest")
+                        webbrowser.open(slinkURL)
                         print("\nWaiting!......")
                         time.sleep(7)
                     elif stream_lnk_Path == "404 Not Here":
@@ -67,16 +68,30 @@ def main_script():
         else:
             break
     
-    ffpegPath = funcs.setLink_Path(False)
-    if funcs.has_ffmpeg_dir(ffpegPath):
-        ffmpeg_path = ffpegPath.replace("bin", "ffmpeg")
-    else:
-        print(f"\nThe 'ffmpeg', 'pkgs', 'Python' directory does not"
-                f" exist in the parent directory of: {stream_lnk_Path}\n"
-                    "   Please Re-Install correctly if needed")
-        time.sleep(3)
-        webbrowser.open("https://streamlink.github.io/install.html#windows-binaries")
+    # ffpegPath = funcs.setLink_Path(False)
+    # if funcs.has_ffmpeg_dir(ffpegPath):
+    #     ffmpeg_path = ffpegPath.replace("bin", "ffmpeg")
+    # else:
+    #     print(f"\nThe 'ffmpeg', 'pkgs', 'Python' directory does not"
+    #             f" exist in the parent directory of: {stream_lnk_Path}\n"
+    #                 "   Please Re-Install correctly if needed")
+    #     time.sleep(3)
+    #     webbrowser.open("https://streamlink.github.io/install.html#windows-binaries")
         
+        
+        
+    if funcs.loadSettings("ffmpegpath") == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave')):
+        ffmpegpath = funcs.file_search("ffmpeg.exe") if not os.path.isfile("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe") else None
+        if not ffmpegpath:
+            ffmpegpath = funcs.execute_or_setting(funcs.DL_unZip_ffmpeg,  key="ffmpegpath")
+            os.system('cls')
+            main_script()
+        if ffmpegpath:
+            funcs.saveSettings("ffmpegpath", ffmpegpath)
+    else:
+        ffmpegpath = funcs.loadSettings("ffmpegpath")
+    ffmpeg_path = os.path.dirname(ffmpegpath)
+    
         
     urlchk = funcs.is_url(url_)
     

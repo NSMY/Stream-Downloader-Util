@@ -10,11 +10,24 @@ import funcs
 def mux(ffmpegpath="C:\\Program Files\\Streamlink\\ffmpeg", file_path_inpt=paste()):
     
     
-    ffpg = fr"{ffmpegpath}".replace("ffmpeg", "ffmpeg && ffmpeg")
+    if funcs.loadSettings("ffmpegpath") == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave')):
+        ffmpegpath = funcs.file_search("ffmpeg.exe") if not os.path.isfile("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe") else None
+        if not ffmpegpath:
+            ffmpegpath = funcs.execute_or_setting(funcs.DL_unZip_ffmpeg,  key="ffmpegpath")
+            os.system('cls')
+            mux()
+        if ffmpegpath:
+            funcs.saveSettings("ffmpegpath", ffmpegpath)
+    else:
+        ffmpegpath = funcs.loadSettings("ffmpegpath")
+    
+    ffpg = fr"{ffmpegpath}"
     
     
     file_path = funcs.getFile(file_path_inpt)
-    
+    if file_path == ".":
+        os.system('cls')
+        mux()
     
     file_path_2 = os.path.dirname(file_path)
     
@@ -41,7 +54,7 @@ def mux(ffmpegpath="C:\\Program Files\\Streamlink\\ffmpeg", file_path_inpt=paste
         print("File size is large, Program may Hang while Working...")
         
     #opens cmd and uses ffmpeg to re-Mux
-    process2 = subprocess.Popen(f'cd {ffpg} -i "{file_path}" -c copy "{new_file_path}"', shell=True, universal_newlines=True) #, cwd=ffpg <alt code to change dir undecided addition
+    process2 = subprocess.Popen(f'ffmpeg -i "{file_path}" -c copy "{new_file_path}"', shell=True, universal_newlines=True, cwd=ffpg) 
     process2.wait()
     
     winsound.PlaySound('C:\\Windows\\Media\\Chimes.wav', winsound.SND_FILENAME)
@@ -51,17 +64,19 @@ def mux(ffmpegpath="C:\\Program Files\\Streamlink\\ffmpeg", file_path_inpt=paste
     # print(error.decode())
     
     #sends Un-Muxed File to trash ONLY if both old/new exist
+    view_fp = funcs.shorten_path_name(file_path)
+    view_nfp = funcs.shorten_path_name(new_file_path)
     try:
         if os.path.exists(new_file_path) and os.path.exists(file_path):
             send2trash(fr"{file_path}")
             if not os.path.exists(fr"{file_path}"):
                 winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav', winsound.SND_FILENAME)
-                print(f'\nMoved: {file_path} to Trash...'
-                        f'\nSaved in to: {new_file_path}    Re-Muxed..\n')
+                print(f'\nMoved: {view_fp} to Trash...'
+                        f'\nSaved in to: {view_nfp}    Re-Muxed..\n')
         else:
-            print("Error...     File:", new_file_path, "\n")
+            print(f"Error... with {view_fp} \n or {view_nfp}\nTried to move {view_fp} to trash\n")
     except:
-        print("Unable to Recycle     ", file_path, "\n")
+        print("Unable to Recycle     ", view_fp, "\n")
         
         
     path = os.path.dirname(new_file_path)
