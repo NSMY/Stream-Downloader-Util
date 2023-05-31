@@ -15,11 +15,11 @@ VSVersionInfo(
       StringTable(
         '040904B0',
         [StringStruct('CompanyName', 'NSMY'),
-        StringStruct('FileDescription', 'Streamlink FFmpeg UTil Program'),
+        StringStruct('FileDescription', 'Stream Downloader Util'),
         StringStruct('FileVersion', '2.0.0.0'),
-        StringStruct('InternalName', 'StreamLinkDownloader'),
-        StringStruct('OriginalFilename', 'SlinkDownloader.exe'),
-        StringStruct('ProductName', 'Slink Download UTil'),
+        StringStruct('InternalName', 'Stream Downloader Util'),
+        StringStruct('OriginalFilename', 'StreamDownloaderUtil.exe'),
+        StringStruct('ProductName', 'Stream Downloader Util'),
         StringStruct('ProductVersion', '2.0.0.0')])
       ]),
     VarFileInfo([VarStruct('Translation', [3081, 1200])])
