@@ -171,7 +171,7 @@ def main_script():
         
         
         
-        
+os.system("title Slink Downloader")     
 funcs.initSettings()
 rprog = funcs.mChoiceQeustion("Download, Re-Mux(Copy) or Extract Streams", ["Download", "Remux", "Extract"])
 if rprog == "Download":
