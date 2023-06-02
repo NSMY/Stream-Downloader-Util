@@ -7,13 +7,20 @@ import winsound
 import funcs
 
 
-def mux(ffmpegpath="C:\\Program Files\\Streamlink\\ffmpeg", file_path_inpt=paste()):
+def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
+        file_path_inpt=paste()):
     
-    
-    if funcs.loadSettings("ffmpegpath") == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave')):
-        ffmpegpath = funcs.file_search("ffmpeg.exe") if not os.path.isfile("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe") else None
+    if (funcs.loadSettings("ffmpegpath")
+        == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))):
+        
+        ffmpegpath = (funcs.file_search("ffmpeg.exe")
+                        if not os.path.isfile("C:\\Program Files\\Streamlink"
+                                                "\\ffmpeg\\ffmpeg.exe")
+                        else None)
+        
         if not ffmpegpath:
-            ffmpegpath = funcs.execute_or_setting(funcs.DL_unZip_ffmpeg,  key="ffmpegpath")
+            ffmpegpath = funcs.execute_or_setting(funcs.DL_unZip_ffmpeg,
+                                                    key="ffmpegpath")
             os.system('cls')
             mux()
         if ffmpegpath:
@@ -21,10 +28,11 @@ def mux(ffmpegpath="C:\\Program Files\\Streamlink\\ffmpeg", file_path_inpt=paste
     else:
         ffmpegpath = funcs.loadSettings("ffmpegpath")
     
+    
     ffpg = fr"{ffmpegpath}"
     
-    
     file_path = funcs.getFile(file_path_inpt)
+    
     if file_path == ".":
         os.system('cls')
         mux()
@@ -44,17 +52,20 @@ def mux(ffmpegpath="C:\\Program Files\\Streamlink\\ffmpeg", file_path_inpt=paste
     
     #checks if file exists if so send file to trash if Overwritten is chosen
     if os.path.exists(new_file_path):
-        exists = funcs.mChoiceQeustion("File already Exists, Overwrite or Rename", ["Overwrite", "Rename"])
+        exists = funcs.mChoiceQeustion("File already Exists, Overwrite or "
+                                        "Rename", ["Overwrite", "Rename"])
         if exists == "Overwrite":
             send2trash(fr"{new_file_path}")
         elif exists == "Rename":
             new_file_path = funcs.saveFile()
-                
+    
     if os.path.getsize(file_path) > 3 * (1024 ** 3):
         print("File size is large, Program may Hang while Working...")
-        
+    
     #opens cmd and uses ffmpeg to re-Mux
-    process2 = subprocess.Popen(f'ffmpeg -i "{file_path}" -c copy "{new_file_path}"', shell=True, universal_newlines=True, cwd=ffpg) 
+    process2 = subprocess.Popen(f'ffmpeg -i "{file_path}" -c copy '
+                                f'"{new_file_path}"', shell=True,
+                                    universal_newlines=True, cwd=ffpg) 
     process2.wait()
     
     winsound.PlaySound('C:\\Windows\\Media\\Chimes.wav', winsound.SND_FILENAME)
@@ -69,12 +80,17 @@ def mux(ffmpegpath="C:\\Program Files\\Streamlink\\ffmpeg", file_path_inpt=paste
     try:
         if os.path.exists(new_file_path) and os.path.exists(file_path):
             send2trash(fr"{file_path}")
+            
             if not os.path.exists(fr"{file_path}"):
-                winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav', winsound.SND_FILENAME)
+                winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
+                                    winsound.SND_FILENAME)
+                
                 print(f'\nMoved: {view_fp} to Trash...'
                         f'\nSaved in to: {view_nfp}    Re-Muxed..\n')
+        
         else:
-            print(f"Error... with {view_fp} \n or {view_nfp}\nTried to move {view_fp} to trash\n")
+            print(f"Error... with {view_fp} \n or {view_nfp}"
+                    "\nTried to move {view_fp} to trash\n")
     except:
         print("Unable to Recycle     ", view_fp, "\n")
         
@@ -83,7 +99,10 @@ def mux(ffmpegpath="C:\\Program Files\\Streamlink\\ffmpeg", file_path_inpt=paste
     os.startfile(os.path.realpath(path))
     
     #exit Options
-    closeOptions = funcs.mChoiceQeustion("Remux again, Download Again, Extract streams or Exit", ["Remux", "Download", "Extract", "Exit"])
+    closeOptions = funcs.mChoiceQeustion("Remux again, Download Again, "
+                    "Extract streams or Exit"
+                    , ["Remux", "Download", "Extract", "Exit"])
+
     if closeOptions == "Remux":
         os.system('cls')
         mux()
