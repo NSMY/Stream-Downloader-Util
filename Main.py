@@ -13,7 +13,7 @@ import winsound
 import cpyVid_scritp_____1 as cpvs
 import funcs
 
-'''do i add multi File processing? mp4 wav etc'''
+'''#TODO do i add multi File processing? mp4 wav etc'''
 
 
 
