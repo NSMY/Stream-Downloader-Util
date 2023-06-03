@@ -483,7 +483,7 @@ def loadSettings(key = None):
     # Initialize the settings file with initial values if it doesn't exist
     initSettings()
     
-    # Get the path to the local AppData folder
+    # Get the path to the local AppData folder.
     appdata_path = os.getenv('LOCALAPPDATA')
 
     # Define the path to the settings file
