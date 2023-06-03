@@ -3,7 +3,7 @@ import funcs
 import subprocess
 
 def ffmpegextract():
-    
+    #BUG if file is NOT muxed it returns [ALL 0 0 Exit] channels
     # IF Path is not saved in setting.json or is last saved sett>30days.
     if (funcs.loadSettings("ffprobepath")
         == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))):

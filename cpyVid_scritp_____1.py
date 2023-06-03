@@ -81,7 +81,7 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
         if os.path.exists(new_file_path) and os.path.exists(file_path):
             send2trash(fr"{file_path}")
             
-            if not os.path.exists(fr"{file_path}"):
+            if not os.path.exists(fr"{file_path}"): #BUG not working had file open so couldnt recycle but played
                 winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
                                     winsound.SND_FILENAME)
                 
