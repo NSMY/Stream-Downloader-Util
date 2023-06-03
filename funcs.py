@@ -320,16 +320,21 @@ def file_search(exeName, timeout = 40):
 def channelsSplit(fprobeDir, filename):
     
     pathDir = os.path.dirname(fprobeDir)
-    print(pathDir)
     
     if pathDir:
         command = (f'ffprobe -v error -show_entries stream=index'
                     fr' -select_streams a -of csv=p=0 "{filename}"')
+        opusCmd = (f'ffprobe -v error -select_streams a:0 -show_entries '
+                'stream=codec_name -of '
+                fr'default=noprint_wrappers=1:nokey=1 "{filename}"')
+
         output = (subprocess.check_output(command, shell=True, cwd=pathDir)
                     .decode('utf-8').strip())
+        opus = (subprocess.check_output(opusCmd, shell=True, cwd=pathDir)
+                    .decode('utf-8').strip())
         
-        audChannels = output.split()
-        return audChannels
+        audChannels = output.split() 
+        return audChannels, opus
         
     else:
         print(f"\nCould Not Find '{fprobeDir}' on your Computer\n")
