@@ -24,8 +24,15 @@ def ffmpegextract():
         
     filename = funcs.getFile()
     
+    file_Types = [".mp4", ".mov", ".mkv", ".ts",]
+    for file_type in file_Types:
+        if filename.endswith(file_type):
+            break
+    
     try:
-        mxChann = funcs.channelsSplit(probeDir, filename)
+        chanReturn = funcs.channelsSplit(probeDir, filename)
+        mxChann = chanReturn[0]
+        opus = chanReturn[-1]
     except subprocess.CalledProcessError as ce:
         from Main import main_script
         os.system('cls')
@@ -64,7 +71,7 @@ def ffmpegextract():
     if selected_channels == "All":
         num_channels = int(mxChann[-1])
         if copy_video:
-            cmd = f'ffmpeg -i "{filename}" -map 0:v -c copy "{outname}.mp4"'
+            cmd = f'ffmpeg -i "{filename}" -map 0:v -c copy "{outname}{file_type}"'
         else:
             cmd = f'ffmpeg -i "{filename}"'
         for i in range(num_channels):
@@ -72,11 +79,17 @@ def ffmpegextract():
     
     else:
         channel = int(selected_channels) - 1
-        if copy_video:
-            cmd = f'ffmpeg -i "{filename}" -map 0:v -c copy "{outname}.mp4"'
+        if copy_video and opus is not "opus":
+            cmd = f'ffmpeg -i "{filename}" -map 0:v -c copy "{outname}{file_type}"'
+        elif copy_video and opus == "opus":
+            cmd = f'ffmpeg -i "{filename}" "{outname}{file_type}"' #TODO anothr line to convert vp9 not just copy and switch needed this copies vp9 atm and if OpUS audio Not vp9 Vid
         else:
             cmd = f'ffmpeg -i "{filename}"'
-        cmd += f' -map 0:a:{channel} -c copy "{outname}_{channel}.aac"'
+        
+        if opus == "opus":
+            cmd += f' && ffmpeg -i "{filename}" "{outname}_{channel}.aac"'
+        else:
+            cmd += f' -map 0:a:{channel} -c copy "{outname}_{channel}.aac"'
     
     try:
         extct = subprocess.Popen(cmd, shell=True, universal_newlines=True,
