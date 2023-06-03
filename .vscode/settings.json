@@ -1,0 +1,23 @@
+{
+    "cSpell.words": [
+        "dlmssg",
+        "dload",
+        "errc",
+        "errh",
+        "errt",
+        "ffmpegpath",
+        "ffpeg",
+        "ffprobe",
+        "ffprobepath",
+        "fprobe",
+        "funcs",
+        "mssg",
+        "Muxed",
+        "Muxing",
+        "newfolder",
+        "outname",
+        "Remux"
+    ],
+    "python.analysis.typeCheckingMode": "off",
+    "todo-tree.tree.scanMode": "workspace"
+}
