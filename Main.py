@@ -13,8 +13,9 @@ import winsound
 import cpyVid_scritp_____1 as cpvs
 import funcs
 
-'''#TODO do i ad multi File processing? mp4 wav etc'''
-
+#TODO do i ad multi File processing? mp4 wav etc
+#TODO do i make Combine streams Aud/Vid
+#TODO make WEBP converter?
 
 
 def main_script():
