@@ -85,12 +85,12 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
                 winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
                                     winsound.SND_FILENAME)
                 
-                print(f'\nMoved: {view_fp} to Trash...'
-                        f'\nSaved in to: {view_nfp}    Re-Muxed..\n')
+                print(f'\nMoved: {view_fp} \nto Trash...'
+                        f'\nSaved in to: {view_nfp}\nRe-Muxed..\n')
         
         else:
             print(f"Error... with {view_fp} \n or {view_nfp}"
-                    "\nTried to move {view_fp} to trash\n")
+                    "\nTried to move {view_fp} \nto trash\n")
     except:
         print("Unable to Recycle     ", view_fp, "\n")
         
