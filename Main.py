@@ -15,7 +15,7 @@ import funcs
 
 #TODO do i ad multi File processing? mp4 wav etc
 #TODO do i make Combine streams Aud/Vid
-#TODO make WEBP converter?
+#TODO make WEBP converter? New File?
 
 
 def main_script():
