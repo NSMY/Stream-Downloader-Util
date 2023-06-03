@@ -359,8 +359,8 @@ def DL_unZip_ffprobe():
     dloadFilePath = os.path.join(os.path.expanduser('~\\Desktop'),
                                 "ffprobe-4.4.1-win-64.zip")
 
-    url = 'https://github.com/ffbinaries/ffbinaries-prebuilt/releases/'
-    'download/v4.4.1/ffprobe-4.4.1-win-64.zip'
+    url = ('https://github.com/ffbinaries/ffbinaries-prebuilt/releases/'
+            'download/v4.4.1/ffprobe-4.4.1-win-64.zip')
 
     dlmssg = ("\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
                 "link (45mb - 110mb Extracted) "
@@ -385,8 +385,8 @@ def DL_unZip_ffprobe():
 def DL_unZip_ffmpeg():
     '''calls dldURL() and Unzip() with all info inside'''
     
-    urlmpg = "https://github.com/ffbinaries/ffbinaries-prebuilt/"
-    "releases/download/v4.4.1/ffmpeg-4.4.1-win-64.zip"
+    urlmpg = ("https://github.com/ffbinaries/ffbinaries-prebuilt/"
+                "releases/download/v4.4.1/ffmpeg-4.4.1-win-64.zip")
     
     dloadFilePath = os.path.join(os.path.expanduser('~\\Desktop'),
                                     "ffmpeg-4.4.1-win-64.zip")
