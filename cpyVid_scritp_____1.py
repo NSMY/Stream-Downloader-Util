@@ -5,7 +5,7 @@ from pyperclip import copy, paste
 from  send2trash import send2trash
 import winsound
 import funcs
-
+#TODO webm?
 
 def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
         file_path_inpt=paste()):
@@ -81,7 +81,7 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
         if os.path.exists(new_file_path) and os.path.exists(file_path):
             send2trash(fr"{file_path}")
             
-            if not os.path.exists(fr"{file_path}"): #BUG not working had file open so couldnt recycle but played
+            if not os.path.exists(fr"{file_path}"): #BUG not working had file open so couldn't recycle but played
                 winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
                                     winsound.SND_FILENAME)
                 
