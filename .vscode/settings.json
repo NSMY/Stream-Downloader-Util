@@ -16,7 +16,8 @@
         "Muxing",
         "newfolder",
         "outname",
-        "Remux"
+        "Remux",
+        "Usettings"
     ],
     "python.analysis.typeCheckingMode": "off",
     "todo-tree.tree.scanMode": "workspace"
