@@ -79,7 +79,7 @@ def ffmpegextract():
     
     else:
         channel = int(selected_channels) - 1
-        if copy_video and opus is not "opus":
+        if copy_video and opus != "opus":
             cmd = f'ffmpeg -i "{filename}" -map 0:v -c copy "{outname}{file_type}"'
         elif copy_video and opus == "opus":
             cmd = f'ffmpeg -i "{filename}" "{outname}{file_type}"' #TODO anothr line to convert vp9 not just copy and switch needed this copies vp9 atm and if OpUS audio Not vp9 Vid
