@@ -426,7 +426,7 @@ def initSettings():
 
     # Define the path to the settings file
     settings_file = os.path.join(appdata_path,
-                                    'StreamlinkDownload', 'SLDsettings.json')
+                                    'Stream-Downloader-Util', 'SDUsettings.json')
 
     # Check if the settings file already exists
     if not os.path.exists(settings_file):
@@ -459,7 +459,7 @@ def saveSettings(key = None, value = None):
     appdata_path = os.getenv('LOCALAPPDATA')
 
     settings_file = os.path.join(appdata_path,
-                                    'StreamlinkDownload', 'SLDsettings.json')
+                                    'Stream-Downloader-Util', 'SDUsettings.json')
     
     with open(settings_file, 'r') as f:
         settings = json.load(f)
@@ -488,7 +488,7 @@ def loadSettings(key = None):
 
     # Define the path to the settings file
     settings_file = os.path.join(appdata_path,
-                                    'StreamlinkDownload', 'SLDsettings.json')
+                                    'Stream-Downloader-Util', 'SDUsettings.json')
 
     # Load settings from the file
     with open(settings_file, 'r') as f:
