@@ -2,6 +2,8 @@ import os
 import funcs
 import subprocess
 
+media_file_Types = [".mp4", ".mov", ".mkv", ".ts",]
+
 def ffmpegextract():
     #BUG if file is NOT muxed it returns [ALL 0 0 Exit] channels
     # IF Path is not saved in setting.json or is last saved sett>30days.
@@ -24,8 +26,7 @@ def ffmpegextract():
         
     filename = funcs.getFile()
     
-    file_Types = [".mp4", ".mov", ".mkv", ".ts",]
-    for file_type in file_Types:
+    for file_type in media_file_Types:
         if filename.endswith(file_type):
             break
     

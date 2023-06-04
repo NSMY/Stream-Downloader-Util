@@ -5,10 +5,12 @@ from pyperclip import copy, paste
 from  send2trash import send2trash
 import winsound
 import funcs
+from ffmpegExtract import media_file_Types
 #TODO webm?
 
+
 def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
-        file_path_inpt=paste()):
+        file_path_inpt = paste()):
     
     if (funcs.loadSettings("ffmpegpath")
         == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))): #BUG downloads ffmpeg on main pc without (.settings i assume)
@@ -30,9 +32,16 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
     
     
     ffpg = fr"{ffmpegpath}"
+    ''' #TEST make File be valid type media_file_Types 
+    
+    
     
     file_path = funcs.getFile(file_path_inpt)
     
+    for file_path in media_file_Types:
+        if file_path.endswith(media_file_Types):
+            break
+    '''
     if file_path == ".":
         os.system('cls')
         mux()
