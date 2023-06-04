@@ -26,7 +26,7 @@ def main_script():
 
     #Retrieves Last item in Clipboard(ctrl v).
     clp_brd = paste()  # text will have the content of clipboard.
-    url_ = clp_brd.replace("?filter=archives&sort=time","")
+    url_ = clp_brd.replace("?filter=archives&sort=time","") #FEATURE make the get URL loop have manual input() available
     
     
     stream_lnk_Path = ""

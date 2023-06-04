@@ -11,7 +11,7 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
         file_path_inpt=paste()):
     
     if (funcs.loadSettings("ffmpegpath")
-        == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))):
+        == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))): #BUG downloads ffmpeg on main pc without (.settings i assume)
         
         ffmpegpath = (funcs.file_search("ffmpeg.exe")
                         if not os.path.isfile("C:\\Program Files\\Streamlink"
@@ -48,9 +48,10 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
     #renames File with newfolder 
     old_file_name = os.path.basename(file_path)
     new_file_path = os.path.join(new_folder_path, old_file_name)
-    print(old_file_name)
+    print("\n", old_file_name)
     
-    #checks if file exists if so send file to trash if Overwritten is chosen
+    #checks if file exists if so 
+    # send file to trash if Overwritten is chosen
     if os.path.exists(new_file_path):
         exists = funcs.mChoiceQeustion("File already Exists, Overwrite or "
                                         "Rename", ["Overwrite", "Rename"])
@@ -81,7 +82,7 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
         if os.path.exists(new_file_path) and os.path.exists(file_path):
             send2trash(fr"{file_path}")
             
-            if not os.path.exists(fr"{file_path}"): #BUG not working had file open so couldn't recycle but played
+            if not os.path.exists(fr"{file_path}"): #WATCH not working had file open so couldn't recycle but played seems OK on PC
                 winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
                                     winsound.SND_FILENAME)
                 
@@ -92,7 +93,7 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
             print(f"Error... with {view_fp} \n or {view_nfp}"
                     "\nTried to move {view_fp} \nto trash\n")
     except:
-        print("Unable to Recycle     ", view_fp, "\n")
+        print("\nUnable to Recycle     ", view_fp, "\n")
         
         
     path = os.path.dirname(new_file_path)
