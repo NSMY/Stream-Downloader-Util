@@ -1,3 +1,5 @@
+from distutils.dist import command_re
+import psutil
 import os
 import re
 import subprocess
@@ -26,7 +28,7 @@ def main_script():
 
     #Retrieves Last item in Clipboard(ctrl v).
     clp_brd = paste()  # text will have the content of clipboard.
-    url_ = clp_brd.replace("?filter=archives&sort=time","") #FEATURE make the get URL loop have manual input() available
+    url_ = clp_brd.replace("?filter=archives&sort=time","")
     
     
     stream_lnk_Path = ""
@@ -96,25 +98,25 @@ def main_script():
     urlchk = funcs.is_url(url_)
     
     
-    while urlchk == False:   
-        if urlchk == False:
-            print(f"ERROR: Clipboard: ( {url_}) Is NOT a Url.\n")
-            rs = [
-                inquirer.List(
-                "OP",
-                message="Clipboard is NOT a URL, Copied URL Again......",
-                choices=["Done", "Exit"],
-                ),
-                ]
-            rs1 = inquirer.prompt(rs)
-            rs2 = ''.join([str(value) for value in rs1.values()])
+    while urlchk == False:
+            print(f"ERROR: ( {url_}) Is NOT a Url.\n")
+            message = ("Clipboard is NOT a URL, Copy URL Again......")
+            choices = ["Done", "Exit", "Manual Input URL"]
+            rs2 = funcs.mChoiceQeustion(message, choices)
+            
             if rs2 == "Done":
                 os.system('cls' if os.name == 'nt' else 'clear')
                 main_script()
+            elif rs2 == "Manual Input URL":
+                url_ = input("Type or paste (Must Include http://www.) URL HERE: ").replace("?filter=archives&sort=time","")
+                urlchk = funcs.is_url(url_)
+                if urlchk == True:
+                    print(url_)
+                    break
+                else:
+                    main_script()
             elif rs2 == "Exit":
                 sys.exit ()
-        else:
-            continue
     
     
     file_path = funcs.saveFile()
@@ -139,18 +141,31 @@ def main_script():
     
     my_choices = list(reversed(result))
     siz_rtn2 = funcs.mChoiceQeustion("What Size to Download?", my_choices)
-    print(siz_rtn2)
     
-    
+    print("Quality Chosen: ", siz_rtn2, "\n")
+        
     def slink_Dload():
         process = subprocess.Popen(fr'cd {stream_lnk_Path} && streamlink '
             f'"{url_}" {siz_rtn2} --stream-segment-threads 5 -o "{file_path}"'
                                     , shell=True, universal_newlines=True)
+        # If Taking to long this kills the process is commanded.
+        child_process_id = process.pid
+        time.sleep(7)
+        killit = funcs.mChoiceQeustion("Taking Too Long? Terminate Process?", ["no", "yes"]) # FIX how to ask a Q but not have to answer.
+        if killit == "yes":
+            try:
+                parent = psutil.Process(child_process_id)
+                for child in parent.children(recursive=True):
+                    child.kill()
+                parent.kill()
+            except psutil.NoSuchProcess as e:
+                print("Already Closed")
         process.wait()
+        print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
+        
     slink_Dload()
     
     
-    print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
     
     
     winsound.PlaySound('C:\\Windows\\Media\\Windows Proximity Notification.wav'
@@ -171,9 +186,9 @@ def main_script():
     print("\nRe Run Program? if Yes you need to copy the next URL"
                 " in the clipboard before answering this:\n")
     
-    exit = funcs.mChoiceQeustion("ReRun or Exit", ["yes", "no"])
+    exit = funcs.mChoiceQeustion("Run Again or Exit?", ["Run Again", "EXIT"])
 
-    if exit == "yes":
+    if exit == "Run Again":
         main_script()
     else:
         sys.exit ()

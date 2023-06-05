@@ -1,6 +1,6 @@
 import os
 from urllib.parse import urlparse
-# import re
+import tkinter as tk
 import subprocess
 import sys
 import time
@@ -28,6 +28,11 @@ def setLink_Path(find_ffmpeg = False):
         str: The path to the Streamlink or FFmpeg installation, or False if 
         not found.
     """
+    if (loadSettings("streamlinkPath")
+        == None or isMoreThan30days(loadSettings('LastSave'))):
+        print("pass")
+    else: return os.path.dirname(loadSettings("streamlinkPath"))
+    
     # Define the paths to check for Streamlink
     streamlink_paths = [
         "C:\\Program Files\\Streamlink\\bin\\streamlink.exe",
@@ -127,6 +132,8 @@ def openFile():
     loops if canceled
     """
     # print("Open File From:... \n")
+    root = tk.Tk()
+    root.withdraw()
     filep = filedialog.askopenfilename(defaultextension=".*",
                                     filetypes=[
                                         ("All files", ".*"),
@@ -134,11 +141,11 @@ def openFile():
                                         ("MOV files", ".mov"),
                                         ("EXE files", ".exe"),
                                     ])
+    root.destroy()
     file = os.path.normpath(filep)
     if not filep: #closes Program if No Save path is Entered
         check = mChoiceQeustion("Canceled Open File: Try again?", 
                                     ["yes", "no", "exit"])
-        
         if check == "yes":
             os.system('cls' if os.name == 'nt' else 'clear')
             openFile()
@@ -159,17 +166,21 @@ def saveFile():
         Save Path
     """
     print("Save File To:... \n")
+    root = tk.Tk()
+    root.withdraw()
     filep = filedialog.asksaveasfilename(defaultextension='.mp4',
                                         filetypes=[
                                             ("MP4 files",".mp4"),    
                                             ("MOV files",".mov"),    
+                                            ("MKV files",".mkv"),    
+                                            ("MP4 files",".mp3"),    
                                             ("All files",".*"),
                                         ])
+    root.destroy()
     file = os.path.normpath(filep)
     if not filep: #closes Program if No Save path is Entered
         check = mChoiceQeustion("Canceled Save Path: Try again?",
                                     ["yes", "no", "exit"])
-        
         if check == "yes":
             os.system('cls' if os.name == 'nt' else 'clear')
             saveFile()
@@ -179,7 +190,6 @@ def saveFile():
             print("Exiting")
             time.sleep(3)
             sys.exit ()
-
     return (file)
 
 

@@ -5,7 +5,7 @@ import subprocess
 media_file_Types = [".mp4", ".mov", ".mkv", ".ts",]
 
 def ffmpegextract():
-    #BUG if file is NOT muxed it returns [ALL 0 0 Exit] channels
+    #FIXIT if file is NOT muxed it returns [ALL 0 0 Exit] channels
     # IF Path is not saved in setting.json or is last saved sett>30days.
     if (funcs.loadSettings("ffprobepath")
         == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))):
@@ -26,8 +26,14 @@ def ffmpegextract():
         
     filename = funcs.getFile()
     
+    if not (any(filename.endswith(file_type)
+            for file_type in media_file_Types)):
+        print("\nNot a Valid File type to Extract Streams From Try again.")
+        ffmpegextract()
+    
     for file_type in media_file_Types:
         if filename.endswith(file_type):
+            print(file_type)
             break
     
     try:

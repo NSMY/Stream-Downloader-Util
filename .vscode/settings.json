@@ -20,5 +20,9 @@
         "Usettings"
     ],
     "python.analysis.typeCheckingMode": "off",
-    "todo-tree.tree.scanMode": "workspace"
+    "todo-tree.tree.scanMode": "workspace",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none"
 }

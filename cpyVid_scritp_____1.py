@@ -2,7 +2,7 @@ import os
 from sys import exit
 import subprocess
 from pyperclip import copy, paste
-from  send2trash import send2trash
+from send2trash import send2trash
 import winsound
 import funcs
 from ffmpegExtract import media_file_Types
@@ -13,12 +13,15 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
         file_path_inpt = paste()):
     
     if (funcs.loadSettings("ffmpegpath")
-        == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))): #BUG downloads ffmpeg on main pc without (.settings i assume)
+        == None or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))): #TESTING downloads ffmpeg on main pc without (.settings i assume)
         
-        ffmpegpath = (funcs.file_search("ffmpeg.exe")
-                        if not os.path.isfile("C:\\Program Files\\Streamlink"
+        default_ffPath = ("C:\\Program Files\\Streamlink"
                                                 "\\ffmpeg\\ffmpeg.exe")
-                        else None)
+        if not os.path.isfile(default_ffPath):
+            ffmpegpath = funcs.file_search("ffmpeg.exe")
+            if not ffmpegpath:
+                ffmpegpath = False
+        else: ffmpegpath = default_ffPath
         
         if not ffmpegpath:
             ffmpegpath = funcs.execute_or_setting(funcs.DL_unZip_ffmpeg,
@@ -32,17 +35,17 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
     
     
     ffpg = fr"{ffmpegpath}"
-    ''' #TEST make File be valid type media_file_Types  
-    ME?
     
-    
+    #[x] make File be valid type media_file_Types  
     
     file_path = funcs.getFile(file_path_inpt)
     
-    for file_path in media_file_Types:
-        if file_path.endswith(media_file_Types):
-            break
-    '''
+    if not (any(file_path.endswith(media_type)
+                for media_type in media_file_Types)):
+        print("\nNot a Valid File type to Remux, Try again.")
+        mux()
+        
+    
     if file_path == ".":
         os.system('cls')
         mux()
@@ -60,8 +63,11 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
     new_file_path = os.path.join(new_folder_path, old_file_name)
     print("\n", old_file_name)
     
-    #checks if file exists if so 
-    # send file to trash if Overwritten is chosen
+    
+    '''
+    checks if file exists if so 
+    send file to trash if Overwritten is chosen
+    '''
     if os.path.exists(new_file_path):
         exists = funcs.mChoiceQeustion("File already Exists, Overwrite or "
                                         "Rename", ["Overwrite", "Rename"])
@@ -76,23 +82,18 @@ def mux(ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg",
     #opens cmd and uses ffmpeg to re-Mux
     process2 = subprocess.Popen(f'ffmpeg -i "{file_path}" -c copy '
                                 f'"{new_file_path}"', shell=True,
-                                    universal_newlines=True, cwd=ffpg) 
-    process2.wait()
-    
+                                    universal_newlines=True, cwd=ffpg)
     winsound.PlaySound('C:\\Windows\\Media\\Chimes.wav', winsound.SND_FILENAME)
     
-    # output, error = process2.communicate()
-    # print(output.decode())
-    # print(error.decode())
-    
-    #sends Un-Muxed File to trash ONLY if both old/new exist
+        
+    # sends Un-Muxed File to trash ONLY if both old/new exist.
     view_fp = funcs.shorten_path_name(file_path)
     view_nfp = funcs.shorten_path_name(new_file_path)
     try:
         if os.path.exists(new_file_path) and os.path.exists(file_path):
             send2trash(fr"{file_path}")
             
-            if not os.path.exists(fr"{file_path}"): #WATCH not working had file open so couldn't recycle but played seems OK on PC
+            if not os.path.exists(fr"{file_path}"): #TEST on laptop not working had file open so couldn't recycle but played seems OK on PC
                 winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
                                     winsound.SND_FILENAME)
                 
