@@ -1,6 +1,5 @@
 /__pycache__/
 /node_modules/
-/.vscode/
 /versionfile.txt/
 /hall.ico/
-/.gitignore/
+/hall.ico/
