@@ -1,17 +1,20 @@
-from distutils.dist import command_re
-import psutil
 import os
 import re
+import signal
 import subprocess
 import sys
+import threading
 import time
 import webbrowser
+import winsound
+from datetime import datetime
+from distutils.dist import command_re
 from tkinter import filedialog
 from urllib.parse import urlparse
-from datetime import datetime
-import inquirer
+
+import psutil
 from pyperclip import copy, paste
-import winsound
+
 import cpyVid_scritp_____1 as cpvs
 import funcs
 
@@ -76,7 +79,7 @@ def main_script():
         else:
             break
         
-        
+        # FIXIT.
     # IF Path is not saved in setting.json or is last saved sett>30days.
     if (funcs.loadSettings("ffmpegpath") == None
             or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))):
@@ -92,8 +95,8 @@ def main_script():
             funcs.saveSettings("ffmpegpath", ffmpegpath)
     else:
         ffmpegpath = funcs.loadSettings("ffmpegpath")
-    ffmpeg_path = os.path.dirname(ffmpegpath)
-    
+    ffmpeg_path = os.path.dirname(str(ffmpegpath))
+    # FIXIT.
     
     urlchk = funcs.is_url(url_)
     
@@ -121,6 +124,9 @@ def main_script():
     
     file_path = funcs.saveFile()
     
+    terminal_Naming = os.path.basename(file_path)
+    
+    os.system(f"title {terminal_Naming}") 
     
     print("Getting Resolutions...")
     
@@ -143,28 +149,33 @@ def main_script():
     siz_rtn2 = funcs.mChoiceQeustion("What Size to Download?", my_choices)
     
     print("Quality Chosen: ", siz_rtn2, "\n")
-        
-    def slink_Dload():
-        process = subprocess.Popen(fr'cd {stream_lnk_Path} && streamlink '
-            f'"{url_}" {siz_rtn2} --stream-segment-threads 5 -o "{file_path}"'
-                                    , shell=True, universal_newlines=True)
-        # If Taking to long this kills the process is commanded.
-        child_process_id = process.pid
-        time.sleep(7)
-        killit = funcs.mChoiceQeustion("Taking Too Long? Terminate Process?", ["no", "yes"]) # FIX how to ask a Q but not have to answer.
-        if killit == "yes":
-            try:
-                parent = psutil.Process(child_process_id)
-                for child in parent.children(recursive=True):
-                    child.kill()
-                parent.kill()
-            except psutil.NoSuchProcess as e:
-                print("Already Closed")
-        process.wait()
-        print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
-        
-    slink_Dload()
+
     
+    process = subprocess.Popen(fr'cd {stream_lnk_Path} && streamlink '
+        f'"{url_}" {siz_rtn2} --stream-segment-threads 5 -o "{file_path}"'
+                                , shell=True, universal_newlines=True)
+    
+    
+    
+    # Define a signal handler for SIGINT using a lambda function
+    handle_sigint = lambda signal, frame: funcs.kill_process(process)
+
+    # Register the signal handler for SIGINT
+    signal.signal(signal.SIGINT, handle_sigint)
+    
+    # Start a thread to wait for the subprocess to complete
+    thread_popen = threading.Thread(target=funcs.wait_for_subprocess, args=(process,))
+    
+    thread_popen.start()
+    
+    # Wait for the thread to finish
+    thread_popen.join()
+
+    # Reset the signal handler for SIGINT to its default behavior
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    
+    
+    print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
     
     
     

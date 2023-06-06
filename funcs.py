@@ -1,24 +1,64 @@
+import json
 import os
-from urllib.parse import urlparse
-import tkinter as tk
 import subprocess
 import sys
 import time
-from  send2trash import send2trash
-from tkinter import filedialog
-import inquirer
-from pyperclip import copy, paste  
-import requests
-from tqdm import tqdm
+import tkinter as tk
 import winsound
-from  send2trash import send2trash
 import zipfile
-import json
 from datetime import datetime, timedelta
+from tkinter import filedialog
+from urllib.parse import urlparse
+
+import inquirer
+import psutil
+import requests
+from pyperclip import copy, paste
+from send2trash import send2trash
+from tqdm import tqdm
+
+from cpyVid_scritp_____1 import mux
+
+video_file_types = [".mp4", ".mov", ".mkv", ".ts",]
+
+def make_new_dir_from_path(file_path, new_dir_name = str)-> str:
+    file_path_2 = os.path.dirname(file_path)
+
+    new_folder_combine_path = os.path.join(file_path_2, new_dir_name)
+
+    if not os.path.exists(new_folder_combine_path):
+        os.makedirs(new_folder_combine_path)
+
+    old_file_name = os.path.basename(file_path)
+    print("\n", old_file_name)
+    return os.path.join(new_folder_combine_path, old_file_name)
 
 
+def get_ffmpeg_path():
 
-def setLink_Path(find_ffmpeg = False):
+    # Check if ffmpeg is installed in the default location
+    default_ffPath = "C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe"
+    if os.path.isfile(default_ffPath):
+        saveSettings("ffmpegpath", default_ffPath)
+        return default_ffPath
+
+    # Search for the ffmpeg executable
+    ffmpegpath = file_search("ffmpeeg.exe")
+    if ffmpegpath:
+        saveSettings("ffmpegpath", ffmpegpath)
+        return ffmpegpath
+
+    # Download and unzip the ffmpeg executable
+    ffmpegpath = execute_or_setting(DL_unZip_ffmpeg, key="ffmpegpath")
+    os.system('cls')
+    mux()
+    
+    if ffmpegpath:
+        saveSettings("ffmpegpath", ffmpegpath)
+        return ffmpegpath
+
+
+def setLink_Path(find_ffmpeg = False): 
     """Check if Streamlink or FFmpeg is installed on the user's system.
 
     Args:
@@ -29,7 +69,7 @@ def setLink_Path(find_ffmpeg = False):
         not found.
     """
     if (loadSettings("streamlinkPath")
-        == None or isMoreThan30days(loadSettings('LastSave'))):
+        is None or isMoreThan30days(loadSettings('LastSave'))):
         print("pass")
     else: return os.path.dirname(loadSettings("streamlinkPath"))
     
@@ -87,8 +127,7 @@ def shorten_path_name(file_path):
         short_dir = f"{dir_parts[0]}{os.sep}...{os.sep}{dir_parts[-1]}"
     else:
         short_dir = dir_name
-    short_path = os.path.join(short_dir, base_name)
-    return short_path
+    return os.path.join(short_dir, base_name)
 
 
 def is_url(variable):
@@ -119,8 +158,7 @@ def mChoiceQeustion(mssg, choice, oPT_type="str", keyName="Key"):
     ]
     answer = inquirer.prompt(questions)
     if oPT_type == "str":
-        qstnStrRtn = ''.join([str(value) for value in answer.values()])
-        return qstnStrRtn
+        return ''.join([str(value) for value in answer.values()])
     return answer
 
 
@@ -326,7 +364,7 @@ def file_search(exeName, timeout = 40):
             
     return False
 
-
+'''
 def channelsSplit(fprobeDir, filename):
     
     pathDir = os.path.dirname(fprobeDir)
@@ -360,7 +398,42 @@ def channelsSplit(fprobeDir, filename):
         channels_list = []
         for i in range(1, audChannels+1):
             channels_list.append(i)
-        return channels_list
+        return channels_list'''
+
+def channelsSplit(fprobeDir, filename):
+    
+    if pathDir := os.path.dirname(fprobeDir):
+        return _extracted_from_channelsSplit_(filename, pathDir)
+    print(f"\nCould Not Find '{fprobeDir}' on your Computer\n")
+    while True:
+        try:
+            audChannels = int(
+                input(
+                    "Couldn't Auto retrieve Max Num of A/Channels, How Many Channels does {filename} have?:"
+                )
+            )
+            break
+        except ValueError:
+            print("Please enter a numerical value(int) EG: 3.")
+
+    return list(range(1, audChannels+1))
+
+
+# TODO Rename this here and in `channelsSplit`
+def _extracted_from_channelsSplit_(filename, pathDir):
+    command = (f'ffprobe -v error -show_entries stream=index'
+                fr' -select_streams a -of csv=p=0 "{filename}"')
+    opusCmd = (f'ffprobe -v error -select_streams a:0 -show_entries '
+            'stream=codec_name -of '
+            fr'default=noprint_wrappers=1:nokey=1 "{filename}"')
+
+    output = (subprocess.check_output(command, shell=True, cwd=pathDir)
+                .decode('utf-8').strip())
+    opus = (subprocess.check_output(opusCmd, shell=True, cwd=pathDir)
+                .decode('utf-8').strip())
+
+    audChannels = output.split()
+    return audChannels, opus
 
 
 def DL_unZip_ffprobe():
@@ -435,7 +508,7 @@ def initSettings():
     appdata_path = os.getenv('LOCALAPPDATA')
 
     # Define the path to the settings file
-    settings_file = os.path.join(appdata_path,
+    settings_file = os.path.join(str(appdata_path),
                                     'Stream-Downloader-Util', 'SDUsettings.json')
 
     # Check if the settings file already exists
@@ -468,7 +541,7 @@ def saveSettings(key = None, value = None):
 
     appdata_path = os.getenv('LOCALAPPDATA')
 
-    settings_file = os.path.join(appdata_path,
+    settings_file = os.path.join(str(appdata_path),
                                     'Stream-Downloader-Util', 'SDUsettings.json')
     
     with open(settings_file, 'r') as f:
@@ -492,12 +565,12 @@ def loadSettings(key = None):
     """
     # Initialize the settings file with initial values if it doesn't exist
     initSettings()
-    
+
     # Get the path to the local AppData folder.
     appdata_path = os.getenv('LOCALAPPDATA')
 
     # Define the path to the settings file
-    settings_file = os.path.join(appdata_path,
+    settings_file = os.path.join(str(appdata_path),
                                     'Stream-Downloader-Util', 'SDUsettings.json')
 
     # Load settings from the file
@@ -505,11 +578,7 @@ def loadSettings(key = None):
         settings = json.load(f)
 
     # Return the value associated with the key if a key is provided
-    if key is not None:
-        return settings.get(key, None)
-    # Otherwise, return the entire settings dictionary
-    else:
-        return settings
+    return settings.get(key, None) if key is not None else settings
 
 
 def isMoreThan30days(datetime1st):
@@ -521,15 +590,12 @@ def isMoreThan30days(datetime1st):
     datetimeNow = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     datetime1 = datetime.strptime(datetimeNow, '%d/%m/%Y %H:%M:%S')
     datetime2 = datetime.strptime(datetime1st, '%d/%m/%Y %H:%M:%S')
-    
+
     # Calculate the difference between the two dates
     difference = abs(datetime2 - datetime1)
-    
+
     # Check if the difference is greater than 30 days
-    if difference > timedelta(days=30):
-        return True
-    else:
-        return False
+    return difference > timedelta(days=30)
 
 
 def execute_or_setting(command, args = (), key = ""):
@@ -553,8 +619,25 @@ returns the value loaded from the settings using the key.
     longer = isMoreThan30days(ls)
     path = loadSettings(key)
 
-    if longer ==True or path == None:
-        result = command(*args)
-        return result
-    elif longer ==False:
+    if longer == True or path is None:
+        return command(*args)
+    elif longer == False:
         return loadSettings(key)
+    
+
+
+def kill_process(process):
+    try:
+        parent = psutil.Process(process.pid)
+        for child in parent.children(recursive=True):
+            child.kill()
+        parent.kill()
+        print("Subprocess killed")
+    except psutil.NoSuchProcess as e:
+        print("Subprocess already closed")
+
+
+def wait_for_subprocess(process):
+    process.wait()
+    # Run some code after the subprocess has completed
+    
