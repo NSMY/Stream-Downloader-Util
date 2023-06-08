@@ -2,51 +2,43 @@ import os
 import subprocess
 
 import funcs
-from Main import main_script
 
 
-def ffmpegextract():
+def ffmpegextract():  # sourcery skip: extract-duplicate-method
     #FIXIT if file is NOT muxed it returns [ALL 0 0 Exit] channels
-    # IF Path is not saved in setting.json or is last saved sett>30days.
-    if (funcs.loadSettings("ffprobepath") is None 
-        or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))):
 
-        probeDir = (funcs.file_search("ffprobe.exe")
-                    if not os.path.isfile("C:\\ffmpeg\\ffprobe") else None)
+######################################################################################
+    # Check if the ffmpeg path is already saved in the settings
+    probeDir = funcs.loadSettings("ffprobepath")
+    if not probeDir or funcs.isMoreThan30days(funcs.loadSettings('LastSave')):
+        probeDir = "C:\\ffmpeg\\ffprobe.exe" #FIX make a dynamic func for this 
 
-        if not probeDir:
-            probeDir = funcs.execute_or_setting(funcs.DL_unZip_ffprobe,
-                                                    key="ffprobepath")
-            os.system('cls')
-            ffmpegextract()
-        if probeDir:
-            funcs.saveSettings("ffprobepath", probeDir)
-    else:
-        probeDir = funcs.loadSettings("ffprobepath")
 
+
+    # ffpg = os.path.dirname(fr"{ffmpegpath}")
 
     filename = funcs.getFile()
 
-    if not (any(filename.endswith(file_type)
-            for file_type in funcs.video_file_types)):
+    if not (any(filename.endswith(media_type)
+                for media_type in funcs.video_file_types)):
         print("\nNot a Valid File type to Extract Streams From Try again.")
         ffmpegextract()
-
-    for file_type in funcs.video_file_types:
-        if filename.endswith(file_type):
-            print(file_type)
-            break
-
+        
+        
+    file_type = funcs.extract_file_type(filename)
+    
+    mxChann = []
     try:
         chanReturn = funcs.channelsSplit(probeDir, filename)
         mxChann = chanReturn[0]
         opus = chanReturn[-1]
     except subprocess.CalledProcessError as ce:
         os.system('cls')
+        from Main import main_script  # HACK to stop circular imports
         main_script()
     chan = ["All"] + mxChann + ["Exit"]
 
-    ffmpegDir = funcs.setLink_Path(True)
+    ffmpegDir = funcs.setLink_Path(True) #FIXIT remake setlink refactor into many
 
     if funcs.has_ffmpeg_dir(ffmpegDir):
         ffmpeg_path = ffmpegDir.replace("\\Streamlink\\bin\\",
@@ -72,6 +64,7 @@ def ffmpegextract():
 
     print(outname)
     os.makedirs(os.path.dirname(outname), exist_ok=True)
+    opus = ""
 
     #parse code
     if selected_channels == "All":
@@ -82,13 +75,12 @@ def ffmpegextract():
             cmd = f'ffmpeg -i "{filename}"'
         for i in range(num_channels):
             cmd += f' -map 0:a:{i} -c copy "{outname}_{i}.aac"'
-
     else:
         channel = int(selected_channels) - 1
-        if copy_video and opus != "opus":
-            cmd = f'ffmpeg -i "{filename}" -map 0:v -c copy "{outname}{file_type}"'
-        elif copy_video and opus == "opus":
+        if copy_video and opus == "opus":
             cmd = f'ffmpeg -i "{filename}" "{outname}{file_type}"' #FIX anothr line to convert vp9 not just copy and switch needed this copies vp9 atm and if OpUS audio Not vp9 Vid
+        elif copy_video:
+            cmd = f'ffmpeg -i "{filename}" -map 0:v -c copy "{outname}{file_type}"'
         else:
             cmd = f'ffmpeg -i "{filename}"'
 
@@ -119,6 +111,7 @@ def ffmpegextract():
         mux()
     elif closeOptions == "Download":
         os.system('cls')
+        from Main import main_script
         main_script()
     elif closeOptions == "Extract":
         os.system('cls')

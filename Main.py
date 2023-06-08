@@ -177,7 +177,7 @@ def main_script():
     
     print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
     
-    
+    # os.system("shutdown -s -t 300") #BUG take out this sends shutdown cmd
     
     winsound.PlaySound('C:\\Windows\\Media\\Windows Proximity Notification.wav'
                         , winsound.SND_FILENAME)
@@ -216,7 +216,7 @@ if rprog == "Download":
     main_script()
 elif rprog == "Remux":
     ffpth = funcs.setLink_Path(True).replace("\\bin", "\\ffmpeg")
-    cpvs.mux(ffmpegpath=ffpth)
+    cpvs.mux(ffmpegpath=ffpth) #LOOK circular imports>> hack cod eis to import within funcs stops this?proceed this route?
 elif rprog == "Extract":
     from ffmpegExtract import ffmpegextract
     ffmpegextract()

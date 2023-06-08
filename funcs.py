@@ -17,11 +17,9 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
-from cpyVid_scritp_____1 import mux
-
 video_file_types = [".mp4", ".mov", ".mkv", ".ts",]
 
-def make_new_dir_from_path(file_path, new_dir_name = str)-> str:
+def make_new_dir_from_path(file_path, new_dir_name)-> str:
     file_path_2 = os.path.dirname(file_path)
 
     new_folder_combine_path = os.path.join(file_path_2, new_dir_name)
@@ -33,8 +31,14 @@ def make_new_dir_from_path(file_path, new_dir_name = str)-> str:
     print("\n", old_file_name)
     return os.path.join(new_folder_combine_path, old_file_name)
 
+def extract_file_type(filename: str) -> str:
+    for file_type in video_file_types:
+        if filename.endswith(file_type):
+            print(file_type)
+            return file_type
+    return ""
 
-def get_ffmpeg_path():
+def get_ffmpeg_path(): # FIX make abstract.
 
     # Check if ffmpeg is installed in the default location
     default_ffPath = "C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe"
@@ -43,7 +47,7 @@ def get_ffmpeg_path():
         return default_ffPath
 
     # Search for the ffmpeg executable
-    ffmpegpath = file_search("ffmpeeg.exe")
+    ffmpegpath = file_search("ffmpeg.exe")
     if ffmpegpath:
         saveSettings("ffmpegpath", ffmpegpath)
         return ffmpegpath
@@ -51,6 +55,7 @@ def get_ffmpeg_path():
     # Download and unzip the ffmpeg executable
     ffmpegpath = execute_or_setting(DL_unZip_ffmpeg, key="ffmpegpath")
     os.system('cls')
+    from cpyVid_scritp_____1 import mux
     mux()
     
     if ffmpegpath:
@@ -58,7 +63,7 @@ def get_ffmpeg_path():
         return ffmpegpath
 
 
-def setLink_Path(find_ffmpeg = False): 
+def setLink_Path(find_ffmpeg = False):
     """Check if Streamlink or FFmpeg is installed on the user's system.
 
     Args:
@@ -144,22 +149,23 @@ def has_ffmpeg_dir(stream_lnk_Path):
     return os.path.isdir(store_path)
 
 
-def mChoiceQeustion(mssg, choice, oPT_type="str", keyName="Key"):
-    """Scrollable Multi Choice coe.
-    
-        mssg = str | choice = [""]
-        """
+def mChoiceQeustion(mssg: str, choice: list, oPT_type="str", keys_name="Key"):
+    """Scrollable Multi Choice question.
+
+    mssg = str | choice = [""]
+    """
     questions = [
         inquirer.List(
-            keyName,
+            keys_name,
             message=mssg,
             choices=choice,
         ),
     ]
     answer = inquirer.prompt(questions)
-    if oPT_type == "str":
-        return ''.join([str(value) for value in answer.values()])
-    return answer
+    if answer is not None:
+        if oPT_type == "str":
+            return ''.join([str(value) for value in answer.values()])
+        return answer
 
 
 def openFile():
@@ -231,7 +237,7 @@ def saveFile():
     return (file)
 
 
-def is_installed(program_name):
+def is_installed(program_name: str) -> bool:
     """Checks if Program is installed in path.
     
     EG: python
@@ -257,6 +263,7 @@ def get_path(program_name):
 
 
 def dldURL(url, dloadFilePath, dlmssg = ""):
+    # sourcery skip: extract-method, last-if-guard
     """Downloads the url to dloadFilepath using Requests
 
     Args:
@@ -309,12 +316,12 @@ def Unzip(dloadFilePath, outputDir, specificFile = "", mssg = ""):
         
         mssg (str, optional): Trash mssg Defaults to "".
     """
-    if not os.path.exists(f"{outputDir}\{specificFile}"):
+    if not os.path.exists(f"{outputDir}\\{specificFile}"):
         try:
             zip_file = (dloadFilePath)
             print(zip_file)
             output_dir = outputDir
-            
+
             if specificFile:
                 with zipfile.ZipFile(zip_file, 'r') as zf:
                     zf.extract(specificFile, output_dir)
@@ -322,17 +329,17 @@ def Unzip(dloadFilePath, outputDir, specificFile = "", mssg = ""):
                 with zipfile.ZipFile(zip_file, 'r') as zf:
                     zf.extractall(output_dir)
             print(f"\nSuccessful Extraction To {output_dir}")
-            
+
             if (os.path.isfile(dloadFilePath) 
-                and os.path.isfile(f"{outputDir}\{specificFile}")):
-                
+                and os.path.isfile(f"{outputDir}\\{specificFile}")):
+
                 send2trash(dloadFilePath)
                 print(mssg)
                 winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
                                     winsound.SND_FILENAME)
                 return True
-            
-        except:
+
+        except Exception:
             print(f"\n\nERROR: Could not extract {dloadFilePath} \n")
             fldr = dloadFilePath.replace(specificFile,"")
             os.startfile(fldr)
@@ -349,6 +356,7 @@ def file_search(exeName, timeout = 40):
     filename = exeName
     found = False
     start_time = time.time()
+    exePth = ""
     
     for directory in directories:
         if found:
@@ -361,8 +369,6 @@ def file_search(exeName, timeout = 40):
                 break
             if time.time() - start_time > timeout:
                 return f"Search timed out after {timeout} seconds"
-            
-    return False
 
 '''
 def channelsSplit(fprobeDir, filename):
