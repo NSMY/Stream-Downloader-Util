@@ -31,51 +31,8 @@ def main_script():
     url_ = clp_brd.replace("?filter=archives&sort=time","")
 
 
-    stream_lnk_Path = ""
-    swtch = 1
-    #Runs Check if streamlink is installed and gives link/opens if Not.
-    while stream_lnk_Path != "c":
-        stream_lnk_Path = funcs.setLink_Path()
-        slinkURL = "https://github.com/streamlink/windows-builds/releases/latest"
-        if stream_lnk_Path == "404 Not Here" and swtch == 1:
-            swtch = +2
-            ipt_asw = input(f"\nYou do not seem to have streamLink installed."
-                            "\n\nPlease Visit: {slinkURL}\nTo download"
-                            " Streamlink and install it."
-                            "\n\n----Look For EG: streamlink-5.1.0-1-py310-x86_64.exe"
-                            "----\nOR \nAuto Launch Website? y/n?: ").lower()
-            if ipt_asw in accp_lst["yes"]:
-                webbrowser.open(slinkURL)
-                print("\nWaiting for Installation...")
-                time.sleep(15)
-            else:
-                print("\nWaiting for Installation...")
-                time.sleep(7)
-        elif swtch >= 0 and stream_lnk_Path == "404 Not Here":
-                swtch = +2
-                got_it = input("\nHas Streamlink been installed?\ny/n?:").lower()
-                stream_lnk_Path = funcs.setLink_Path()
-                time.sleep(5)
-                if got_it in accp_lst["yes"] and stream_lnk_Path == "404 Not Here":
-                    stream_lnk_Path = funcs.setLink_Path()
-                    lie_chk = input("\nHaven't Found Streamlink In File Path "
-                                    "C\\Program (or {x86}) \\Files\\Streamlink\\bin\\"
-                                    "   Are you sure it is there?\n"
-                                    "Do you need the website again? y/n?:").lower()
-                    time.sleep(5)
-                    if lie_chk in accp_lst["yes"]:
-                        webbrowser.open(slinkURL)
-                        print("\nWaiting!......")
-                        time.sleep(7)
-                    elif stream_lnk_Path == "404 Not Here":
-                        time.sleep(8)# 21 ----
-                        print("\nPlease Check: C\\Program (or {x86}) \\Files\\Streamlink\\bin\\ Path")
-                else:
-                    time.sleep(12)
-
-        else:
-            break
-        
+    FFPATH = ''#HERE
+    
     
     # IF Path is not saved in setting.json or is last saved sett>30days.
     if (funcs.loadSettings("ffmpegpath") is None

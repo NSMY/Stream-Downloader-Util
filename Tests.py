@@ -48,6 +48,15 @@
 #     return fpath
 
 
-from funcs import program_Path_Details
+import funcs
+from funcs import (ffmpegpath_download_an_unzip, program_Path_Details,
+                   shorten_path_name)
 
-print(program_Path_Details("python"))
+settings_Key = "ffmpegpath"
+dld = "_download_an_unzip"
+func_name = self.settings_Key + dld
+func = getattr(funcs, func_name)
+func()
+
+
+# print(getattr(settings_Key, dld))

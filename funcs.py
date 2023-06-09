@@ -17,7 +17,7 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
-from Main import main_script
+# import Main
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts",]
 
@@ -42,85 +42,85 @@ def video_file_exe_return(filename: str) -> str:
     return ""
 
 
-def ffmpeg_path_set(): # FIX make abstract.
+# def ffmpeg_path_set(): # FIX make abstract.
 
-    # Check if ffmpeg is installed in the default location
-    default_ffPath = "C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe"
-    if os.path.isfile(default_ffPath):
-        saveSettings("ffmpegpath", default_ffPath)
-        return default_ffPath
+#     # Check if ffmpeg is installed in the default location
+#     default_ffPath = "C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe"
+#     if os.path.isfile(default_ffPath):
+#         saveSettings("ffmpegpath", default_ffPath)
+#         return default_ffPath
 
-    # Search for the ffmpeg executable
-    ffmpegpath = file_search("ffmpeg.exe")
-    if ffmpegpath:
-        saveSettings("ffmpegpath", ffmpegpath)
-        return ffmpegpath
+#     # Search for the ffmpeg executable
+#     ffmpegpath = file_search("ffmpeg.exe")
+#     if ffmpegpath:
+#         saveSettings("ffmpegpath", ffmpegpath)
+#         return ffmpegpath
 
-    # Download and unzip the ffmpeg executable
-    ffmpegpath = execute_or_setting(DL_unZip_ffmpeg, key="ffmpegpath")
-    os.system("cls")
-    from cpyVid_scritp_____1 import mux
-    mux()
+#     # Download and unzip the ffmpeg executable
+#     ffmpegpath = execute_or_setting(DL_unZip_ffmpeg, key="ffmpegpath")
+#     os.system("cls")
+#     from cpyVid_scritp_____1 import mux
+#     mux()
     
-    if ffmpegpath:
-        saveSettings("ffmpegpath", ffmpegpath)
-        return ffmpegpath
+#     if ffmpegpath:
+#         saveSettings("ffmpegpath", ffmpegpath)
+#         return ffmpegpath
 
 
-def setLink_Path(find_ffmpeg = False):
-    """Check if Streamlink or FFmpeg is installed on the user"s system.
+# def setLink_Path(find_ffmpeg = False):
+#     """Check if Streamlink or FFmpeg is installed on the user"s system.
 
-    Args:
-        find_ffmpeg (bool): If True, check for FFmpeg instead of Streamlink.
+#     Args:
+#         find_ffmpeg (bool): If True, check for FFmpeg instead of Streamlink.
 
-    Returns:
-        str: The path to the Streamlink or FFmpeg installation, or False if 
-        not found.
-    """
-    if (loadSettings("streamlinkPath")
-        is None or isMoreThan30days(loadSettings("LastSave"))):
-        print("pass")
-    else: return os.path.dirname(loadSettings("streamlinkPath"))
+#     Returns:
+#         str: The path to the Streamlink or FFmpeg installation, or False if 
+#         not found.
+#     """
+#     if (loadSettings("streamlinkPath")
+#         is None or isMoreThan30days(loadSettings("LastSave"))):
+#         print("pass")
+#     else: return os.path.dirname(loadSettings("streamlinkPath"))
     
-    # Define the paths to check for Streamlink
-    streamlink_paths = [
-        "C:\\Program Files\\Streamlink\\bin\\streamlink.exe",
-        "C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe"
-    ]
+#     # Define the paths to check for Streamlink
+#     streamlink_paths = [
+#         "C:\\Program Files\\Streamlink\\bin\\streamlink.exe",
+#         "C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe"
+#     ]
 
-    # Check if Streamlink is installed at one of the defined paths
-    for path in streamlink_paths:
-        if os.path.isfile(path) and find_ffmpeg == False:
-            saveSettings("streamlinkPath", path)
-            return os.path.dirname(path)
-        elif not path:
-            streamlink_path = file_search("streamlink.exe")
-            if streamlink_path and find_ffmpeg == False:
-                saveSettings("streamlinkPath", streamlink_path)
-                return os.path.dirname(streamlink_path)
+#     # Check if Streamlink is installed at one of the defined paths
+#     for path in streamlink_paths:
+#         if os.path.isfile(path) and find_ffmpeg == False:
+#             saveSettings("streamlinkPath", path)
+#             return os.path.dirname(path)
+#         elif not path:
+#             streamlink_path = file_search("streamlink.exe")
+#             if streamlink_path and find_ffmpeg == False:
+#                 saveSettings("streamlinkPath", streamlink_path)
+#                 return os.path.dirname(streamlink_path)
     
-    # If find_ffmpeg is True, check for FFmpeg
-    if find_ffmpeg:
-        slinkFFMPEG = os.path.isfile(streamlink_paths[0].replace(
-                    "\\bin\\streamlink.exe", "\\ffmpeg\\ffmpeg.exe"))
-        if slinkFFMPEG:
-            ffmpg = os.path.dirname(streamlink_paths[0].replace(
-                    "\\bin\\streamlink.exe", "\\ffmpeg\\ffmpeg.exe"))
-            saveSettings("ffmpegpath", ffmpg)
-            return ffmpg
-        if not slinkFFMPEG:
-            ffmpeg_path = os.path.dirname(file_search("ffmpeg.exe")) # type: ignore fixed in OpenFile
-            saveSettings("ffmpegpath", ffmpeg_path)
-            return ffmpeg_path
-        else:
-            ffmpeg_path = DL_unZip_ffmpeg()
-            saveSettings("ffmpegpath", ffmpeg_path)
-            return ffmpeg_path
+    # # If find_ffmpeg is True, check for FFmpeg
+    # if find_ffmpeg:
+    #     slinkFFMPEG = os.path.isfile(streamlink_paths[0].replace(
+    #                 "\\bin\\streamlink.exe", "\\ffmpeg\\ffmpeg.exe"))
+    #     if slinkFFMPEG:
+    #         ffmpg = os.path.dirname(streamlink_paths[0].replace(
+    #                 "\\bin\\streamlink.exe", "\\ffmpeg\\ffmpeg.exe"))
+    #         saveSettings("ffmpegpath", ffmpg)
+    #         return ffmpg
+    #     if not slinkFFMPEG:
+    #         ffmpeg_path = os.path.dirname(file_search("ffmpeg.exe")) # type: ignore fixed in OpenFile
+    #         saveSettings("ffmpegpath", ffmpeg_path)
+    #         return ffmpeg_path
+    #     else:
+    #         ffmpeg_path = DL_unZip_ffmpeg()
+    #         saveSettings("ffmpegpath", ffmpeg_path)
+    #         return ffmpeg_path
             
-    return False
+    # return False
 
 
-def shorten_path_name(file_path):
+def shorten_path_name(file_path: str):
     """shortens Filepaths for viewing/printing
 
     Args:
@@ -134,7 +134,7 @@ def shorten_path_name(file_path):
     dir_parts = dir_name.split(os.sep)
     if len(dir_parts) > 2:
         short_dir = f"{dir_parts[0]}{os.sep}...{os.sep}{dir_parts[-1]}"
-    else:
+    else:    
         short_dir = dir_name
     return os.path.join(short_dir, base_name)
 
@@ -207,7 +207,7 @@ def openFile():
             openFile()
         elif check == "no":
             os.system("cls" if os.name == "nt" else "clear")
-            main_script()
+            Main.main_script()
         sys.exit ()
     return file
 
@@ -239,7 +239,7 @@ def saveFile():
             saveFile()
         elif check == "no":
             os.system("cls" if os.name == "nt" else "clear")
-            main_script()
+            Main.main_script()
         sys.exit ()
     return (file)
 
@@ -445,61 +445,6 @@ def _extracted_from_channelsSplit_(filename, pathDir):
     return audChannels, opus
 
 
-def DL_unZip_ffprobe():
-    """calls dldURL() and Unzip() with all info inside"""
-    
-    dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
-                                "ffprobe-4.4.1-win-64.zip")
-
-    url = ("https://github.com/ffbinaries/ffbinaries-prebuilt/releases/"
-            "download/v4.4.1/ffprobe-4.4.1-win-64.zip")
-
-    dlmssg = ("\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
-                "link (45mb - 110mb Extracted) "
-                " LINK >>> https://ffbinaries.com/downloads <<<"
-                f"---------------\n ----------------to {dloadFilePath} "
-                "and will auto extract to C:\\ffmpeg\\ ------------------\n")
-
-    save_Dir = "C:\\ffmpeg\\"
-    spefFile = "ffprobe.exe"
-    zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
-    dld = download_url(url, dloadFilePath, dlmssg)
-    zp = unzip_file_from_path(dloadFilePath, save_Dir, spefFile, zipmssg)
-    
-    if dld and zp ==True:
-        Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
-        saveSettings("ffprobepath", Fprobe_Path)
-        return Fprobe_Path
-    
-    return save_Dir
-
-
-def DL_unZip_ffmpeg():
-    """calls dldURL() and Unzip() with all info inside"""
-    
-    urlmpg = ("https://github.com/ffbinaries/ffbinaries-prebuilt/"
-                "releases/download/v4.4.1/ffmpeg-4.4.1-win-64.zip")
-    
-    dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
-                                    "ffmpeg-4.4.1-win-64.zip")
-    
-    dlmssg = ("\n---------------Downloading ffmpeg from OFFICIAL FFMPEG "
-                "link (45mb - 110mb Extracted) LINK >>> "
-                "https://ffbinaries.com/downloads <<<---------------\n "
-                f"----------------to {dloadFilePath} "
-                "and will auto extract to C:\\ffmpeg\\ ------------------\n")
-    
-    dld = download_url(urlmpg, dloadFilePath, dlmssg)
-    zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", "ffmpeg.exe")
-    fpath = os.path.dirname(file_search("ffmpeg.exe")) # type: ignore fixed in OpenFile fixed in OpeenFile
-    
-    if dld and zp ==True:
-        ffm_Path = ("C:\\ffmpeg\\") #only needs the dir to cmd into
-        saveSettings("ffmpegpath", ffm_Path)
-        return ffm_Path
-    
-    return fpath
-
 
 def file_path_get(passed_input_path: str = paste()):
     """Defaults to paste() if no Args specified,
@@ -652,3 +597,64 @@ def wait_for_subprocess(process):
     process.wait()
     # Run some code after the subprocess has completed
     
+    
+    
+    
+    
+    
+####################################################
+def ffprobepath_download_an_unzip():
+    """calls dldURL() and Unzip() with all info inside"""
+    
+    dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
+                                "ffprobe-4.4.1-win-64.zip")
+
+    url = ("https://github.com/ffbinaries/ffbinaries-prebuilt/releases/"
+            "download/v4.4.1/ffprobe-4.4.1-win-64.zip")
+
+    dlmssg = ("\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
+                "link (45mb - 110mb Extracted) "
+                " LINK >>> https://ffbinaries.com/downloads <<<"
+                f"---------------\n ----------------to {dloadFilePath} "
+                "and will auto extract to C:\\ffmpeg\\ ------------------\n")
+
+    save_Dir = "C:\\ffmpeg\\"
+    spefFile = "ffprobe.exe"
+    zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
+    
+    dld = download_url(url, dloadFilePath, dlmssg)
+    zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", spefFile, zipmssg)
+    if dld and zp ==True:
+        Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
+        saveSettings("ffprobepath", Fprobe_Path)
+        return Fprobe_Path
+    
+    return f"{save_Dir}ffmpeg.exe"
+
+
+def ffmpegpath_download_an_unzip():
+    """calls dldURL() and Unzip() with all info inside"""
+    
+    urlmpg = ("https://github.com/ffbinaries/ffbinaries-prebuilt/"
+                "releases/download/v4.4.1/ffmpeg-4.4.1-win-64.zip")
+
+    dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
+                                    "ffmpeg-4.4.1-win-64.zip")
+
+    dlmssg = ("\n---------------Downloading ffmpeg from OFFICIAL FFMPEG "
+                "link (45mb - 110mb Extracted) LINK >>> "
+                "https://ffbinaries.com/downloads <<<---------------\n "
+                f"----------------to {dloadFilePath} "
+                "and will auto extract to C:\\ffmpeg\\ ------------------\n")
+    save_Dir = "C:\\ffmpeg\\"
+    spefFile = "ffmpeg.exe"
+    zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
+    
+    dld = download_url(urlmpg, dloadFilePath, dlmssg)
+    zp = unzip_file_from_path(dloadFilePath, save_Dir, spefFile, zipmssg)
+    if dld and zp ==True:
+        ffm_Path = ("C:\\ffmpeg\\ffmpeg.exe") #only needs the dir to cmd into
+        saveSettings("ffmpegpath", ffm_Path)
+        return ffm_Path
+
+    return f"{save_Dir}ffmpeg.exe"
