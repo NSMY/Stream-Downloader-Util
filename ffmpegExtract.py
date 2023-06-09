@@ -17,7 +17,7 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
 
     # ffpg = os.path.dirname(fr"{ffmpegpath}")
 
-    filename = funcs.getFile()
+    filename = funcs.file_path_get()
 
     if not (any(filename.endswith(media_type)
                 for media_type in funcs.video_file_types)):
@@ -25,7 +25,7 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
         ffmpegextract()
         
         
-    file_type = funcs.extract_file_type(filename)
+    file_type = funcs.video_file_exe_return(filename)
     
     mxChann = []
     try:
@@ -38,7 +38,7 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
         main_script()
     chan = ["All"] + mxChann + ["Exit"]
 
-    ffmpegDir = funcs.setLink_Path(True) #FIXIT remake setlink refactor into many
+    ffmpegDir = "C:\\Program Files\\Streamlink\\ffmpeg\\"# funcs.setLink_Path(True) #FIXIT remake setlink refactor into many
 
     if funcs.has_ffmpeg_dir(ffmpegDir):
         ffmpeg_path = ffmpegDir.replace("\\Streamlink\\bin\\",
@@ -46,15 +46,16 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
 
     # Inputs questions
     message = "Which audio channels would you like to extract?"
-    answers = funcs.mChoiceQeustion(message, chan, "int", "channels")
+    answers = funcs.multi_choice_dialog(message, chan, "int", "channels")
     selected_channels = answers["channels"]
 
     if selected_channels == "Exit":
+        from Main import main_script
         os.system('cls')
         main_script()
 
     message = "Do you want to extract the video stream?"
-    answers = funcs.mChoiceQeustion(message, ["Yes", "No"], "int")
+    answers = funcs.multi_choice_dialog(message, ["Yes", "No"], "int")
     copy_video = answers["Key"] == "Yes"
 
     # create Dir
@@ -102,7 +103,7 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
 
 
     #exit Options
-    closeOptions = funcs.mChoiceQeustion("Extract again, Download Again, "
+    closeOptions = funcs.multi_choice_dialog("Extract again, Download Again, "
                                         "Remux media or Exit",
                                     ["Extract", "Download", "Remux", "Exit"])
     if closeOptions == "Remux":

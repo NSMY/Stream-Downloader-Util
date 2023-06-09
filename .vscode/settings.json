@@ -17,6 +17,7 @@
         "newfolder",
         "outname",
         "Remux",
+        "sourcery",
         "Usettings"
     ],
     "python.analysis.typeCheckingMode": "basic",

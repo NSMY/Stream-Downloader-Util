@@ -17,28 +17,32 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
+from Main import main_script
+
 video_file_types = [".mp4", ".mov", ".mkv", ".ts",]
 
-def make_new_dir_from_path(file_path, new_dir_name)-> str:
-    file_path_2 = os.path.dirname(file_path)
-
-    new_folder_combine_path = os.path.join(file_path_2, new_dir_name)
-
+def make_new_dir_from_input(input_file_path:str , new_dir_name_arg: str)-> str:
+    '''Makes a directory from the input file path
+    inline with input_file_path'''
+    file_path_2 = os.path.dirname(input_file_path)
+    new_folder_combine_path = os.path.join(file_path_2, new_dir_name_arg)
+    
     if not os.path.exists(new_folder_combine_path):
         os.makedirs(new_folder_combine_path)
+    return os.path.join(new_folder_combine_path)
 
-    old_file_name = os.path.basename(file_path)
-    print("\n", old_file_name)
-    return os.path.join(new_folder_combine_path, old_file_name)
 
-def extract_file_type(filename: str) -> str:
+def video_file_exe_return(filename: str) -> str:
+    '''Returns the .extension if in video_file_types
+    otherwise returns empty string'''
     for file_type in video_file_types:
         if filename.endswith(file_type):
             print(file_type)
             return file_type
     return ""
 
-def get_ffmpeg_path(): # FIX make abstract.
+
+def ffmpeg_path_set(): # FIX make abstract.
 
     # Check if ffmpeg is installed in the default location
     default_ffPath = "C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe"
@@ -54,7 +58,7 @@ def get_ffmpeg_path(): # FIX make abstract.
 
     # Download and unzip the ffmpeg executable
     ffmpegpath = execute_or_setting(DL_unZip_ffmpeg, key="ffmpegpath")
-    os.system('cls')
+    os.system("cls")
     from cpyVid_scritp_____1 import mux
     mux()
     
@@ -64,7 +68,7 @@ def get_ffmpeg_path(): # FIX make abstract.
 
 
 def setLink_Path(find_ffmpeg = False):
-    """Check if Streamlink or FFmpeg is installed on the user's system.
+    """Check if Streamlink or FFmpeg is installed on the user"s system.
 
     Args:
         find_ffmpeg (bool): If True, check for FFmpeg instead of Streamlink.
@@ -74,7 +78,7 @@ def setLink_Path(find_ffmpeg = False):
         not found.
     """
     if (loadSettings("streamlinkPath")
-        is None or isMoreThan30days(loadSettings('LastSave'))):
+        is None or isMoreThan30days(loadSettings("LastSave"))):
         print("pass")
     else: return os.path.dirname(loadSettings("streamlinkPath"))
     
@@ -105,7 +109,7 @@ def setLink_Path(find_ffmpeg = False):
             saveSettings("ffmpegpath", ffmpg)
             return ffmpg
         if not slinkFFMPEG:
-            ffmpeg_path = os.path.dirname(file_search("ffmpeg.exe"))
+            ffmpeg_path = os.path.dirname(file_search("ffmpeg.exe")) # type: ignore fixed in OpenFile
             saveSettings("ffmpegpath", ffmpeg_path)
             return ffmpeg_path
         else:
@@ -143,28 +147,36 @@ def is_url(variable):
     except ValueError:
         return False
 
-
+#NOTE is needed?
 def has_ffmpeg_dir(stream_lnk_Path):
     store_path = os.path.join(os.path.dirname(stream_lnk_Path), "ffmpeg")
     return os.path.isdir(store_path)
 
 
-def mChoiceQeustion(mssg: str, choice: list, oPT_type="str", keys_name="Key"):
-    """Scrollable Multi Choice question.
-
-    mssg = str | choice = [""]
+def multi_choice_dialog(mssg: str, choice_s: list,
+                        return_options="str", keys_name="Key"
+                        ):
     """
+    Args:
+        mssg (str): questions mssg
+        choice_s (list): choices
+        return_options (str, optional): if u want a string returned or dict.
+        keys_name (str, optional): name of "Key" in dict.
+
+    Returns:
+        Str or Dict
+    """    
     questions = [
         inquirer.List(
             keys_name,
             message=mssg,
-            choices=choice,
+            choices=choice_s,
         ),
     ]
     answer = inquirer.prompt(questions)
     if answer is not None:
-        if oPT_type == "str":
-            return ''.join([str(value) for value in answer.values()])
+        if return_options == "str":
+            return "".join([str(value) for value in answer.values()])
         return answer
 
 
@@ -188,18 +200,15 @@ def openFile():
     root.destroy()
     file = os.path.normpath(filep)
     if not filep: #closes Program if No Save path is Entered
-        check = mChoiceQeustion("Canceled Open File: Try again?", 
+        check = multi_choice_dialog("Canceled Open File: Try again?", 
                                     ["yes", "no", "exit"])
         if check == "yes":
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system("cls" if os.name == "nt" else "clear")
             openFile()
         elif check == "no":
-            return ""
-        else:
-            print("Exiting")
-            time.sleep(3)
-            sys.exit ()
-    
+            os.system("cls" if os.name == "nt" else "clear")
+            main_script()
+        sys.exit ()
     return file
 
 
@@ -212,7 +221,7 @@ def saveFile():
     print("Save File To:... \n")
     root = tk.Tk()
     root.withdraw()
-    filep = filedialog.asksaveasfilename(defaultextension='.mp4',
+    filep = filedialog.asksaveasfilename(defaultextension=".mp4",
                                         filetypes=[
                                             ("MP4 files",".mp4"),    
                                             ("MOV files",".mov"),    
@@ -223,47 +232,31 @@ def saveFile():
     root.destroy()
     file = os.path.normpath(filep)
     if not filep: #closes Program if No Save path is Entered
-        check = mChoiceQeustion("Canceled Save Path: Try again?",
+        check = multi_choice_dialog("Canceled Save Path: Try again?",
                                     ["yes", "no", "exit"])
         if check == "yes":
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system("cls" if os.name == "nt" else "clear")
             saveFile()
         elif check == "no":
-            return ""
-        else:
-            print("Exiting")
-            time.sleep(3)
-            sys.exit ()
+            os.system("cls" if os.name == "nt" else "clear")
+            main_script()
+        sys.exit ()
     return (file)
 
 
-def is_installed(program_name: str) -> bool:
-    """Checks if Program is installed in path.
-    
-    EG: python
-    
-    returns:
-        True/False
+def program_Path_Details(program_name):
+    """Gets Program file path, but only if its in "the Path".
     """
     try:
-        result = subprocess.check_output([program_name, '-version'])
-        return True
-    except FileNotFoundError:
-        return False
-
-
-def get_path(program_name):
-    """Gets Program file path, but only if its in 'the Path'.
-    """
-    try:
-        where = subprocess.check_output(['where', program_name])
-        return where.decode('utf-8').strip()
+        where = subprocess.check_output(["where", program_name])
+        version = subprocess.check_output([program_name, "--version"])
+        return where.decode("utf-8").split(), version.decode("utf-8").strip()
     except FileNotFoundError:
         return None
 
 
-def dldURL(url, dloadFilePath, dlmssg = ""):
-    # sourcery skip: extract-method, last-if-guard
+def download_url(url: str, dloadFilePath: str, dlmssg: str = ""):
+    # sourcery skip: extract-method
     """Downloads the url to dloadFilepath using Requests
 
     Args:
@@ -274,127 +267,138 @@ def dldURL(url, dloadFilePath, dlmssg = ""):
         dlmssg (str, optional): Transparency mssg whats 
         happening. Defaults to "".
     """
-    if not os.path.exists(dloadFilePath):
-        try:
-            response = requests.get(url, stream=True)
-            total_size = int(response.headers.get('content-length', 0))
-            block_size = 1024
-            
-            if dlmssg:
-                print(dlmssg)
-            with open(dloadFilePath, 'wb') as f:
-                for data in tqdm(response.iter_content(block_size), 
-                                    total=total_size//block_size, unit='KB'):
-                    
-                    f.write(data)
-            return True
-            
-        except requests.exceptions.HTTPError as errh:
-            print(f'HTTP Error: {errh}')
-            return False
-        except requests.exceptions.ConnectionError as errc:
-            print(f'Error Connecting: {errc}')
-            return False
-        except requests.exceptions.Timeout as errt:
-            print(f'Timeout Error: {errt}')
-            return False
-        except requests.exceptions.RequestException as err:
-            print(f'Something went wrong. Error: {err}')
-            return False
+    if os.path.exists(dloadFilePath):
+        return dloadFilePath
+    try:
+        response = requests.get(url, stream=True)
+        total_size = int(response.headers.get("content-length", 0))
+        block_size = 1024
+        
+        print(dlmssg)
+        with open(dloadFilePath, "wb") as f:
+            for data in tqdm(response.iter_content(block_size), 
+                                total=total_size//block_size, unit="KB"):
+                
+                f.write(data)
+        return True
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+        return False
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+        return False
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+        return False
+    except requests.exceptions.RequestException as err:
+        print(f"Something went wrong. Error: {err}")
+        return False
 
 
-def Unzip(dloadFilePath, outputDir, specificFile = "", mssg = ""):
+def unzip_file_from_path(zip_file_path,
+                        outputDir,
+                        specific_filename_to_extract: str = "",
+                        mssg = ""
+                        ):
     """Unzips files or specific File into outputDir,
+    
     moves Old .zip to Bin if both exist.
-
+    
     Args:
         dloadFilePath (str): C:\\example\\file.type
         
         outputDir (str): C:\\OutPutFolder\\
         
-        specificFile (str, optional): fileType.exe Defaults to "none".
+        specificFile (str, optional): fileType.exe Defaults to " ".
         
         mssg (str, optional): Trash mssg Defaults to "".
     """
-    if not os.path.exists(f"{outputDir}\\{specificFile}"):
+    if os.path.isfile(f"{outputDir}\\{specific_filename_to_extract}"):
         try:
-            zip_file = (dloadFilePath)
+            zip_file = zip_file_path
             print(zip_file)
             output_dir = outputDir
-
-            if specificFile:
-                with zipfile.ZipFile(zip_file, 'r') as zf:
-                    zf.extract(specificFile, output_dir)
-            else:
-                with zipfile.ZipFile(zip_file, 'r') as zf:
-                    zf.extractall(output_dir)
-            print(f"\nSuccessful Extraction To {output_dir}")
-
-            if (os.path.isfile(dloadFilePath) 
-                and os.path.isfile(f"{outputDir}\\{specificFile}")):
-
-                send2trash(dloadFilePath)
-                print(mssg)
-                winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
-                                    winsound.SND_FILENAME)
-                return True
-
+            with zipfile.ZipFile(zip_file, "r") as zf:
+                if specific_filename_to_extract:
+                    zf.extract(specific_filename_to_extract, output_dir)
+                zf.extractall(output_dir)
+                print(f"\nSuccessful Extraction To {output_dir}")
         except Exception:
-            print(f"\n\nERROR: Could not extract {dloadFilePath} \n")
-            fldr = dloadFilePath.replace(specificFile,"")
-            os.startfile(fldr)
-            return False            
+            print(f"\n\nERROR: Could not extract {zip_file_path} \n")
+            fldr = zip_file_path.replace(specific_filename_to_extract,"")
+            return os.startfile(fldr)
+        if (os.path.isfile(zip_file_path)
+            and os.path.isfile(f"{outputDir}\\{specific_filename_to_extract}")
+            ):
+            send_to_trash(zip_file_path)
+            print(f"{zip_file_path} sent to Recycler")
+            return True
+    return
 
 
-def file_search(exeName, timeout = 40):
-    
-    appDataSubDirs = ['Local', 'LocalLow', 'Roaming']
-    directories = (['C:\\ffmpeg\\', 'C:\\Program Files', 'C:\\Program Files (x86)'] 
-                    + [os.path.expanduser(f'~\\AppData\\{subDir}') 
-                        for subDir in appDataSubDirs])
-    
-    filename = exeName
+def send_to_trash(filename):
+            send2trash(filename)
+            if not os.path.isfile(filename):
+                print(f"sent {filename} to recycler")
+                winsound.PlaySound("C:\\Windows\\Media\\Recycle.wav",
+                                    winsound.SND_FILENAME)
+                return True   
+            return False
+
+def file_search(extensionNam: str):
+    """
+
+    Args:
+        exeName ('Example.exe'):
+
+    Returns:
+        _type_: str
+    """    
+    appDataSubDirs = ["Local", "LocalLow", "Roaming"]
+    directories = (["C:\\ffmpeg\\", "C:\\Program Files", "C:\\Program Files (x86)"] 
+                    + [os.path.expanduser(f"~\\AppData\\{subDir}") 
+                        for subDir in appDataSubDirs]
+                    )
     found = False
-    start_time = time.time()
     exePth = ""
-    
     for directory in directories:
         if found:
-            return exePth
+            return str(exePth)
             
         for root, dirs, files in os.walk(directory):
-            if filename in files:
-                exePth = (os.path.join(root, filename))
+            if extensionNam in files:
+                exePth = (os.path.join(root, extensionNam))
                 found = True
                 break
-            if time.time() - start_time > timeout:
-                return f"Search timed out after {timeout} seconds"
+    return f"{extensionNam} Not Found:"
 
-'''
+
+
+"""
 def channelsSplit(fprobeDir, filename):
     
     pathDir = os.path.dirname(fprobeDir)
     
     if pathDir:
-        command = (f'ffprobe -v error -show_entries stream=index'
-                    fr' -select_streams a -of csv=p=0 "{filename}"')
-        opusCmd = (f'ffprobe -v error -select_streams a:0 -show_entries '
-                'stream=codec_name -of '
-                fr'default=noprint_wrappers=1:nokey=1 "{filename}"')
+        command = (f"ffprobe -v error -show_entries stream=index"
+                    fr" -select_streams a -of csv=p=0 "{filename}"")
+        opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
+                "stream=codec_name -of "
+                fr"default=noprint_wrappers=1:nokey=1 "{filename}"")
 
         output = (subprocess.check_output(command, shell=True, cwd=pathDir)
-                    .decode('utf-8').strip())
+                    .decode("utf-8").strip())
         opus = (subprocess.check_output(opusCmd, shell=True, cwd=pathDir)
-                    .decode('utf-8').strip())
+                    .decode("utf-8").strip())
         
         audChannels = output.split() 
         return audChannels, opus
         
     else:
-        print(f"\nCould Not Find '{fprobeDir}' on your Computer\n")
+        print(f"\nCould Not Find "{fprobeDir}" on your Computer\n")
         while True:
             try:
-                audChannels = int(input(f"Couldn't Auto retrieve Maximum"
+                audChannels = int(input(f"Couldn"t Auto retrieve Maximum"
                                         "number of Audio Channels, How Many "
                                         "Channels does {filename} have?:"))
                 break
@@ -404,7 +408,7 @@ def channelsSplit(fprobeDir, filename):
         channels_list = []
         for i in range(1, audChannels+1):
             channels_list.append(i)
-        return channels_list'''
+        return channels_list"""
 
 def channelsSplit(fprobeDir, filename):
     
@@ -415,9 +419,8 @@ def channelsSplit(fprobeDir, filename):
         try:
             audChannels = int(
                 input(
-                    "Couldn't Auto retrieve Max Num of A/Channels, How Many Channels does {filename} have?:"
-                )
-            )
+                    f"Couldn't Auto retrieve Max Num of A/Channels, "
+                        f"How Many Channels does {filename} have?:"))
             break
         except ValueError:
             print("Please enter a numerical value(int) EG: 3.")
@@ -427,29 +430,29 @@ def channelsSplit(fprobeDir, filename):
 
 # TODO Rename this here and in `channelsSplit`
 def _extracted_from_channelsSplit_(filename, pathDir):
-    command = (f'ffprobe -v error -show_entries stream=index'
-                fr' -select_streams a -of csv=p=0 "{filename}"')
-    opusCmd = (f'ffprobe -v error -select_streams a:0 -show_entries '
-            'stream=codec_name -of '
-            fr'default=noprint_wrappers=1:nokey=1 "{filename}"')
+    command = (f"ffprobe -v error -show_entries stream=index"
+                fr" -select_streams a -of csv=p=0 '{filename}'")
+    opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
+            "stream=codec_name -of "
+            fr"default=noprint_wrappers=1:nokey=1 '{filename}'")
 
     output = (subprocess.check_output(command, shell=True, cwd=pathDir)
-                .decode('utf-8').strip())
+                .decode("utf-8").strip())
     opus = (subprocess.check_output(opusCmd, shell=True, cwd=pathDir)
-                .decode('utf-8').strip())
+                .decode("utf-8").strip())
 
     audChannels = output.split()
     return audChannels, opus
 
 
 def DL_unZip_ffprobe():
-    '''calls dldURL() and Unzip() with all info inside'''
+    """calls dldURL() and Unzip() with all info inside"""
     
-    dloadFilePath = os.path.join(os.path.expanduser('~\\Desktop'),
+    dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
                                 "ffprobe-4.4.1-win-64.zip")
 
-    url = ('https://github.com/ffbinaries/ffbinaries-prebuilt/releases/'
-            'download/v4.4.1/ffprobe-4.4.1-win-64.zip')
+    url = ("https://github.com/ffbinaries/ffbinaries-prebuilt/releases/"
+            "download/v4.4.1/ffprobe-4.4.1-win-64.zip")
 
     dlmssg = ("\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
                 "link (45mb - 110mb Extracted) "
@@ -458,10 +461,10 @@ def DL_unZip_ffprobe():
                 "and will auto extract to C:\\ffmpeg\\ ------------------\n")
 
     save_Dir = "C:\\ffmpeg\\"
-    spefFile = 'ffprobe.exe'
+    spefFile = "ffprobe.exe"
     zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
-    dld = dldURL(url, dloadFilePath, dlmssg)
-    zp = Unzip(dloadFilePath, save_Dir, spefFile, zipmssg)
+    dld = download_url(url, dloadFilePath, dlmssg)
+    zp = unzip_file_from_path(dloadFilePath, save_Dir, spefFile, zipmssg)
     
     if dld and zp ==True:
         Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
@@ -472,12 +475,12 @@ def DL_unZip_ffprobe():
 
 
 def DL_unZip_ffmpeg():
-    '''calls dldURL() and Unzip() with all info inside'''
+    """calls dldURL() and Unzip() with all info inside"""
     
     urlmpg = ("https://github.com/ffbinaries/ffbinaries-prebuilt/"
                 "releases/download/v4.4.1/ffmpeg-4.4.1-win-64.zip")
     
-    dloadFilePath = os.path.join(os.path.expanduser('~\\Desktop'),
+    dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
                                     "ffmpeg-4.4.1-win-64.zip")
     
     dlmssg = ("\n---------------Downloading ffmpeg from OFFICIAL FFMPEG "
@@ -486,9 +489,9 @@ def DL_unZip_ffmpeg():
                 f"----------------to {dloadFilePath} "
                 "and will auto extract to C:\\ffmpeg\\ ------------------\n")
     
-    dld = dldURL(urlmpg, dloadFilePath, dlmssg)
-    zp = Unzip(dloadFilePath, "C:\\ffmpeg\\", "ffmpeg.exe")
-    fpath = os.path.dirname(file_search("ffmpeg.exe"))
+    dld = download_url(urlmpg, dloadFilePath, dlmssg)
+    zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", "ffmpeg.exe")
+    fpath = os.path.dirname(file_search("ffmpeg.exe")) # type: ignore fixed in OpenFile fixed in OpeenFile
     
     if dld and zp ==True:
         ffm_Path = ("C:\\ffmpeg\\") #only needs the dir to cmd into
@@ -498,41 +501,43 @@ def DL_unZip_ffmpeg():
     return fpath
 
 
-def getFile(file_path_inpt = paste()):
-    '''If no Arg uses Paste Clipboard checks if 
-    paste is a File if Not Opens File Finder.
-    Returns File Path'''
-    file_path = os.path.normpath(file_path_inpt)
-    if not os.path.isfile(file_path):
-        file_path = os.path.normpath(openFile())
-        print(file_path)
-    return file_path
+def file_path_get(passed_input_path: str = paste()):
+    """Defaults to paste() if no Args specified,
+    if input is not a file opens finder window and
+    converts to norm path
+    
+    returns normal path.
+    """
+    norm_file_path = os.path.normpath(passed_input_path)
+    if not os.path.isfile(norm_file_path):
+        return os.path.normpath(openFile())
+    return norm_file_path
 
 
 def initSettings():
     # Get the path to the local AppData folder
-    appdata_path = os.getenv('LOCALAPPDATA')
+    appdata_path = os.getenv("LOCALAPPDATA")
 
     # Define the path to the settings file
     settings_file = os.path.join(str(appdata_path),
-                                    'Stream-Downloader-Util', 'SDUsettings.json')
+                                    "Stream-Downloader-Util", "SDUsettings.json")
 
     # Check if the settings file already exists
     if not os.path.exists(settings_file):
-        # Create the directory if it doesn't exist
+        # Create the directory if it doesn"t exist
         os.makedirs(os.path.dirname(settings_file), exist_ok=True)
         
         LastSave = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         
         # Define the initial settings as a dictionary
         settings = {
-            'ExamplePath': '/path/to/file',
-            'Example_feature': True,
-            'Initialize': True,
+            "ExamplePath": "/path/to/file",
+            "Example_feature": True,
+            "Initialize": True,
             "LastSave": LastSave,
         }
         # Save the initial settings to the file
-        with open(settings_file, 'w') as f:
+        with open(settings_file, "w") as f:
             json.dump(settings, f, indent=4)
 
 
@@ -545,12 +550,12 @@ def saveSettings(key = None, value = None):
     """
     initSettings()
 
-    appdata_path = os.getenv('LOCALAPPDATA')
+    appdata_path = os.getenv("LOCALAPPDATA")
 
     settings_file = os.path.join(str(appdata_path),
-                                    'Stream-Downloader-Util', 'SDUsettings.json')
+                                    "Stream-Downloader-Util", "SDUsettings.json")
     
-    with open(settings_file, 'r') as f:
+    with open(settings_file, "r") as f:
         settings = json.load(f)
         
     if key is not None and value is not None:
@@ -558,29 +563,29 @@ def saveSettings(key = None, value = None):
         LastSave = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         settings["LastSave"] = LastSave
         
-    with open(settings_file, 'w') as f:
+    with open(settings_file, "w") as f:
         json.dump(settings, f, indent=4)
 
 
 def loadSettings(key = None):
     """iF Known pass in via Args the Key 
     you want to know the Value of to call
-    Keys must be in a 'string'
+    Keys must be in a "string"
     
     LastSave = last save date
     """
-    # Initialize the settings file with initial values if it doesn't exist
+    # Initialize the settings file with initial values if it doesn"t exist
     initSettings()
 
     # Get the path to the local AppData folder.
-    appdata_path = os.getenv('LOCALAPPDATA')
+    appdata_path = os.getenv("LOCALAPPDATA")
 
     # Define the path to the settings file
     settings_file = os.path.join(str(appdata_path),
-                                    'Stream-Downloader-Util', 'SDUsettings.json')
+                                    "Stream-Downloader-Util", "SDUsettings.json")
 
     # Load settings from the file
-    with open(settings_file, 'r') as f:
+    with open(settings_file, "r") as f:
         settings = json.load(f)
 
     # Return the value associated with the key if a key is provided
@@ -594,8 +599,8 @@ def isMoreThan30days(datetime1st):
     True=>30d
     False<30d"""
     datetimeNow = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    datetime1 = datetime.strptime(datetimeNow, '%d/%m/%Y %H:%M:%S')
-    datetime2 = datetime.strptime(datetime1st, '%d/%m/%Y %H:%M:%S')
+    datetime1 = datetime.strptime(datetimeNow, "%d/%m/%Y %H:%M:%S")
+    datetime2 = datetime.strptime(datetime1st, "%d/%m/%Y %H:%M:%S")
 
     # Calculate the difference between the two dates
     difference = abs(datetime2 - datetime1)

@@ -12,36 +12,34 @@ import funcs
 
 
 def mux(file_path_inpt = paste()):
-    
-    # Check if the ffmpeg path is already saved in the settings
     ffmpegpath = funcs.loadSettings("ffmpegpath")
+
     if not ffmpegpath or funcs.isMoreThan30days(funcs.loadSettings('LastSave')):
-        ffmpegpath = funcs.get_ffmpeg_path()
-
-
-
+        ffmpegpath = "C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe"# BUG funcs.ffmpeg_path_set()
     ffpg = os.path.dirname(fr"{ffmpegpath}")
 
-    file_path = funcs.getFile(file_path_inpt)
-
+    file_path = funcs.file_path_get(file_path_inpt)
     if not (any(file_path.endswith(media_type)
-                for media_type in funcs.video_file_types)):
+                for media_type in funcs.video_file_types)
+    ):
         print("\nNot a Valid File type to Remux, Try again.")
         mux()
-
-
     if file_path == ".":
         os.system('cls')
         mux()
 
-    new_file_path = funcs.make_new_dir_from_path(file_path, "FFMPEG__re-Muxed")
+
+    new_file_path = funcs.make_new_dir_from_input(file_path, "FFMPEG__re-Muxed")
+    old_file_name = os.path.basename(file_path)
+    print("\n", old_file_name)
+
 
     '''
     checks if file exists if so 
     send file to trash if Overwritten is chosen
     '''
     if os.path.exists(new_file_path):
-        exists = funcs.mChoiceQeustion("File already Exists, Overwrite or "
+        exists = funcs.multi_choice_dialog("File already Exists, Overwrite or "
                                         "Rename", ["Overwrite", "Rename"])
         if exists == "Overwrite":
             send2trash(fr"{new_file_path}")
@@ -75,7 +73,7 @@ def mux(file_path_inpt = paste()):
         else:
             print(f"Error... with {view_fp} \n or {view_nfp}"
                     "\nTried to move {view_fp} \nto trash\n")
-    except:
+    except Exception:
         print("\nUnable to Recycle     ", view_fp, "\n")
 
 
@@ -83,7 +81,7 @@ def mux(file_path_inpt = paste()):
     os.startfile(os.path.realpath(path))
 
     #exit Options
-    closeOptions = funcs.mChoiceQeustion("Remux again, Download Again, "
+    closeOptions = funcs.multi_choice_dialog("Remux again, Download Again, "
                     "Extract streams or Exit"
                     , ["Remux", "Download", "Extract", "Exit"])
 
