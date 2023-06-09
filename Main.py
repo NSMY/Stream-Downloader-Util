@@ -18,7 +18,7 @@ import funcs
 #TODO do i ad multi File processing? mp4 wav etc
 #TODO do i make Combine streams Aud/Vid
 #TODO make WEBP converter? New File?
-
+#TODO make separate download/main thats can get lives and restart if dropouts maybe scheduled  maybe seek notos?
 
 def main_script():
 
