@@ -34,17 +34,19 @@ class DefaultPathFactory():
         if os.path.isfile(self.default_ffPath):
             funcs.saveSettings(self.settings_key, self.default_ffPath)
             print("🐍 File: Stream-Downloader-Util/default_path_factory.py | Line: 36 | set_default_path ~ call_back_func",call_back_func)
-            call_back_func()       
+            call_back_func()
+            return self.default_ffPath     
 
         if not (extention_find_path := funcs.file_search(self.extension_name)):
             if self.settings_key == "streamlinkPath":
                 funcs.saveSettings(self.settings_key, extention_find_path)
-                return self.streamlink_retreive()
+                self.streamlink_retrieve()
             else:
-                return self.download_dependencies()
+                self.download_dependencies()
         funcs.saveSettings(self.settings_key, extention_find_path)
         print("🐍 File: Stream-Downloader-Util/default_path_factory.py | Line: 46 | set_default_path ~ call_back_func",call_back_func)
         call_back_func()
+        return extention_find_path
 
     def download_dependencies(self):
         func_name = f"{self.settings_key}_download_an_unzip"
@@ -55,13 +57,13 @@ class DefaultPathFactory():
         module_name = self.base_func_Callback[0]
         my_module = importlib.import_module(module_name)
         call_back_func = getattr(my_module, self.base_func_Callback[1])
-        call_back_func()
+        return call_back_func()
     
-    def streamlink_retreive(self):
-        print("Cannot find streamlink on your system please download and "
-                "retry\nEG *streamlink-5.5.1-2-py311-x86_64.exe......\n"
-                "Download and install then Continue.")
+    def streamlink_retrieve(self):
         slinkURL = "https://github.com/streamlink/windows-builds/releases/latest"
+        print("\nCannot find streamlink on your system please download and "
+                "retry\nFind EG *streamlink-5.5.1-2-py311-x86_64.exe......\n\n"
+                f"{slinkURL}\nDownload and install then Continue.\n")
         webbrowser.open(slinkURL)
         answer = funcs.multi_choice_dialog("Continue if resolved", ["Continue", "Exit"])
         if answer == "Continue":

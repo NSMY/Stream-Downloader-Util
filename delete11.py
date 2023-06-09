@@ -106,7 +106,7 @@
 from default_path_factory import DefaultPathFactory
 
 ##############################################################################################
-default_ffPath = ("C:\\Prooogram Files\\Streamlink\\ffmpeg\\ffmpeg.exe")
+default_ffPath = ("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe")
 saveTo1 = "ffmpegpath"
 exe1 = "ffmpeg.exe"
 bascall1 = ["cpyVid_scritp_____1", "mux"]
@@ -118,15 +118,16 @@ bascall2 = ["ffmpegExtract", "ffmpegextract"]
 
 default_slinkPath = ("C:\\Program2 Files\\Streamlink\\bin\\streamlink.exe")
 saveTo3 = "streamlinkPath"
-exe3 = "streamlink.exe"
-bascall3 = ["Main", "main_script"]
+exe3 = "streamlindk.exe"
+# bascall3 = ["Main", "main_script"]
+bascall3 = ["funcs", "initSettings"]
 
 
 
 
 # pathset = DefaultPathFactory(default_ffPath, saveTo1, exe1, bascall1)
 # print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 65 | undefined ~ pathset",pathset)
-# info = DefaultPathFactory.set_default_path(pathset)
+# info = pathset.set_default_path()
 # print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 69 | undefined ~ info",info)
 
 
@@ -138,7 +139,7 @@ bascall3 = ["Main", "main_script"]
 # print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 82 | undefined ~ info2",info2)
 
 pathset2 = DefaultPathFactory(default_slinkPath, saveTo3, exe3, bascall3)
-print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 81 | undefined ~ pathset1",pathset2) #FIXIT Not Working saving files
+print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 81 | undefined ~ pathset1",pathset2) #HERE working now mainfile loop problem spoof main got it to work
 dada = pathset2.set_default_path()
 print("🐍 File: Stream-Downloader-Util/delete11.py | Line: 142 | undefined ~ dada",dada)
 
