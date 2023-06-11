@@ -13,14 +13,14 @@ import funcs
 
 def mux(file_path_inpt=paste()):
     # IF Path is not saved in setting.json or is last saved sett>30days.
-    if (funcs.isMoreThan30days(funcs.loadSettings('LastSave')) is True
-        or funcs.loadSettings('ffmpegpath') is None
-        ):
-        funcs.ffmpeg_factory_init(['cpyVid_scritp_____1', 'mux'])
+    check_settings = funcs.loadSettings(['LastSave', 'ffmpegpath'])
+    fresh_save = [funcs.is_less_than_30days(check_settings[0])]
+    fresh_save.extend(check_settings[1:2])
+    if not all(fresh_save):
+        funcs.ffmpeg_factory_init(["cpyVid_scritp_____1", "mux"])
         os.system('cls')
         mux()
-    ffmpegpath = funcs.loadSettings('ffmpegpath')
-    ffpg = os.path.dirname(str(ffmpegpath))
+    ffpg = os.path.dirname(check_settings[1])
 
     file_path = funcs.file_path_get(file_path_inpt)
     if not (any(file_path.endswith(media_type) 
@@ -36,11 +36,9 @@ def mux(file_path_inpt=paste()):
     new_file_path = os.path.join(new_file_path, old_file_name)
     print(old_file_name)
 
-    """
-    checks if file exists if so 
-    send file to trash if Overwritten is chosen
-    """
-
+    
+    # checks if file exists if so. 
+    # send file to trash if Overwritten is chosen.    
     if os.path.isfile(new_file_path):
         exists = funcs.multi_choice_dialog('File already Exists, Overwrite or ' 
                                             'Rename', ['Overwrite', 'Rename']
@@ -73,10 +71,11 @@ def mux(file_path_inpt=paste()):
         else:
             if not os.path.isfile(f'{file_path}'):
                 winsound.PlaySound(
-                    'C:\\Windows\\Media\\Recycle.wav',
-                    winsound.SND_FILENAME)
+                'C:\\Windows\\Media\\Recycle.wav',
+                winsound.SND_FILENAME
+                )
                 print(f'\nMoved: {view_fp} \nto Trash...'
-                        f'\nSaved in to: {view_nfp}\nRe-Muxed..\n')
+                f'\nSaved in to: {view_nfp}\nRe-Muxed..\n')
 
     funcs.open_directory_Force_front(new_file_path)
 
@@ -100,7 +99,6 @@ def mux(file_path_inpt=paste()):
         ffmpegextract()
     else:
         exit()
-
 
 if __name__ == '__main__':
     mux()

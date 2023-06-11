@@ -19,25 +19,26 @@ import funcs
 # TODO do i make Combine streams Aud/Vid
 # TODO make WEBP converter? New File?
 # TODO make separate download/main thats can get lives and restart if dropouts maybe scheduled  maybe seek notos?
+# [] Somehow incorporate auto download from noto?
+# [] Win Alert notos? 
 
 
 def main_script():
     #Retrieves Last item in Clipboard(ctrl v).
     url_ = paste().replace("?filter=archives&sort=time","")
     
-    # IF Path is not saved in setting.json or is last saved sett>30days.
-    if (funcs.loadSettings("streamlinkPath") is None
-            or funcs.isMoreThan30days(funcs.loadSettings('LastSave'))
-        ):
+    check_settings = funcs.loadSettings(['LastSave', 'streamlinkPath'])
+    fresh_save = [funcs.is_less_than_30days(check_settings[0])]
+    fresh_save.extend(check_settings[1:2])
+    if not all(fresh_save):
         funcs.streamlink_factory_init(["Main", "main_script"])
         os.system('cls')
         main_script()
-    streamlinkPath = funcs.loadSettings("streamlinkPath")
-    slinkDir = os.path.dirname(str(streamlinkPath))
+    slinkDir = os.path.dirname(check_settings[1])
 
     urlchk = funcs.is_url(url_)
     message = ("Clipboard is NOT a URL, Copy URL Again......")
-
+# [] make a Func?
     while not urlchk:
         print(f"ERROR: ( {url_}) Is NOT a Url.\n")
         choices = ["Done", "Exit", "Manual Input URL"]
@@ -60,7 +61,7 @@ def main_script():
 
     # Naming the Terminal.
     terminal_Naming = os.path.basename(file_path)
-    os.system(f"title {terminal_Naming}") 
+    os.system(f"title {terminal_Naming}")
 
     print("Getting Resolutions...")
 
@@ -87,7 +88,6 @@ def main_script():
         f'"{url_}" {siz_rtn2} --stream-segment-threads 5 -o "{file_path}"'
                                 , shell=True, universal_newlines=True)
 
-
     # Define a signal handler for SIGINT using a lambda function
     handle_sigint = lambda signal, frame: funcs.kill_process(process)
     # Register the signal handler for SIGINT
@@ -106,7 +106,8 @@ def main_script():
 
     print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
 
-    # os.system("shutdown -s -t 300") #FEATURE take out this sends shutdown cmd
+    # os.system("shutdown -s -t 300") #FEATURE take out this sends shutdown cmd?
+    #[] Print to a a Log ?
 
     winsound.PlaySound('C:\\Windows\\Media\\Windows Proximity Notification.wav'
                         , winsound.SND_FILENAME)
@@ -145,7 +146,7 @@ def main_start():
     if rprog == "Download":
         main_script()
     elif rprog == "Remux":
-        cpvs.mux() #LOOK circular imports>> hack cod eis to import within funcs stops this?proceed this route?
+        cpvs.mux()
     elif rprog == "Extract":
         from ffmpegExtract import ffmpegextract
         ffmpegextract()

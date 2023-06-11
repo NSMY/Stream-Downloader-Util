@@ -1,30 +1,25 @@
 import os
 import subprocess
 
+from numpy import append
+
 import funcs
 
 
-def ffmpegextract():  # sourcery skip: extract-duplicate-method
+def ffmpegextract():
     #FIXIT if file is NOT muxed it returns [ALL 0 0 Exit] channels
-    print(funcs.isMoreThan30days(funcs.loadSettings('LastSave')))
-    
-    if (funcs.isMoreThan30days(funcs.loadSettings('LastSave')) is True
-        or funcs.loadSettings('ffmpegpath') is None
-        ):
+    check_settings = funcs.loadSettings(['LastSave', 'ffprobepath', 'ffmpegpath'])
+    fresh_save = [funcs.is_less_than_30days(check_settings[0])]
+    fresh_save.extend(check_settings[1:3])
+    print("🐍 File: Stream-Downloader-Util/ffmpegExtract.py | Line: 14 | ffmpegextract ~ fresh_save",fresh_save)
+
+    if not all(fresh_save):
+        funcs.ffprobe_factory_init(["ffmpegExtract", "ffmpegextract"])
         funcs.ffmpeg_factory_init(["ffmpegExtract", "ffmpegextract"])
         os.system('cls')
         ffmpegextract()
-    ffprobepath = funcs.loadSettings('ffprobepath')
-    probeDir = os.path.dirname(str(ffprobepath))
-    
-    if (funcs.isMoreThan30days(funcs.loadSettings('LastSave')
-        or funcs.loadSettings('ffprobepath') is None)
-        ):
-        funcs.ffprobe_factory_init(["ffmpegExtract", "ffmpegextract"])
-        os.system('cls')
-        ffmpegextract()
-    ffmpegpath = funcs.loadSettings('ffmpegpath')
-    ffmpeg_path = os.path.dirname(str(ffmpegpath))
+    ffmpeg_dir = os.path.dirname(check_settings[2])
+    probe_dir = os.path.dirname(check_settings[1])
 
     filename = funcs.file_path_get()
     if not (any(filename.endswith(media_type)
@@ -32,25 +27,19 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
         print("\nNot a Valid File type to Extract Streams From Try again.")
         ffmpegextract()
         
-        
-    file_type = funcs.video_file_exe_return(filename)
-    # FIX running main for somereasosn.
+    file_type = funcs.video_file_exetension_return(filename)
     mxChann = []
+    opus = ""
+    print("🐍 File: Stream-Downloader-Util/ffmpegExtract.py | Line: 33 | ffmpegextract ~ opus",opus)
     try:
-        chanReturn = funcs.channelsSplit(probeDir, filename)
+        chanReturn = funcs.channelsSplit(probe_dir, filename)
+        print("🐍 File: Stream-Downloader-Util/ffmpegExtract.py | Line: 34 | ffmpegextract ~ chanReturn",chanReturn)
         mxChann = chanReturn[0]
-        opus = chanReturn[-1]
+        opus = chanReturn[-1] #FIX Opus still not working
     except subprocess.CalledProcessError as ce:
         os.system('cls')
-        from Main import main_script  # HACK to stop circular imports
-        main_script()
+        ffmpegextract()
     chan = ["All"] + mxChann + ["Exit"]
-
-    ffmpegDir = "C:\\Program Files\\Streamlink\\ffmpeg\\"# funcs.setLink_Path(True) #FIXIT remake setlink refactor into many
-
-    if funcs.has_ffmpeg_dir(ffmpegDir):
-        ffmpeg_path = ffmpegDir.replace("\\Streamlink\\bin\\",
-                                            "\\Streamlink\\ffmpeg\\")
 
     # Inputs questions
     message = "Which audio channels would you like to extract?"
@@ -73,9 +62,8 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
 
     print(outname)
     os.makedirs(os.path.dirname(outname), exist_ok=True)
-    opus = ""
-
-    #parse code
+    
+    # [] Split to a Class?
     if selected_channels == "All":
         num_channels = int(mxChann[-1])
         if copy_video:
@@ -100,10 +88,9 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
 
     try:
         extct = subprocess.Popen(cmd, shell=True, universal_newlines=True,
-                                    cwd=ffmpeg_path)
+                                    cwd=ffmpeg_dir)
         extct.wait()
         os.startfile(os.path.dirname(fr'{outname}'))
-
     except subprocess.CalledProcessError as ce:
         ffmpegextract()
     except Exception:

@@ -20,7 +20,7 @@ from tqdm import tqdm
 import Main
 from default_path_factory import DefaultPathFactory
 
-video_file_types = [".mp4", ".mov", ".mkv", ".ts",]
+video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
 
 def make_new_dir_from_input(input_file_path:str , new_dir_name_arg: str)-> str:
     '''Makes a directory from the input file path
@@ -33,7 +33,7 @@ def make_new_dir_from_input(input_file_path:str , new_dir_name_arg: str)-> str:
     return os.path.join(new_folder_combine_path)
 
 
-def video_file_exe_return(filename: str) -> str:
+def video_file_exetension_return(filename: str) -> str:
     '''Returns the .extension if in video_file_types
     otherwise returns empty string'''
     for file_type in video_file_types:
@@ -382,76 +382,96 @@ def file_search(extensionNam: str):
     return None
 
 
+#######################################################################################################
 
-"""
+# def channelsSplit(fprobeDir, filename):
+#     pathDir = os.path.dirname(fprobeDir)
+#     print(pathDir)
+#     if pathDir:
+#         command = (f'ffprobe -v error -show_entries stream=index'
+#                     fr' -select_streams a -of csv=p=0 "{filename}"')
+#         output = subprocess.check_output(command, shell=True, cwd=pathDir).decode('utf-8').strip()
+#         audChannels = output.split()
+#         return audChannels
+#     else:
+#         print(f"\nCould Not Find '{fprobeDir}' on your Computer\n")
+#         while True:
+#             try:
+#                 audChannels = int(input(f"Couldn't Auto retrieve Maximum number of Audio Channels, How Many Channels does {filename} have?:"))
+#                 break
+#             except ValueError:
+#                 print("Please enter a numerical value(int) EG: 3.")
+#         channels_list = []
+#         for i in range(1, audChannels+1):
+#             channels_list.append(i)
+#         return channels_list
+
+###########################################################################################################
+
 def channelsSplit(fprobeDir, filename):
     
-    pathDir = os.path.dirname(fprobeDir)
-    
-    if pathDir:
+    if fprobeDir:
         command = (f"ffprobe -v error -show_entries stream=index"
-                    fr" -select_streams a -of csv=p=0 "{filename}"")
+                    fr' -select_streams a -of csv=p=0 "{filename}"')
         opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
                 "stream=codec_name -of "
-                fr"default=noprint_wrappers=1:nokey=1 "{filename}"")
-
-        output = (subprocess.check_output(command, shell=True, cwd=pathDir)
+                fr'default=noprint_wrappers=1:nokey=1 "{filename}"')
+        output = (subprocess.check_output(command, shell=True, cwd=fprobeDir)
                     .decode("utf-8").strip())
-        opus = (subprocess.check_output(opusCmd, shell=True, cwd=pathDir)
+        opus = (subprocess.check_output(opusCmd, shell=True, cwd=fprobeDir)
                     .decode("utf-8").strip())
         
         audChannels = output.split() 
         return audChannels, opus
         
     else:
-        print(f"\nCould Not Find "{fprobeDir}" on your Computer\n")
+        print(f'\nCould Not Find "{fprobeDir}" on your Computer\n')
         while True:
             try:
-                audChannels = int(input(f"Couldn"t Auto retrieve Maximum"
-                                        "number of Audio Channels, How Many "
-                                        "Channels does {filename} have?:"))
+                audChannels = int(input(f'Couldn"t Auto retrieve Maximum'
+                                        'number of Audio Channels, How Many '
+                                        'Channels does {filename} have?:'))
                 break
             except ValueError:
                 print("Please enter a numerical value(int) EG: 3.")
-
         channels_list = []
         for i in range(1, audChannels+1):
             channels_list.append(i)
-        return channels_list"""
+        return channels_list
 
-def channelsSplit(fprobeDir, filename):
+# def channelsSplit(fprobeDir, filename):
     
-    if pathDir := os.path.dirname(fprobeDir):
-        return _extracted_from_channelsSplit_(filename, pathDir)
-    print(f"\nCould Not Find '{fprobeDir}' on your Computer\n")
-    while True:
-        try:
-            audChannels = int(
-                input(
-                    f"Couldn't Auto retrieve Max Num of A/Channels, "
-                        f"How Many Channels does {filename} have?:"))
-            break
-        except ValueError:
-            print("Please enter a numerical value(int) EG: 3.")
-
-    return list(range(1, audChannels+1))
+#     _extracted_from_channelsSplit_(filename, fprobeDir)
+#     print(f"\nCould Not Find '{fprobeDir}' on your Computer\n")
+#     while True:
+#         try:
+#             audChannels = int(
+#                 input(
+#                     f"Couldn't Auto retrieve Max Num of A/Channels, "
+#                         f"How Many Channels does {filename} have?:"))
+#             break
+#         except ValueError:
+#             print("Please enter a numerical value(int) EG: 3.")
+#     return list(range(1, audChannels+1))
 
 
-# TODO Rename this here and in `channelsSplit`
-def _extracted_from_channelsSplit_(filename, pathDir):
-    command = (f"ffprobe -v error -show_entries stream=index"
-                fr" -select_streams a -of csv=p=0 '{filename}'")
-    opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
-            "stream=codec_name -of "
-            fr"default=noprint_wrappers=1:nokey=1 '{filename}'")
+# # TODO Rename this here and in `channelsSplit`
+# def _extracted_from_channelsSplit_(filename, pathDir):
+#     command = (f"ffprobe -v error -show_entries stream=index"
+#                 fr" -select_streams a -of csv=p=0 '{filename}'")
+#     opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
+#             "stream=codec_name -of "
+#             fr"default=noprint_wrappers=1:nokey=1 '{filename}'")
 
-    output = (subprocess.check_output(command, shell=True, cwd=pathDir)
-                .decode("utf-8").strip())
-    opus = (subprocess.check_output(opusCmd, shell=True, cwd=pathDir)
-                .decode("utf-8").strip())
+#     output = (subprocess.check_output(command, shell=True, cwd=pathDir)
+#                 .decode("utf-8").strip())
+#     opus = (subprocess.check_output(opusCmd, shell=True, cwd=pathDir)
+#                 .decode("utf-8").strip())
 
-    audChannels = output.split()
-    return audChannels, opus
+#     audChannels = output.split()
+#     return audChannels, opus
+
+##########################################################################################################
 
 
 
@@ -521,13 +541,15 @@ def saveSettings(key = None, value = None):
         json.dump(settings, f, indent=4)
 
 
-def loadSettings(key = None):
+def loadSettings(keys: list[str])-> list[str]:
     """iF Known pass in via Args the Key 
     you want to know the Value of to call
     Keys must be in a "string"
     
     LastSave = last save date
     """
+    if keys is None:
+        keys = []
     # Initialize the settings file with initial values if it doesn"t exist
     initSettings()
 
@@ -537,21 +559,24 @@ def loadSettings(key = None):
     # Define the path to the settings file
     settings_file = os.path.join(str(appdata_path),
                                     "Stream-Downloader-Util", "SDUsettings.json")
+    answers = []
+    for key in keys:
+        # Load settings from the file
+        with open(settings_file, "r") as f:
+            settings = json.load(f)
+            # Return the value associated with the key if a key is provided
+            answer = settings.get(key, None) if key is not None else settings
+            answers.append(answer)
+            
+    return answers
 
-    # Load settings from the file
-    with open(settings_file, "r") as f:
-        settings = json.load(f)
 
-    # Return the value associated with the key if a key is provided
-    return settings.get(key, None) if key is not None else settings
-
-
-def isMoreThan30days(datetime1st):
+def is_less_than_30days(datetime1st):
     """Must pass 1 (Past) Date Time in as STR
     %d/%m/%Y %H:%M:%S
     
-    True=>30d
-    False<30d"""
+    True=<30d
+    False=>30d"""
     datetimeNow = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     datetime1 = datetime.strptime(datetimeNow, "%d/%m/%Y %H:%M:%S")
     datetime2 = datetime.strptime(datetime1st, "%d/%m/%Y %H:%M:%S")
@@ -560,34 +585,34 @@ def isMoreThan30days(datetime1st):
     difference = abs(datetime2 - datetime1)
 
     # Check if the difference is greater than 30 days
-    return difference > timedelta(days=30)
+    return difference < timedelta(days=30)
 
 
-def execute_or_setting(command, args = (), key = ""):
-    """Executes a command if the "LastSave" setting is more than 30 days old
-or if the path loaded from the settings using the key is None. Otherwise, 
-returns the value loaded from the settings using the key.
+# def execute_or_setting(command, args = (), key = ""):
+#     """Executes a command if the "LastSave" setting is more than 30 days old
+# or if the path loaded from the settings using the key is None. Otherwise, 
+# returns the value loaded from the settings using the key.
     
-    Args:
-        command (function): The command to be executed without ().
+#     Args:
+#         command (function): The command to be executed without ().
         
-        args for the func (tuple, optional): If need (True,) or ("string",)
-        EG (funcs.setLink_Path, (True,), "ffmpegpath")
+#         args for the func (tuple, optional): If need (True,) or ("string",)
+#         EG (funcs.setLink_Path, (True,), "ffmpegpath")
         
-        key (str, optional): Key used to load the path from the settings.
+#         key (str, optional): Key used to load the path from the settings.
         
-    Returns:
-        The result of executing the command or the value loaded from
-        the settings using the
-    """
-    ls = loadSettings("LastSave")
-    longer = isMoreThan30days(ls)
-    path = loadSettings(key)
+#     Returns:
+#         The result of executing the command or the value loaded from
+#         the settings using the
+#     """
+#     ls = loadSettings("LastSave")
+#     longer = is_less_than_30days(ls)
+#     path = loadSettings(key)
 
-    if longer == True or path is None:
-        return command(*args)
-    elif longer == False:
-        return loadSettings(key)
+#     if longer == True or path is None:
+#         return command(*args)
+#     elif longer == False:
+#         return loadSettings(key)
     
 
 
@@ -680,7 +705,11 @@ def ffmpeg_factory_init(callback_info: list[str]):
     saveTo1 = "ffmpegpath"
     exename = "ffmpeg.exe"
 
-    init_factory = DefaultPathFactory(default_ffPath, saveTo1, exename, callback_info)
+    init_factory = DefaultPathFactory(default_Path=default_ffPath,
+                                    settings_save_Key=saveTo1,
+                                    extension_name_Lookup=exename,
+                                    parent_func_Callback=callback_info
+                                    )
     return init_factory.set_default_path()
 
 
@@ -692,7 +721,11 @@ def ffprobe_factory_init(callback_info: list[str]):
     saveTo = "ffprobepath"
     exename = "ffprobe.exe"
 
-    init_factory = DefaultPathFactory(default_ffprobePath, saveTo, exename, callback_info)
+    init_factory = DefaultPathFactory(default_Path=default_ffprobePath,
+                                        settings_save_Key=saveTo,
+                                        extension_name_Lookup=exename,
+                                        parent_func_Callback=callback_info
+                                        )
     return init_factory.set_default_path()
 
 
@@ -704,6 +737,10 @@ def streamlink_factory_init(callback_info: list[str]):
     saveTo = "streamlinkPath"
     exename = "streamlink.exe"
 
-    init_factory = DefaultPathFactory(default_slinkPath, saveTo, exename, callback_info)
+    init_factory = DefaultPathFactory(default_Path=default_slinkPath,
+                                        settings_save_Key=saveTo,
+                                        extension_name_Lookup=exename,
+                                        parent_func_Callback=callback_info
+                                        )
     return init_factory.set_default_path()
 
