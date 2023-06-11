@@ -107,7 +107,7 @@ def main_script():
     print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
 
     # os.system("shutdown -s -t 300") #FEATURE take out this sends shutdown cmd?
-    #[] Print to a a Log ?
+    #[] completion Print to a a Log ?
 
     winsound.PlaySound('C:\\Windows\\Media\\Windows Proximity Notification.wav'
                         , winsound.SND_FILENAME)

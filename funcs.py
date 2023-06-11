@@ -43,7 +43,7 @@ def video_file_exetension_return(filename: str) -> str:
     return ""
 
 
-# def ffmpeg_path_set(): # FIX make abstract.
+# def ffmpeg_path_set():
 
 #     # Check if ffmpeg is installed in the default location
 #     default_ffPath = "C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe"
@@ -148,7 +148,7 @@ def is_url(variable):
     except ValueError:
         return False
 
-#NOTE is needed?
+#NOTE is this needed?
 def has_ffmpeg_dir(stream_lnk_Path):
     store_path = os.path.join(os.path.dirname(stream_lnk_Path), "ffmpeg")
     return os.path.isdir(store_path)
@@ -454,8 +454,6 @@ def channelsSplit(fprobeDir, filename):
 #             print("Please enter a numerical value(int) EG: 3.")
 #     return list(range(1, audChannels+1))
 
-
-# # TODO Rename this here and in `channelsSplit`
 # def _extracted_from_channelsSplit_(filename, pathDir):
 #     command = (f"ffprobe -v error -show_entries stream=index"
 #                 fr" -select_streams a -of csv=p=0 '{filename}'")
