@@ -105,43 +105,65 @@
 
 from default_path_factory import DefaultPathFactory
 
+
 ##############################################################################################
-default_ffPath = ("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe")
-saveTo1 = "ffmpegpath"
-exe1 = "ffmpeg.exe"
-bascall1 = ["cpyVid_scritp_____1", "mux"]
+def ffmpeg_factory_init(callback_info: list[str]):
+    '''callback_info is module then the parent function from calling
+    ["Main", "main_script"]'''
+    
+    default_ffPath = ("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe")
+    saveTo1 = "ffmpegpath"
+    exename = "ffmpeg.exe"
 
-default_ffprbePath = ("C:\\ffmpeg\\ffprbe.exe")
-saveTo2 = "ffprobepath"
-exe2 = "ffprobe.exe"
-bascall2 = ["ffmpegExtract", "ffmpegextract"]
+    init_factory = DefaultPathFactory(default_ffPath, saveTo1, exename, callback_info)
+    return init_factory.set_default_path()
 
-default_slinkPath = ("C:\\Program2 Files\\Streamlink\\bin\\streamlink.exe")
-saveTo3 = "streamlinkPath"
-exe3 = "streamlindk.exe"
-# bascall3 = ["Main", "main_script"]
-bascall3 = ["funcs", "initSettings"]
+ffmpeg_factory_init(["Main", "main_script"])
 
 
+def ffprobe_factory_init(callback_info: list[str]):
+    '''callback_info is module then the parent function from calling
+    ["Main", "main_script"]'''
+
+    default_ffprobePath = ("C:\\ffmpeg\\ffprbe.exe")
+    saveTo = "ffprobepath"
+    exename = "ffprobe.exe"
+
+    init_factory = DefaultPathFactory(default_ffprobePath, saveTo, exename, callback_info)
+    return init_factory.set_default_path()
 
 
-# pathset = DefaultPathFactory(default_ffPath, saveTo1, exe1, bascall1)
-# print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 65 | undefined ~ pathset",pathset)
-# info = pathset.set_default_path()
-# print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 69 | undefined ~ info",info)
+ffprobe_factory_init(["cpyVid_scritp_____1", "mux"])
+
+
+def streamlink_factory_init(callback_info: list[str]):
+    '''callback_info is module then the parent function from calling
+    ["Main", "main_script"]'''
+
+    default_slinkPath = ("C:\\Program Files\\Streamlink\\bin\\streamlink.exe")
+    saveTo = "streamlinkPath"
+    exename = "streamlink.exe"
+
+    init_factory = DefaultPathFactory(default_slinkPath, saveTo, exename, callback_info)
+    return init_factory.set_default_path()
+
+streamlink_factory_init(["Main", "main_script"])
 
 
 
-# pathset1 = DefaultPathFactory(default_ffprbePath, saveTo2, exe2, bascall2)
-# print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 81 | undefined ~ pathset1",pathset1)
 
-# info2=DefaultPathFactory.set_default_path(pathset1)
-# print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 82 | undefined ~ info2",info2)
 
-pathset2 = DefaultPathFactory(default_slinkPath, saveTo3, exe3, bascall3)
-print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 81 | undefined ~ pathset1",pathset2) #HERE working now mainfile loop problem spoof main got it to work
-dada = pathset2.set_default_path()
-print("🐍 File: Stream-Downloader-Util/delete11.py | Line: 142 | undefined ~ dada",dada)
+
+
+
+# pathset2 = DefaultPathFactory(default_slinkPath, saveTo3, exe3, bascall3)
+# print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 81 | undefined ~ pathset2",pathset2) #HERE working now mainfile loop problem spoof main got it to work
+# dada = pathset2.set_default_path()
+# print("🐍 File: Streamlink.Automated.Downloader/delete11.py | Line: 143 | undefined ~ dada",dada)
+
+
+import os
 
 # info3=DefaultPathFactory.set_default_path(pathset2)
 # print("🐍 File: Streamlink.Automated.Downloader/Tests.py | Line: 82 | undefined ~ info2",info3)
+import funcs

@@ -6,19 +6,27 @@ import funcs
 
 def ffmpegextract():  # sourcery skip: extract-duplicate-method
     #FIXIT if file is NOT muxed it returns [ALL 0 0 Exit] channels
-
-######################################################################################
-    # Check if the ffmpeg path is already saved in the settings
-    probeDir = funcs.loadSettings("ffprobepath")
-    if not probeDir or funcs.isMoreThan30days(funcs.loadSettings('LastSave')):
-        probeDir = "C:\\ffmpeg\\ffprobe.exe" #FIX make a dynamic func for this 
-
-
-
-    # ffpg = os.path.dirname(fr"{ffmpegpath}")
+    print(funcs.isMoreThan30days(funcs.loadSettings('LastSave')))
+    
+    if (funcs.isMoreThan30days(funcs.loadSettings('LastSave')) is True
+        or funcs.loadSettings('ffmpegpath') is None
+        ):
+        funcs.ffmpeg_factory_init(["ffmpegExtract", "ffmpegextract"])
+        os.system('cls')
+        ffmpegextract()
+    ffprobepath = funcs.loadSettings('ffprobepath')
+    probeDir = os.path.dirname(str(ffprobepath))
+    
+    if (funcs.isMoreThan30days(funcs.loadSettings('LastSave')
+        or funcs.loadSettings('ffprobepath') is None)
+        ):
+        funcs.ffprobe_factory_init(["ffmpegExtract", "ffmpegextract"])
+        os.system('cls')
+        ffmpegextract()
+    ffmpegpath = funcs.loadSettings('ffmpegpath')
+    ffmpeg_path = os.path.dirname(str(ffmpegpath))
 
     filename = funcs.file_path_get()
-
     if not (any(filename.endswith(media_type)
                 for media_type in funcs.video_file_types)):
         print("\nNot a Valid File type to Extract Streams From Try again.")
@@ -26,7 +34,7 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
         
         
     file_type = funcs.video_file_exe_return(filename)
-    
+    # FIX running main for somereasosn.
     mxChann = []
     try:
         chanReturn = funcs.channelsSplit(probeDir, filename)
@@ -58,7 +66,7 @@ def ffmpegextract():  # sourcery skip: extract-duplicate-method
     answers = funcs.multi_choice_dialog(message, ["Yes", "No"], "int")
     copy_video = answers["Key"] == "Yes"
 
-    # create Dir
+    # creates adjacent Dir
     name = os.path.splitext(os.path.basename(filename))[0]
     outname = os.path.join(os.path.dirname(filename),
                             f"{name} audio streams", name)

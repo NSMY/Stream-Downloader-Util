@@ -48,15 +48,27 @@
 #     return fpath
 
 
-import funcs
-from funcs import (ffmpegpath_download_an_unzip, program_Path_Details,
-                   shorten_path_name)
+# import funcs
+# from funcs import (ffmpegpath_download_an_unzip, program_Path_Details,
+#                    shorten_path_name)
 
-settings_Key = "ffmpegpath"
-dld = "_download_an_unzip"
-func_name = self.settings_Key + dld
-func = getattr(funcs, func_name)
-func()
+# settings_Key = "ffmpegpath"
+# dld = "_download_an_unzip"
+# func_name = self.settings_Key + dld
+# func = getattr(funcs, func_name)
+# func()
 
 
-# print(getattr(settings_Key, dld))
+import os
+# # print(getattr(settings_Key, dld))
+import tkinter as tk
+
+new_file_path = "E:\\DeleteStreams\\New folder\\FFMPEG__re-Muxed"
+
+def open_directory_Force_front(full_path: str):
+    # root = tk.Tk()
+    # root.withdraw()
+    path = os.path.dirname(full_path)
+    os.startfile(os.path.realpath(path))
+    # root.destroy()
+open_directory_Force_front(new_file_path)

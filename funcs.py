@@ -17,7 +17,8 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
-# import Main
+import Main
+from default_path_factory import DefaultPathFactory
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts",]
 
@@ -180,6 +181,14 @@ def multi_choice_dialog(mssg: str, choice_s: list,
         return answer
 
 
+def open_directory_Force_front(full_dir_path: str):
+    root = tk.Tk()
+    root.withdraw()
+    path = os.path.dirname(full_dir_path)
+    os.startfile(os.path.realpath(path))
+    root.destroy()
+
+
 def openFile():
     """Opens File dialog box
     Returns:
@@ -208,7 +217,7 @@ def openFile():
         elif check == "no":
             os.system("cls" if os.name == "nt" else "clear")
             Main.main_script()
-        sys.exit ()
+        sys.exit()
     return file
 
 
@@ -313,7 +322,7 @@ def unzip_file_from_path(zip_file_path,
         
         mssg (str, optional): Trash mssg Defaults to "".
     """
-    if os.path.isfile(f"{outputDir}\\{specific_filename_to_extract}"):
+    if not os.path.isfile(f"{outputDir}\\{specific_filename_to_extract}"):
         try:
             zip_file = zip_file_path
             print(zip_file)
@@ -331,9 +340,8 @@ def unzip_file_from_path(zip_file_path,
             and os.path.isfile(f"{outputDir}\\{specific_filename_to_extract}")
             ):
             send_to_trash(zip_file_path)
-            print(f"{zip_file_path} sent to Recycler")
             return True
-    return
+    return True
 
 
 def send_to_trash(filename):
@@ -344,6 +352,7 @@ def send_to_trash(filename):
                                     winsound.SND_FILENAME)
                 return True   
             return False
+
 
 def file_search(extensionNam: str):
     """
@@ -658,3 +667,43 @@ def ffmpegpath_download_an_unzip():
         return ffm_Path
 
     return f"{save_Dir}ffmpeg.exe"
+
+
+
+
+##############################################################################################
+def ffmpeg_factory_init(callback_info: list[str]):
+    '''callback_info is module then the parent function from calling
+    ["Main", "main_script"]'''
+    
+    default_ffPath = ("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe")
+    saveTo1 = "ffmpegpath"
+    exename = "ffmpeg.exe"
+
+    init_factory = DefaultPathFactory(default_ffPath, saveTo1, exename, callback_info)
+    return init_factory.set_default_path()
+
+
+def ffprobe_factory_init(callback_info: list[str]):
+    '''callback_info is module then the parent function from calling
+    ["Main", "main_script"]'''
+
+    default_ffprobePath = ("C:\\ffmpeg\\ffprbe.exe")
+    saveTo = "ffprobepath"
+    exename = "ffprobe.exe"
+
+    init_factory = DefaultPathFactory(default_ffprobePath, saveTo, exename, callback_info)
+    return init_factory.set_default_path()
+
+
+def streamlink_factory_init(callback_info: list[str]):
+    '''callback_info is module then the parent function from calling
+    ["Main", "main_script"]'''
+
+    default_slinkPath = ("C:\\Program Files\\Streamlink\\bin\\streamlink.exe")
+    saveTo = "streamlinkPath"
+    exename = "streamlink.exe"
+
+    init_factory = DefaultPathFactory(default_slinkPath, saveTo, exename, callback_info)
+    return init_factory.set_default_path()
+
