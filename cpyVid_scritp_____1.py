@@ -18,7 +18,7 @@ def mux(file_path_inpt=paste()):
     fresh_save.extend(check_settings[1:2])
     if not all(fresh_save):
         funcs.ffmpeg_factory_init(["cpyVid_scritp_____1", "mux"])
-        os.system('cls')
+        os.system("cls")
         mux()
     ffpg = os.path.dirname(check_settings[1])
 
@@ -26,10 +26,10 @@ def mux(file_path_inpt=paste()):
     if not (any(file_path.endswith(media_type) 
                 for media_type in funcs.video_file_types) or file_path == '.'):
         print('\nNot a Valid File type to Remux, Try again.')
-        os.system('cls')
+        os.system("cls")
         mux()
     if file_path == '.':
-        os.system('cls')
+        os.system("cls")
 
     new_file_path = funcs.make_new_dir_from_input(file_path, 'FFMPEG__re-Muxed')
     old_file_name = os.path.basename(file_path)
@@ -79,26 +79,7 @@ def mux(file_path_inpt=paste()):
 
     funcs.open_directory_Force_front(new_file_path)
 
-    # exit Options
-    closeOptions = funcs.multi_choice_dialog(
-        'Remux again, Download, '
-        'Extract streams or Exit',
-        ['Remux', 'Download', 'Extract', 'Exit'],
-        )
-    if closeOptions == 'Remux':
-        os.system('cls')
-        mux()
-    elif closeOptions == 'Download':
-        os.system('cls')
-        from Main import main_script
-
-        main_script()
-    elif closeOptions == 'Extract':
-        from ffmpegExtract import ffmpegextract
-
-        ffmpegextract()
-    else:
-        exit()
+    funcs.main_start()
 
 if __name__ == '__main__':
     mux()

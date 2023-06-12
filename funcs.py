@@ -17,10 +17,30 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
-import Main
 from default_path_factory import DefaultPathFactory
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
+
+def main_start():
+    os.system("title Stream Downloader Util")     
+
+    initSettings()
+
+    rprog = multi_choice_dialog("Download, Re-Mux(Copy) or Extract Streams"
+                                    , ["Download", "Remux", "Extract", "Exit"])
+
+    if rprog == "Download":
+        from Main import main_script
+        main_script()
+    elif rprog == "Remux":
+        from cpyVid_scritp_____1 import mux
+        mux()
+    elif rprog == "Extract":
+        from ffmpegExtract import ffmpegextract
+        ffmpegextract()
+    else:
+        exit()
+
 
 def make_new_dir_from_input(input_file_path:str , new_dir_name_arg: str)-> str:
     '''Makes a directory from the input file path
@@ -41,84 +61,6 @@ def video_file_exetension_return(filename: str) -> str:
             print(file_type)
             return file_type
     return ""
-
-
-# def ffmpeg_path_set():
-
-#     # Check if ffmpeg is installed in the default location
-#     default_ffPath = "C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe"
-#     if os.path.isfile(default_ffPath):
-#         saveSettings("ffmpegpath", default_ffPath)
-#         return default_ffPath
-
-#     # Search for the ffmpeg executable
-#     ffmpegpath = file_search("ffmpeg.exe")
-#     if ffmpegpath:
-#         saveSettings("ffmpegpath", ffmpegpath)
-#         return ffmpegpath
-
-#     # Download and unzip the ffmpeg executable
-#     ffmpegpath = execute_or_setting(DL_unZip_ffmpeg, key="ffmpegpath")
-#     os.system("cls")
-#     from cpyVid_scritp_____1 import mux
-#     mux()
-    
-#     if ffmpegpath:
-#         saveSettings("ffmpegpath", ffmpegpath)
-#         return ffmpegpath
-
-
-# def setLink_Path(find_ffmpeg = False):
-#     """Check if Streamlink or FFmpeg is installed on the user"s system.
-
-#     Args:
-#         find_ffmpeg (bool): If True, check for FFmpeg instead of Streamlink.
-
-#     Returns:
-#         str: The path to the Streamlink or FFmpeg installation, or False if 
-#         not found.
-#     """
-#     if (loadSettings("streamlinkPath")
-#         is None or isMoreThan30days(loadSettings("LastSave"))):
-#         print("pass")
-#     else: return os.path.dirname(loadSettings("streamlinkPath"))
-    
-#     # Define the paths to check for Streamlink
-#     streamlink_paths = [
-#         "C:\\Program Files\\Streamlink\\bin\\streamlink.exe",
-#         "C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe"
-#     ]
-
-#     # Check if Streamlink is installed at one of the defined paths
-#     for path in streamlink_paths:
-#         if os.path.isfile(path) and find_ffmpeg == False:
-#             saveSettings("streamlinkPath", path)
-#             return os.path.dirname(path)
-#         elif not path:
-#             streamlink_path = file_search("streamlink.exe")
-#             if streamlink_path and find_ffmpeg == False:
-#                 saveSettings("streamlinkPath", streamlink_path)
-#                 return os.path.dirname(streamlink_path)
-    
-    # # If find_ffmpeg is True, check for FFmpeg
-    # if find_ffmpeg:
-    #     slinkFFMPEG = os.path.isfile(streamlink_paths[0].replace(
-    #                 "\\bin\\streamlink.exe", "\\ffmpeg\\ffmpeg.exe"))
-    #     if slinkFFMPEG:
-    #         ffmpg = os.path.dirname(streamlink_paths[0].replace(
-    #                 "\\bin\\streamlink.exe", "\\ffmpeg\\ffmpeg.exe"))
-    #         saveSettings("ffmpegpath", ffmpg)
-    #         return ffmpg
-    #     if not slinkFFMPEG:
-    #         ffmpeg_path = os.path.dirname(file_search("ffmpeg.exe")) # type: ignore fixed in OpenFile
-    #         saveSettings("ffmpegpath", ffmpeg_path)
-    #         return ffmpeg_path
-    #     else:
-    #         ffmpeg_path = DL_unZip_ffmpeg()
-    #         saveSettings("ffmpegpath", ffmpeg_path)
-    #         return ffmpeg_path
-            
-    # return False
 
 
 def shorten_path_name(file_path: str):
@@ -382,95 +324,33 @@ def file_search(extensionNam: str):
     return None
 
 
-#######################################################################################################
-
-# def channelsSplit(fprobeDir, filename):
-#     pathDir = os.path.dirname(fprobeDir)
-#     print(pathDir)
-#     if pathDir:
-#         command = (f'ffprobe -v error -show_entries stream=index'
-#                     fr' -select_streams a -of csv=p=0 "{filename}"')
-#         output = subprocess.check_output(command, shell=True, cwd=pathDir).decode('utf-8').strip()
-#         audChannels = output.split()
-#         return audChannels
-#     else:
-#         print(f"\nCould Not Find '{fprobeDir}' on your Computer\n")
-#         while True:
-#             try:
-#                 audChannels = int(input(f"Couldn't Auto retrieve Maximum number of Audio Channels, How Many Channels does {filename} have?:"))
-#                 break
-#             except ValueError:
-#                 print("Please enter a numerical value(int) EG: 3.")
-#         channels_list = []
-#         for i in range(1, audChannels+1):
-#             channels_list.append(i)
-#         return channels_list
-
-###########################################################################################################
-
 def channelsSplit(fprobeDir, filename):
-    
-    if fprobeDir:
-        command = (f"ffprobe -v error -show_entries stream=index"
-                    fr' -select_streams a -of csv=p=0 "{filename}"')
-        opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
-                "stream=codec_name -of "
-                fr'default=noprint_wrappers=1:nokey=1 "{filename}"')
-        output = (subprocess.check_output(command, shell=True, cwd=fprobeDir)
-                    .decode("utf-8").strip())
-        opus = (subprocess.check_output(opusCmd, shell=True, cwd=fprobeDir)
-                    .decode("utf-8").strip())
-        
-        audChannels = output.split() 
-        return audChannels, opus
-        
-    else:
+    '''-> Codec type at pos[0], channels at pos[1]'''
+    if not fprobeDir:
         print(f'\nCould Not Find "{fprobeDir}" on your Computer\n')
         while True:
             try:
                 audChannels = int(input(f'Couldn"t Auto retrieve Maximum'
                                         'number of Audio Channels, How Many '
                                         'Channels does {filename} have?:'))
-                break
+                channels_list = []
+                for i in range(1, audChannels+1):
+                    channels_list.append(i)
+                return channels_list
             except ValueError:
                 print("Please enter a numerical value(int) EG: 3.")
-        channels_list = []
-        for i in range(1, audChannels+1):
-            channels_list.append(i)
-        return channels_list
-
-# def channelsSplit(fprobeDir, filename):
-    
-#     _extracted_from_channelsSplit_(filename, fprobeDir)
-#     print(f"\nCould Not Find '{fprobeDir}' on your Computer\n")
-#     while True:
-#         try:
-#             audChannels = int(
-#                 input(
-#                     f"Couldn't Auto retrieve Max Num of A/Channels, "
-#                         f"How Many Channels does {filename} have?:"))
-#             break
-#         except ValueError:
-#             print("Please enter a numerical value(int) EG: 3.")
-#     return list(range(1, audChannels+1))
-
-# def _extracted_from_channelsSplit_(filename, pathDir):
-#     command = (f"ffprobe -v error -show_entries stream=index"
-#                 fr" -select_streams a -of csv=p=0 '{filename}'")
-#     opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
-#             "stream=codec_name -of "
-#             fr"default=noprint_wrappers=1:nokey=1 '{filename}'")
-
-#     output = (subprocess.check_output(command, shell=True, cwd=pathDir)
-#                 .decode("utf-8").strip())
-#     opus = (subprocess.check_output(opusCmd, shell=True, cwd=pathDir)
-#                 .decode("utf-8").strip())
-
-#     audChannels = output.split()
-#     return audChannels, opus
-
-##########################################################################################################
-
+    else:
+        command = (f"ffprobe -v error -show_entries stream=index"
+                    fr' -select_streams a -of csv=p=0 "{filename}"')
+        opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
+                "stream=codec_name -of "
+                fr'default=noprint_wrappers=1:nokey=1 "{filename}"')
+        output = (subprocess.check_output(f'{opusCmd} && {command}', shell=True, cwd=fprobeDir)
+                    .decode("utf-8").strip())
+        codec_type = output.split()
+        codec = (codec_type[0])
+        channels = (codec_type[1:])
+        return codec, channels
 
 
 def file_path_get(passed_input_path: str = paste()):

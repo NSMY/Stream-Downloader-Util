@@ -15,6 +15,7 @@ from pyperclip import copy, paste
 import cpyVid_scritp_____1 as cpvs
 import funcs
 
+# FEATURE customTKinter GUI??
 # TODO do i ad multi File processing? mp4 wav etc
 # TODO do i make Combine streams Aud/Vid
 # TODO make WEBP converter? New File?
@@ -135,22 +136,8 @@ def main_script():
         sys.exit ()
         
         
-def main_start():
-    os.system("title Stream Downloader Util")     
-
-    funcs.initSettings()
-
-    rprog = funcs.multi_choice_dialog("Download, Re-Mux(Copy) or Extract Streams"
-                                    , ["Download", "Remux", "Extract"])
-
-    if rprog == "Download":
-        main_script()
-    elif rprog == "Remux":
-        cpvs.mux()
-    elif rprog == "Extract":
-        from ffmpegExtract import ffmpegextract
-        ffmpegextract()
+    funcs.main_start()
 
 
 if __name__ == "__main__":
-    main_start()
+    main_script()
