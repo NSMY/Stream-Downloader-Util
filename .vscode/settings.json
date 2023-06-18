@@ -1,0 +1,29 @@
+{
+    "cSpell.words": [
+        "dlmssg",
+        "dload",
+        "errc",
+        "errh",
+        "errt",
+        "ffmpegpath",
+        "ffpeg",
+        "ffprobe",
+        "ffprobepath",
+        "fprobe",
+        "funcs",
+        "mssg",
+        "Muxed",
+        "Muxing",
+        "newfolder",
+        "outname",
+        "Remux",
+        "sourcery",
+        "Usettings"
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+    "todo-tree.tree.scanMode": "workspace",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
+}
