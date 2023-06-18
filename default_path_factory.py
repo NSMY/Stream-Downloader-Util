@@ -5,6 +5,7 @@ import webbrowser
 import funcs
 
 
+# No Need to be a Class but practice.
 class DefaultPathFactory:
     
     def __init__(self, 

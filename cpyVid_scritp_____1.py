@@ -12,8 +12,12 @@ import funcs
 
 
 def mux(file_path_inpt=paste()):
-    # IF Path is not saved in setting.json or is last saved sett>30days.
-    check_settings = funcs.loadSettings(['LastSave', 'ffmpegpath'])
+    try:
+        check_settings = funcs.loadSettings(['LastSave', 'ffmpegpath'])
+    except FileNotFoundError as e:
+        funcs.initSettings()
+        mux()
+    
     fresh_save = [funcs.is_less_than_30days(check_settings[0])]
     fresh_save.extend(check_settings[1:2])
     if not all(fresh_save):

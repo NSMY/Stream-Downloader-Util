@@ -4,8 +4,6 @@ import signal
 import subprocess
 import sys
 import threading
-import time
-import webbrowser
 import winsound
 from datetime import datetime
 from urllib.parse import urlparse
@@ -15,17 +13,9 @@ from pyperclip import copy, paste
 import cpyVid_scritp_____1 as cpvs
 import funcs
 
-# FEATURE customTKinter GUI??
-# TODO do i ad multi File processing? mp4 wav etc
-# TODO do i make Combine streams Aud/Vid
-# TODO make WEBP converter? New File?
-# TODO make separate download/main thats can get lives and restart if dropouts maybe scheduled  maybe seek notos?
-# [] Somehow incorporate auto download from noto?
-# [] Win Alert notos?
-# []Keep both Copies Main and With Shutdown?????.
 
-
-def main_script():
+# [] KEEP THIS???.
+def main_script_with_shutdown():
     #Retrieves Last item in Clipboard(ctrl v).
     url_ = paste().replace("?filter=archives&sort=time","")
     
@@ -33,14 +23,14 @@ def main_script():
         check_settings = funcs.loadSettings(['LastSave', 'streamlinkPath'])
     except FileNotFoundError as e:
         funcs.initSettings()
-        main_script()
+        main_script_with_shutdown()
     
     fresh_save = [funcs.is_less_than_30days(check_settings[0])]
     fresh_save.extend(check_settings[1:2])
     if not all(fresh_save):
-        funcs.streamlink_factory_init(["Main", "main_script"])
+        funcs.streamlink_factory_init(["Main", "main_script_with_shutdown"])
         os.system('cls')
-        main_script()
+        main_script_with_shutdown()
     slinkDir = os.path.dirname(check_settings[1])
 
     urlchk = funcs.is_url(url_)
@@ -52,7 +42,7 @@ def main_script():
         rs2 = funcs.multi_choice_dialog(message, choices)
         if rs2 == "Done":
             os.system('cls' if os.name == 'nt' else 'clear')
-            main_script()
+            main_script_with_shutdown()
         elif rs2 == "Manual Input URL":
             url_ = input("Type or paste (Must Include http://www.) "
                         "URL HERE: ").replace("?filter=archives&sort=time","")
@@ -60,7 +50,7 @@ def main_script():
             if urlchk == True:
                 print(url_)
                 break
-            main_script()
+            main_script_with_shutdown()
         elif rs2 == "Exit":
             sys.exit ()
 
@@ -114,40 +104,19 @@ def main_script():
 
     print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
     
-# def timer_shutdown(wait_time:int = 300):
-#     '''wait_time is the number of seconds'''
-#     os.system(f"shutdown -s -t {wait_time}") #FEATURE take out this sends shutdown cmd?
-#     with open('downloadCompleteTime.txt', 'w') as f:
-#         f.write(datetime.now().strftime("%H:%M:%S---------\n"))
+    # def timer_shutdown(wait_time:int = 300):
+    '''wait_time is the number of seconds'''
+    os.system("shutdown -s -t 200")
+    with open('downloadCompleteTime.txt', 'w') as f:
+        f.write(datetime.now().strftime("%H:%M:%S---------\n"))
 
     winsound.PlaySound('C:\\Windows\\Media\\Windows Proximity Notification.wav'
                         , winsound.SND_FILENAME)
 
+    cpvs.mux(file_path)
 
-    print("\nBecause of how Video is downloaded (Chunks) sometimes"
-                    " Re-Muxing is needed for smooth playback."
-                    " \n(Re-Mux)Make a Copy of this file?:\n ")
-
-    convert = funcs.multi_choice_dialog("Convert?", ["yes", "no"])
-    print(file_path)
-    if convert == "yes":
-        cpvs.mux(file_path)
-        print("\nDone!!")
-
-
-    print("\nRe Run Program? if Yes you need to copy the next URL"
-                " in the clipboard before answering this:\n")
-
-    exit = funcs.multi_choice_dialog("Run Again or Exit?", ["Run Again", "EXIT"])
-
-    if exit == "Run Again":
-        main_script()
-    else:
-        sys.exit ()
-        
-        
     funcs.main_start()
 
 
 if __name__ == "__main__":
-    funcs.main_start()
+    main_script_with_shutdown()

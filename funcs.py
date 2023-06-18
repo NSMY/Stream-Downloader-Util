@@ -18,6 +18,7 @@ from send2trash import send2trash
 from tqdm import tqdm
 
 from default_path_factory import DefaultPathFactory
+from download_with_Shutdown import main_script_with_shutdown
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
 
@@ -26,8 +27,9 @@ def main_start():
 
     initSettings()
 
-    rprog = multi_choice_dialog("Download, Re-Mux(Copy) or Extract Streams"
-                                    , ["Download", "Remux", "Extract", "Exit"])
+    rprog = multi_choice_dialog("Download, Re-Mux(Copy),  Extract Streams or "
+                                "Download with PC Shutdown Command Once Finished"
+                                    , ["Download", "Remux", "Extract", "Download-Shutdown", "Exit"])
 
     if rprog == "Download":
         from Main import main_script
@@ -38,6 +40,9 @@ def main_start():
     elif rprog == "Extract":
         from ffmpegExtract import ffmpegextract
         ffmpegextract()
+    elif rprog == "Download-Shutdown":
+        from download_with_Shutdown import main_script_with_shutdown
+        main_script_with_shutdown()
     else:
         exit()
 
@@ -177,7 +182,7 @@ def saveFile():
                                             ("MP4 files",".mp4"),    
                                             ("MOV files",".mov"),    
                                             ("MKV files",".mkv"),    
-                                            ("MP4 files",".mp3"),    
+                                            ("MP3 files",".mp3"),    
                                             ("All files",".*"),
                                         ])
     root.destroy()
@@ -324,7 +329,7 @@ def file_search(extensionNam: str):
     return None
 
 
-def channelsSplit(fprobeDir, filename):
+def audio_channel_get_info(fprobeDir, filename):
     '''-> Codec type at pos[0], channels at pos[1]'''
     if not fprobeDir:
         print(f'\nCould Not Find "{fprobeDir}" on your Computer\n')
@@ -367,28 +372,23 @@ def file_path_get(passed_input_path: str = paste()):
 
 
 def initSettings():
-    # Get the path to the local AppData folder
     appdata_path = os.getenv("LOCALAPPDATA")
 
-    # Define the path to the settings file
     settings_file = os.path.join(str(appdata_path),
                                     "Stream-Downloader-Util", "SDUsettings.json")
 
     # Check if the settings file already exists
     if not os.path.exists(settings_file):
-        # Create the directory if it doesn"t exist
         os.makedirs(os.path.dirname(settings_file), exist_ok=True)
         
         LastSave = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         
-        # Define the initial settings as a dictionary
         settings = {
             "ExamplePath": "/path/to/file",
             "Example_feature": True,
             "Initialize": True,
             "LastSave": LastSave,
         }
-        # Save the initial settings to the file
         with open(settings_file, "w") as f:
             json.dump(settings, f, indent=4)
 
@@ -400,8 +400,6 @@ def saveSettings(key = None, value = None):
     
     value (all, optional=No Change):
     """
-    initSettings()
-
     appdata_path = os.getenv("LOCALAPPDATA")
 
     settings_file = os.path.join(str(appdata_path),
@@ -424,12 +422,10 @@ def loadSettings(keys: list[str])-> list[str]:
     you want to know the Value of to call
     Keys must be in a "string"
     
-    LastSave = last save date
+    '[LastSave]' = last save date
     """
     if keys is None:
         keys = []
-    # Initialize the settings file with initial values if it doesn"t exist
-    initSettings()
 
     # Get the path to the local AppData folder.
     appdata_path = os.getenv("LOCALAPPDATA")
@@ -466,34 +462,6 @@ def is_less_than_30days(datetime1st):
     return difference < timedelta(days=30)
 
 
-# def execute_or_setting(command, args = (), key = ""):
-#     """Executes a command if the "LastSave" setting is more than 30 days old
-# or if the path loaded from the settings using the key is None. Otherwise, 
-# returns the value loaded from the settings using the key.
-    
-#     Args:
-#         command (function): The command to be executed without ().
-        
-#         args for the func (tuple, optional): If need (True,) or ("string",)
-#         EG (funcs.setLink_Path, (True,), "ffmpegpath")
-        
-#         key (str, optional): Key used to load the path from the settings.
-        
-#     Returns:
-#         The result of executing the command or the value loaded from
-#         the settings using the
-#     """
-#     ls = loadSettings("LastSave")
-#     longer = is_less_than_30days(ls)
-#     path = loadSettings(key)
-
-#     if longer == True or path is None:
-#         return command(*args)
-#     elif longer == False:
-#         return loadSettings(key)
-    
-
-
 def kill_process(process):
     try:
         parent = psutil.Process(process.pid)
@@ -510,11 +478,6 @@ def wait_for_subprocess(process):
     # Run some code after the subprocess has completed
     
     
-    
-    
-    
-    
-####################################################
 def ffprobepath_download_an_unzip():
     """calls dldURL() and Unzip() with all info inside"""
     
@@ -572,9 +535,6 @@ def ffmpegpath_download_an_unzip():
     return f"{save_Dir}ffmpeg.exe"
 
 
-
-
-##############################################################################################
 def ffmpeg_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
     ["Main", "main_script"]'''
