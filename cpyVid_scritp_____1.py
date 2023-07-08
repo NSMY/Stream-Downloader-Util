@@ -59,6 +59,7 @@ def mux(file_path_inpt=paste()):
         universal_newlines=True,
         cwd=ffpg,
         )
+    process2.wait()
     
     winsound.PlaySound('C:\\Windows\\Media\\Chimes.wav', winsound.SND_FILENAME)
 
