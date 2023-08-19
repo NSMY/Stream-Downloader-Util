@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 import tkinter as tk
 import winsound
@@ -17,17 +18,25 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
+import auth_skip_ads_
+import init_files
 from default_path_factory import DefaultPathFactory
 from download_with_Shutdown import main_script_with_shutdown
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
 
 def main_start():
-    os.system("title Stream Downloader Util")     
+    os.system("title Stream Downloader Util")
+    
+    t1 = threading.Thread(target=auth_skip_ads_.auth_file_check)
+    t1.start()
+    t2 = threading.Thread(target=init_files.init_links_file)
+    t2.start()
+    
+    init_files.version_check()
 
-    initSettings()
 
-    rprog = multi_choice_dialog("Download, Re-Mux(Copy),  Extract Streams or "
+    rprog = multi_choice_dialog("Download, Re-Mux(Copy), Extract Streams or "
                                 "Download with PC Shutdown Command Once Finished"
                                     , ["Download", "Remux", "Extract", "Download-Shutdown", "Exit"])
 
@@ -371,27 +380,6 @@ def file_path_get(passed_input_path: str = paste()):
     return norm_file_path
 
 
-def initSettings():
-    appdata_path = os.getenv("LOCALAPPDATA")
-
-    settings_file = os.path.join(str(appdata_path),
-                                    "Stream-Downloader-Util", "SDUsettings.json")
-
-    # Check if the settings file already exists
-    if not os.path.exists(settings_file):
-        os.makedirs(os.path.dirname(settings_file), exist_ok=True)
-        
-        LastSave = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        
-        settings = {
-            "ExamplePath": "/path/to/file",
-            "Example_feature": True,
-            "Initialize": True,
-            "LastSave": LastSave,
-        }
-        with open(settings_file, "w") as f:
-            json.dump(settings, f, indent=4)
-
 
 def saveSettings(key = None, value = None):
     """To save new Settings Must Pass via Args
@@ -477,15 +465,27 @@ def wait_for_subprocess(process):
     process.wait()
     # Run some code after the subprocess has completed
     
-    
+
+def get_download_links(keys: list[str]):
+    appdata_path = os.getenv("LOCALAPPDATA")
+    links_file = os.path.join(str(appdata_path),
+                                    "Stream-Downloader-Util", "download_links.txt")
+    answers = []
+    for key in keys:
+        with open(links_file, "r") as f:
+            settings = json.load(f)
+            answer = settings.get(key, None) if key is not None else settings
+            # answers.append(answer)
+    return answer
+
 def ffprobepath_download_an_unzip():
     """calls dldURL() and Unzip() with all info inside"""
     
+    url = get_download_links(["FFPROBE_Link"])
+    last_segment = url.split('/')[-1]
+    
     dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
-                                "ffprobe-4.4.1-win-64.zip")
-
-    url = ("https://github.com/ffbinaries/ffbinaries-prebuilt/releases/"
-            "download/v4.4.1/ffprobe-4.4.1-win-64.zip")
+                                f"{last_segment}")
 
     dlmssg = ("\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
                 "link (45mb - 110mb Extracted) "
@@ -510,11 +510,11 @@ def ffprobepath_download_an_unzip():
 def ffmpegpath_download_an_unzip():
     """calls dldURL() and Unzip() with all info inside"""
     
-    urlmpg = ("https://github.com/ffbinaries/ffbinaries-prebuilt/"
-                "releases/download/v4.4.1/ffmpeg-4.4.1-win-64.zip")
-
+    urlmpg = get_download_links(["FFMPEG_Link"])
+    last_segment = urlmpg.split('/')[-1]
+        
     dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
-                                    "ffmpeg-4.4.1-win-64.zip")
+                                    f"{last_segment}")
 
     dlmssg = ("\n---------------Downloading ffmpeg from OFFICIAL FFMPEG "
                 "link (45mb - 110mb Extracted) LINK >>> "
