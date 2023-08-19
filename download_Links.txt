@@ -1,0 +1,8 @@
+{
+    "_comment": "If this File is Updated in Github you can update it without needing to download a new verion of the App.",
+    "_comment2": "Just replace this file with the updated one in Github. File Location C_Users_USERNAME_AppData_Local_Stream_Downloader-Util_download_Links.txt",
+    "_Version": "1.0",
+    "FFMPEG_Link": "https://github.com/ffbinaries/ffbinaries-prebuilt/releases/download/v4.4.1/ffmpeg-4.4.1-win-64.zip",
+    "FFPROBE_Link": "https://github.com/ffbinaries/ffbinaries-prebuilt/releases/download/v4.4.1/ffprobe-4.4.1-win-64.zip",
+    "STREAMLINK_Link": "https://github.com/streamlink/windows-builds/releases/latest"
+}
