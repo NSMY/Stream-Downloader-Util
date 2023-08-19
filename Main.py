@@ -7,13 +7,17 @@ import threading
 import time
 import webbrowser
 import winsound
+from ast import arg
 from datetime import datetime
+from queue import Queue
 from urllib.parse import urlparse
 
 from pyperclip import copy, paste
 
+import auth_skip_ads_
 import cpyVid_scritp_____1 as cpvs
 import funcs
+import init_files
 
 # FEATURE customTKinter GUI??
 # TODO do i ad multi File processing? mp4 wav etc
@@ -24,15 +28,20 @@ import funcs
 # [] Win Alert notos?
 # []Keep both Copies Main and With Shutdown?????.
 
-
 def main_script():
     #Retrieves Last item in Clipboard(ctrl v).
     url_ = paste().replace("?filter=archives&sort=time","")
+    urlchk = funcs.is_url(url_)
+    
+    t1 = threading.Thread(target=funcs.is_url, args=(url_,))
+    t1.start()
+    
+    message = ("Clipboard is NOT a URL, Copy URL Again......")
     
     try:
         check_settings = funcs.loadSettings(['LastSave', 'streamlinkPath'])
     except FileNotFoundError as e:
-        funcs.initSettings()
+        init_files.initSettings()
         main_script()
     
     fresh_save = [funcs.is_less_than_30days(check_settings[0])]
@@ -43,8 +52,6 @@ def main_script():
         main_script()
     slinkDir = os.path.dirname(check_settings[1])
 
-    urlchk = funcs.is_url(url_)
-    message = ("Clipboard is NOT a URL, Copy URL Again......")
 # [] make a Func?
     while not urlchk:
         print(f"ERROR: ( {url_}) Is NOT a Url.\n")
@@ -63,38 +70,62 @@ def main_script():
             main_script()
         elif rs2 == "Exit":
             sys.exit ()
-
+    
+    
+    def get_vid_resolutions(slinkDir, url_, queue):
+        print("Getting Resolutions...")
+        
+        subprocess.call(f'cd {slinkDir}', shell=True)
+        rw_stream = subprocess.Popen(f'cd {slinkDir} && streamlink "{url_}"'
+                                    , shell=True, stdout=subprocess.PIPE,
+                                        universal_newlines=True)
+        rw_stream.wait()
+        out_pt = str(rw_stream.communicate()).replace("\\n'", "")
+        res_stripped = re.sub(pattern = "[^\\w\\s]",
+                repl = "",
+                string = out_pt)
+        res_Options = res_stripped.split()
+        result = res_Options[9:-1]
+        queue.put(result)
+    
+    q = Queue()
+    result = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
+    result.start()
+    
     file_path = funcs.saveFile()
-
+    
     # Naming the Terminal.
     terminal_Naming = os.path.basename(file_path)
     os.system(f"title {terminal_Naming}")
 
-    print("Getting Resolutions...")
 
-
-    subprocess.call(f'cd {slinkDir}', shell=True)
-    rw_stream = subprocess.Popen(f'cd {slinkDir} && streamlink "{url_}"'
-                                , shell=True, stdout=subprocess.PIPE,
-                                    universal_newlines=True)
-    rw_stream.wait()
-    out_pt = str(rw_stream.communicate()).replace("\\n'", "")
-    res_stripped = re.sub(pattern = "[^\\w\\s]",
-            repl = "",
-            string = out_pt)
-    res_Options = res_stripped.split()
-    result = res_Options[9:-1]
-
+    result.join()
+    result = q.get()
+    
     my_choices = list(reversed(result))
 
     siz_rtn2 = funcs.multi_choice_dialog("What Size to Download?", my_choices)
 
-    print("Quality Chosen: ", siz_rtn2, "\n")
-    print("CTRL + C to cancel Download early if necessary\n")
+    dload_via = funcs.multi_choice_dialog('Streamlink Twitch Flags Download:'
+        'Standard, Advanced(No Ads, Auth Token)', ['Standard', 'Advanced']
+        )
+    if dload_via == 'Advanced':
+        skip_ads_rtrn = auth_skip_ads_.skip_ads()
+        download_string = subprocess.Popen(fr'cd {slinkDir} && streamlink {skip_ads_rtrn} '
+            f'"{url_}" {siz_rtn2} --stream-segment-threads 5 -o "{file_path}"'
+                                    , shell=True, universal_newlines=True)
+    else:
+        download_string = subprocess.Popen(fr'cd {slinkDir} && streamlink '
+            f'"{url_}" {siz_rtn2} --stream-segment-threads 5 -o "{file_path}"'
+                                    , shell=True, universal_newlines=True)
 
-    process = subprocess.Popen(fr'cd {slinkDir} && streamlink '
-        f'"{url_}" {siz_rtn2} --stream-segment-threads 5 -o "{file_path}"'
-                                , shell=True, universal_newlines=True)
+    print("\nQuality Chosen: ", siz_rtn2, "\n")
+    print("CTRL + C to CANCEL Download early if necessary\n")
+
+
+    # Main Download Process
+    process = download_string
+
 
     # Define a signal handler for SIGINT using a lambda function
     handle_sigint = lambda signal, frame: funcs.kill_process(process)
@@ -112,7 +143,7 @@ def main_script():
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
-    print("\nCompletion Time:", datetime.now().strftime("%H:%M:%S---------\n"))
+    print("\nCompletion Time:", datetime.now().strftime("---- %H:%M:%S ----\n"))
     
 # def timer_shutdown(wait_time:int = 300):
 #     '''wait_time is the number of seconds'''
