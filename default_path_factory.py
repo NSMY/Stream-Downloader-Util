@@ -49,7 +49,7 @@ class DefaultPathFactory:
     
     
     def streamlink_retrieve(self):
-        slinkURL = "https://github.com/streamlink/windows-builds/releases/latest"
+        slinkURL = funcs.get_download_links(["STREAMLINK_Link"])
         print("\nCannot find streamlink on your system please download and "
                 "retry\nFind EG *streamlink-5.5.1-2-py311-x86_64.exe......\n\n"
                 f"{slinkURL}\nDownload and install then Continue.\n")
