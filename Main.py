@@ -19,6 +19,7 @@ import cpyVid_scritp_____1 as cpvs
 import funcs
 import init_files
 
+# TODO more robust dependency searching and downloading (if deleted between sett Checks)
 # FEATURE customTKinter GUI??
 # TODO do i ad multi File processing? mp4 wav etc
 # TODO do i make Combine streams Aud/Vid
