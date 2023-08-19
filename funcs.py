@@ -171,8 +171,9 @@ def openFile():
             os.system("cls" if os.name == "nt" else "clear")
             openFile()
         elif check == "no":
+            from Main import main_script
             os.system("cls" if os.name == "nt" else "clear")
-            Main.main_script()
+            main_script()
         sys.exit()
     return file
 
@@ -203,8 +204,9 @@ def saveFile():
             os.system("cls" if os.name == "nt" else "clear")
             saveFile()
         elif check == "no":
+            from Main import main_script
             os.system("cls" if os.name == "nt" else "clear")
-            Main.main_script()
+            main_script()
         sys.exit ()
     return (file)
 
