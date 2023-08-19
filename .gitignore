@@ -1,5 +1,7 @@
 /__pycache__/
 /node_modules/
 /versionfile.txt/
+file_extentions/
 hall.ico
 .vscode
+Testcode.py
