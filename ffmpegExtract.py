@@ -4,6 +4,7 @@ import subprocess
 from numpy import append
 
 import funcs
+import init_files
 from extraction_factory import VideoBlueprint
 
 
@@ -12,7 +13,7 @@ def ffmpegextract():
     try:
         check_settings = funcs.loadSettings(['LastSave', 'ffprobepath', 'ffmpegpath'])
     except FileNotFoundError as e:
-        funcs.initSettings()
+        init_files.initSettings()
         ffmpegextract()
     fresh_save = [funcs.is_less_than_30days(check_settings[0])]
     fresh_save.extend(check_settings[1:3])

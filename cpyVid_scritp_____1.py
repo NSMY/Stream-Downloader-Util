@@ -7,6 +7,7 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 
 import funcs
+import init_files
 
 # TODO webm?
 
@@ -15,7 +16,7 @@ def mux(file_path_inpt=paste()):
     try:
         check_settings = funcs.loadSettings(['LastSave', 'ffmpegpath'])
     except FileNotFoundError as e:
-        funcs.initSettings()
+        init_files.initSettings()
         mux()
     
     fresh_save = [funcs.is_less_than_30days(check_settings[0])]
