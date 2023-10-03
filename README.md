@@ -71,7 +71,7 @@ Made this because i was sick of manually entering a string i had saved into Cmd,
 [available]: https://github.com/NSMY/Stream-Downloader-Util/blob/d683041b21d277261a08d3cbba19f119bdab22cc/Main.py#L76
 [fileddialog]: https://github.com/NSMY/Stream-Downloader-Util/blob/d683041b21d277261a08d3cbba19f119bdab22cc/funcs.py#L181
 [fileddialog2]: https://github.com/NSMY/Stream-Downloader-Util/blob/d683041b21d277261a08d3cbba19f119bdab22cc/funcs.py#L148
-[Mux-ing]: https://github.com/NSMY/Stream-Downloader-Util/blob/d683041b21d277261a08d3cbba19f119bdab22cc/mux_vid.py#L57
+[Mux-ing]: https://github.com/NSMY/Stream-Downloader-Util/blob/3a2866f282599293e1ff0aebb8722204713cbf85/mux_vid.py#L57
 [ffmpeg]: https://github.com/ffbinaries/ffbinaries-prebuilt/releases/tag/v4.4.1
 [terminate]: https://github.com/NSMY/Stream-Downloader-Util/blob/d683041b21d277261a08d3cbba19f119bdab22cc/Main.py#L132
 [Auth]: https://streamlink.github.io/cli/plugins/twitch.html#authentication
