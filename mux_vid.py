@@ -22,7 +22,7 @@ def mux(file_path_inpt=paste()):
     fresh_save = [funcs.is_less_than_30days(check_settings[0])]
     fresh_save.extend(check_settings[1:2])
     if not all(fresh_save):
-        funcs.ffmpeg_factory_init(["cpyVid_scritp_____1", "mux"])
+        funcs.ffmpeg_factory_init(["mux_vid", "mux"])
         os.system("cls")
         mux()
     ffpg = os.path.dirname(check_settings[1])

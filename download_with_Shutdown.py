@@ -12,21 +12,13 @@ from datetime import datetime
 from queue import Queue
 from urllib.parse import urlparse
 
+import mux_vid as cpvs
 from pyperclip import copy, paste
 
 import auth_skip_ads_
-import cpyVid_scritp_____1 as cpvs
 import funcs
 import init_files
 
-# FEATURE customTKinter GUI??
-# TODO do i ad multi File processing? mp4 wav etc
-# TODO do i make Combine streams Aud/Vid
-# TODO make WEBP converter? New File?
-# TODO make separate download/main thats can get lives and restart if dropouts maybe scheduled  maybe seek notos?
-# [] Somehow incorporate auto download from noto?
-# [] Win Alert notos?
-# []Keep both Copies Main and With Shutdown?????.
 
 def main_script_with_shutdown():
     
@@ -79,7 +71,6 @@ def main_script_with_shutdown():
         main_script_with_shutdown()
     slinkDir = os.path.dirname(check_settings[1])
 
-# [] make a Func?
     while not urlchk:
         print(f"ERROR: ( {url_}) Is NOT a Url.\n")
         choices = ["Done", "Exit", "Manual Input URL"]

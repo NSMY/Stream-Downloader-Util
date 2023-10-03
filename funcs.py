@@ -44,7 +44,7 @@ def main_start():
         from Main import main_script
         main_script()
     elif rprog == "Remux":
-        from cpyVid_scritp_____1 import mux
+        from mux_vid import mux
         mux()
     elif rprog == "Extract":
         from ffmpegExtract import ffmpegextract
@@ -104,7 +104,7 @@ def is_url(variable):
     except ValueError:
         return False
 
-#NOTE is this needed?
+
 def has_ffmpeg_dir(stream_lnk_Path):
     store_path = os.path.join(os.path.dirname(stream_lnk_Path), "ffmpeg")
     return os.path.isdir(store_path)
@@ -171,9 +171,8 @@ def openFile():
             os.system("cls" if os.name == "nt" else "clear")
             openFile()
         elif check == "no":
-            from Main import main_script
             os.system("cls" if os.name == "nt" else "clear")
-            main_script()
+            main_start()
         sys.exit()
     return file
 
@@ -204,9 +203,8 @@ def saveFile():
             os.system("cls" if os.name == "nt" else "clear")
             saveFile()
         elif check == "no":
-            from Main import main_script
             os.system("cls" if os.name == "nt" else "clear")
-            main_script()
+            main_start()
         sys.exit ()
     return (file)
 
@@ -242,8 +240,8 @@ def download_url(url: str, dloadFilePath: str, dlmssg: str = ""):
         block_size = 1024
         
         print(dlmssg)
-        with open(dloadFilePath, "wb") as f:
-            for data in tqdm(response.iter_content(block_size), 
+        with open(file=dloadFilePath, mode="wb") as f:
+            for data in tqdm(response.iter_content(chunk_size=block_size), 
                                 total=total_size//block_size, unit="KB"):
                 
                 f.write(data)
@@ -285,7 +283,7 @@ def unzip_file_from_path(zip_file_path,
             zip_file = zip_file_path
             print(zip_file)
             output_dir = outputDir
-            with zipfile.ZipFile(zip_file, "r") as zf:
+            with zipfile.ZipFile(file=zip_file, mode="r") as zf:
                 if specific_filename_to_extract:
                     zf.extract(specific_filename_to_extract, output_dir)
                 zf.extractall(output_dir)
@@ -306,8 +304,8 @@ def send_to_trash(filename):
             send2trash(filename)
             if not os.path.isfile(filename):
                 print(f"sent {filename} to recycler")
-                winsound.PlaySound("C:\\Windows\\Media\\Recycle.wav",
-                                    winsound.SND_FILENAME)
+                winsound.PlaySound(sound="C:\\Windows\\Media\\Recycle.wav",
+                                    flags=winsound.SND_FILENAME)
                 return True   
             return False
 
@@ -395,7 +393,7 @@ def saveSettings(key = None, value = None):
     settings_file = os.path.join(str(appdata_path),
                                     "Stream-Downloader-Util", "SDUsettings.json")
     
-    with open(settings_file, "r") as f:
+    with open(file=settings_file, mode="r") as f:
         settings = json.load(f)
         
     if key is not None and value is not None:
@@ -403,7 +401,7 @@ def saveSettings(key = None, value = None):
         LastSave = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         settings["LastSave"] = LastSave
         
-    with open(settings_file, "w") as f:
+    with open(file=settings_file, mode="w") as f:
         json.dump(settings, f, indent=4)
 
 
@@ -500,7 +498,7 @@ def ffprobepath_download_an_unzip():
     zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
     
     dld = download_url(url, dloadFilePath, dlmssg)
-    zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", spefFile, zipmssg)
+    zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", spefFile, mssg=zipmssg)
     if dld and zp ==True:
         Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
         saveSettings("ffprobepath", Fprobe_Path)

@@ -40,7 +40,7 @@ def ffmpegextract():
         chanReturn = funcs.audio_channel_get_info(probe_dir, filename)
         result = chanReturn[1:]
         mxChann = [x for t in result for x in t]
-        opus = chanReturn[0] #FIX Opus still not working
+        opus = chanReturn[0]
     except subprocess.CalledProcessError as ce:
         os.system('cls')
         ffmpegextract()
