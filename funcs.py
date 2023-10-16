@@ -45,13 +45,13 @@ def main_start():
         main_script()
     elif rprog == "Remux":
         from mux_vid import mux
-        mux()
+        mux(ran_as_main=True)
     elif rprog == "Extract":
         from ffmpegExtract import ffmpegextract
         ffmpegextract()
     elif rprog == "Download-Shutdown":
-        from download_with_Shutdown import main_script_with_shutdown
-        main_script_with_shutdown()
+        from Main import main_script
+        main_script(True)
     else:
         exit()
 
@@ -581,4 +581,27 @@ def streamlink_factory_init(callback_info: list[str]):
                                         parent_func_Callback=callback_info
                                         )
     return init_factory.set_default_path()
+
+
+def manual_shutdown_timer():
+    time = input("\nEnter the time until shutdown in the format '1h &/or 45m'"
+                " (EG: 1h, 1h 45m or 45m)\nTo cancel "
+                "the shutdown command if nessecary\nOpen a "
+                "Windows Command Prompt Or Shell\nand type "
+                "[shutdown -a] without Brackets [] then enter to Cancel: ")
+
+    time = time.split()
+
+    hours = 0
+    minutes = 0
+
+    for t in time:
+        if 'h' in t:
+            hours = int(t.replace('h', ''))
+        elif 'm' in t:
+            minutes = int(t.replace('m', ''))
+
+    seconds = (hours * 3600) + (minutes * 60)    
+    os.system(f"shutdown -s -t {seconds}")
+    print(f"Shutdown in {seconds} seconds")
 
