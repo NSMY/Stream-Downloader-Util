@@ -21,7 +21,6 @@ from tqdm import tqdm
 import auth_skip_ads_
 import init_files
 from default_path_factory import DefaultPathFactory
-from download_with_Shutdown import main_script_with_shutdown
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
 
