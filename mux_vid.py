@@ -12,7 +12,7 @@ import init_files
 # TODO webm?
 
 
-def mux(file_path_inpt=paste()):
+def mux(file_path_inpt=paste(), ran_as_main: bool=False):
     try:
         check_settings = funcs.loadSettings(['LastSave', 'ffmpegpath'])
     except FileNotFoundError as e:
@@ -84,8 +84,9 @@ def mux(file_path_inpt=paste()):
                 f'\nSaved in to: {view_nfp}\nRe-Muxed..\n')
 
     funcs.open_directory_Force_front(new_file_path)
-
-    funcs.main_start()
+    
+    if ran_as_main == True:
+        funcs.main_start()
 
 if __name__ == '__main__':
     mux()
