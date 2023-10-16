@@ -12,7 +12,7 @@ import init_files
 # TODO webm?
 
 
-def mux(file_path_inpt=paste()):
+def mux(file_path_inpt=paste(), ran_as_main: bool=False):
     try:
         check_settings = funcs.loadSettings(['LastSave', 'ffmpegpath'])
     except FileNotFoundError as e:
@@ -22,7 +22,7 @@ def mux(file_path_inpt=paste()):
     fresh_save = [funcs.is_less_than_30days(check_settings[0])]
     fresh_save.extend(check_settings[1:2])
     if not all(fresh_save):
-        funcs.ffmpeg_factory_init(["cpyVid_scritp_____1", "mux"])
+        funcs.ffmpeg_factory_init(["mux_vid", "mux"])
         os.system("cls")
         mux()
     ffpg = os.path.dirname(check_settings[1])
@@ -84,8 +84,9 @@ def mux(file_path_inpt=paste()):
                 f'\nSaved in to: {view_nfp}\nRe-Muxed..\n')
 
     funcs.open_directory_Force_front(new_file_path)
-
-    funcs.main_start()
+    
+    if ran_as_main == True:
+        funcs.main_start()
 
 if __name__ == '__main__':
     mux()
