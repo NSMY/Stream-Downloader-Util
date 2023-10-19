@@ -70,7 +70,7 @@ def main_script(download_with_Shutdown=None):
         elif rs2 == "Exit":
             sys.exit ()
     
-    
+    # BUG if SUB only will error out, Must FIX
     def get_vid_resolutions(slinkDir, url_, queue):
         print("Getting Resolutions...")
         subprocess.call(f'cd {slinkDir}', shell=True)
