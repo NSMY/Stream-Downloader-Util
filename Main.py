@@ -42,13 +42,13 @@ def main_script(download_with_Shutdown=None):
         init_files.initSettings()
         main_script()
     
-    is_a_fresh_save = [funcs.is_less_than_30days(check_settings[0])]
-    is_a_fresh_save.extend(check_settings[1:2])
+    is_a_fresh_save = [funcs.is_less_than_30days(check_settings[0])] # type: ignore possible unbound
+    is_a_fresh_save.extend(check_settings[1:2]) # type: ignore possible unbound
     if not all(is_a_fresh_save):
         funcs.streamlink_factory_init(["Main", "main_script"])
         os.system('cls')
         main_script()
-    slinkDir = os.path.dirname(check_settings[1])
+    slinkDir = os.path.dirname(check_settings[1]) # type: ignore possible unbound
 
 
     message = ("Clipboard is NOT a URL, Copy URL Again......")
@@ -70,21 +70,29 @@ def main_script(download_with_Shutdown=None):
         elif rs2 == "Exit":
             sys.exit ()
     
-    # BUG if SUB only will error out, Must FIX
-    def get_vid_resolutions(slinkDir, url_, queue):
-        print("Getting Resolutions...")
-        subprocess.call(f'cd {slinkDir}', shell=True)
-        rw_stream = subprocess.Popen(f'cd {slinkDir} && streamlink "{url_}"'
-                                    , shell=True, stdout=subprocess.PIPE,
-                                        universal_newlines=True)
-        rw_stream.wait()
-        out_pt = str(rw_stream.communicate()).replace("\\n'", "")
-        res_stripped = re.sub(pattern = "[^\\w\\s]",
-                repl = "",
-                string = out_pt)
-        res_Options = res_stripped.split()
-        result = res_Options[9:-1]
-        queue.put(result)
+    
+    # [] Untested fix to sub only Vods Res Check.
+    # As not subbed to any sub only vod streamers.
+    def get_vid_resolutions(slinkDir, url_, queue, auth_String=''):
+        try:
+            rw_stream = subprocess.Popen(fr'cd "{slinkDir}" && streamlink "{url_}" {auth_String}',
+                                        shell=True, stdout=subprocess.PIPE, 
+                                        stderr=subprocess.PIPE, 
+                                        universal_newlines=True
+                                        )
+            stdout, stderr = rw_stream.communicate()
+            
+            if stderr:
+                print("\nError: Likely a Sub Only Vod\n\n", )
+                auth = auth_skip_ads_.auth_twitch_string()
+                get_vid_resolutions(slinkDir, url_, queue, auth) # type: ignore
+            else:
+                rw_stream.wait()
+                out_pt, _ = rw_stream.communicate()
+                result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
+                queue.put(result)
+        except Exception as e:
+            print('OSE Error:')
     
     
     # Checks if a Twitch URL.
