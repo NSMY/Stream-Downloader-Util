@@ -153,8 +153,9 @@ def openFile():
     """
     # print("Open File From:... \n")
     root = tk.Tk()
+    root.wm_attributes('-topmost', 1)
     root.withdraw()
-    filep = filedialog.askopenfilename(defaultextension=".*",
+    filep = filedialog.askopenfilename(parent=root, defaultextension=".*",
                                     filetypes=[
                                         ("All files", ".*"),
                                         ("MP4 files", ".mp4"),
@@ -184,8 +185,9 @@ def saveFile():
     """
     print("Save File To:... \n")
     root = tk.Tk()
+    root.wm_attributes('-topmost', 1)
     root.withdraw()
-    filep = filedialog.asksaveasfilename(defaultextension=".mp4",
+    filep = filedialog.asksaveasfilename(parent=root, defaultextension=".mp4",
                                         filetypes=[
                                             ("MP4 files",".mp4"),    
                                             ("MOV files",".mov"),    
