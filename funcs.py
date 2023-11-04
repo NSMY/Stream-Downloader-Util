@@ -1,9 +1,8 @@
+
 import json
 import os
 import subprocess
 import sys
-import threading
-import time
 import tkinter as tk
 import winsound
 import zipfile
@@ -18,49 +17,17 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
-import auth_skip_ads_
-import init_files
 from default_path_factory import DefaultPathFactory
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
 
-def main_start():
-    os.system("title Stream Downloader Util")
-    
-    t1 = threading.Thread(target=auth_skip_ads_.auth_file_check)
-    t1.start()
-    t2 = threading.Thread(target=init_files.init_links_file)
-    t2.start()
-    
-    init_files.version_check()
 
-
-    rprog = multi_choice_dialog("Download, Re-Mux(Copy), Extract Streams or "
-                                "Download with PC Shutdown Command Once Finished"
-                                    , ["Download", "Remux", "Extract", "Download-Shutdown", "Exit"])
-
-    if rprog == "Download":
-        from Main import main_script
-        main_script()
-    elif rprog == "Remux":
-        from mux_vid import mux
-        mux(ran_as_main=True)
-    elif rprog == "Extract":
-        from ffmpegExtract import ffmpegextract
-        ffmpegextract()
-    elif rprog == "Download-Shutdown":
-        from Main import main_script
-        main_script(True)
-    else:
-        exit()
-
-
-def make_new_dir_from_input(input_file_path:str , new_dir_name_arg: str)-> str:
+def make_new_dir_from_input(input_file_path: str, new_dir_name_arg: str) -> str:
     '''Makes a directory from the input file path
     inline with input_file_path'''
     file_path_2 = os.path.dirname(input_file_path)
     new_folder_combine_path = os.path.join(file_path_2, new_dir_name_arg)
-    
+
     if not os.path.exists(new_folder_combine_path):
         os.makedirs(new_folder_combine_path)
     return os.path.join(new_folder_combine_path)

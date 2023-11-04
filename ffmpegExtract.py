@@ -31,9 +31,9 @@ def ffmpegextract():
                 for media_type in funcs.video_file_types)):
         print("\nNot a Valid File type to Extract Streams From Try again.")
         ffmpegextract()
-        
+
     file_type = funcs.video_file_exetension_return(filename)
-    
+
     mxChann = []
     opus = ""
     try:
@@ -58,25 +58,25 @@ def ffmpegextract():
     message = "Do you want to extract the video stream?"
     video_answers = funcs.multi_choice_dialog(message, ["Yes", "No"], "int")
     copy_video = video_answers["Key"]
-    
+
     # creates adjacent Dir
     name = os.path.splitext(os.path.basename(filename))[0]
     outname = os.path.join(os.path.dirname(filename),
                             f"{name} audio streams", name)
     os.makedirs(os.path.dirname(outname), exist_ok=True)
-    
+
     num_channels = int(mxChann[-1])
-    
+
     ###########factory Here<<<<<<<<<
     vid_initializer = VideoBlueprint(
-    filename=filename,
-    output_name=outname,
-    copy_video_answer=copy_video,
-    selected_channel=selected_channels,
-    total_num_channels=num_channels,
-    input_audio_codec_type=opus,
-    video_file_type=file_type,
-    export_codec=".aac", #non implemented choice export codec
+        filename=filename,
+        output_name=outname,
+        copy_video_answer=copy_video,
+        selected_channel=selected_channels,
+        total_num_channels=num_channels,
+        input_audio_codec_type=opus,
+        video_file_type=file_type,
+        export_codec=".aac", #non implemented choice export codec
     )
     
     
@@ -97,8 +97,9 @@ def ffmpegextract():
     except Exception:
         print("Extracting Failed")
 
+    from startup import main_start
+    main_start()
 
-    funcs.main_start()
 
 if __name__ == "__main__":
     ffmpegextract()
