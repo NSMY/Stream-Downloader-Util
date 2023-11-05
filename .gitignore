@@ -5,3 +5,8 @@ file_extentions/
 hall.ico
 .vscode
 Testcode.py
+__pycache__
+utility_dir\__pycache__
+\jsons
+new_mass_gql/jsons - Shortcut.lnk
+new_mass_gql/jsons_symlink

@@ -20,7 +20,7 @@ import init_files
 import mux_vid as cpvs
 
 
-def main_script(download_with_Shutdown=None):
+def main_script(download_with_Shutdown=None, fromfile=None):
     sd_type = None
     if download_with_Shutdown:
         sd_type = funcs.multi_choice_dialog(
@@ -30,7 +30,10 @@ def main_script(download_with_Shutdown=None):
             funcs.manual_shutdown_timer()
 
     # Retrieves Last item in Clipboard(ctrl v).
-    url_ = paste().replace("?filter=archives&sort=time", "")
+    if fromfile is None:
+        url_ = paste().replace("?filter=archives&sort=time", "")
+    else:
+        url_ = fromfile[0]
     urlchk = funcs.is_url(url_)
 
     t1 = threading.Thread(target=funcs.is_url, args=(url_,))
@@ -110,7 +113,8 @@ def main_script(download_with_Shutdown=None):
     result = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
     result.start()
 
-    file_path = funcs.saveFile()
+    # saving file path.
+    file_path = funcs.saveFile(fromfile[1]) if fromfile else funcs.saveFile()
 
     # Naming the Terminal.
     terminal_Naming = os.path.basename(file_path)

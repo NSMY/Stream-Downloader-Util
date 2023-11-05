@@ -8,12 +8,8 @@ import auth_skip_ads_
 import funcs
 import init_files
 from ffmpegExtract import ffmpegextract
-
-sys.path.append(path.abspath(r'C:\Users\970EVO-Gamer\Documents\Python_cheats\New-twitch-mass-downloader'))
-sys.path.append(path.abspath(r'C:\Users\970EVO-Gamer\Documents\Python_cheats\New-twitch-mass-downloader\utility_dir'))
-import check_new_streams
-import gql
-from utility_dir import get_single_vod_
+from new_mass_gql import check_new_streams, gql_main_call
+from new_mass_gql.utility_dir import get_single_vod_
 
 
 def main_start():
@@ -37,10 +33,15 @@ def main_start():
         exit()
 
     def making_vods_list():
-        gql.First_making_cmds()
+        gql_main_call.First_making_cmds()
 
     def check_streams():
         check_new_streams.start_new_vods()
+
+    def retrieve_saved_vod():
+        aad = get_single_vod_.Run_get_vod('')
+        from Main import main_script
+        main_script(fromfile=aad)
 
     # Define your dictionary
     switch = {
@@ -48,8 +49,9 @@ def main_start():
         'Remux': remux,
         'Extract': extract,
         'Download-Shutdown': download_shutdown,
-        'Vods-File': making_vods_list,
-        'Check-New-Vods': check_streams,
+        'Get-Vod-from-File': retrieve_saved_vod,
+        'Make-New-Vods-File': making_vods_list,
+        'Check-for-New-Vods': check_streams,
         'Exit': exit_program,
     }
 
@@ -65,13 +67,14 @@ def main_start():
     question = ('"Download, Re-Mux(Copy), Extract Streams, Vods-File, Check-New-Vods or "'
                 '"Download with PC Shutdown Command Once Finished"')
     responses = [
-        "Download",
-        "Remux",
-        "Extract",
-        "Download-Shutdown",
-        "Vods-File",
-        'Check-New-Vods',
-        "Exit"
+        'Download',
+        'Remux',
+        'Extract',
+        'Download-Shutdown',
+        'Get-Vod-from-File',
+        'Check-for-New-Vods',
+        'Make-New-Vods-File',
+        'Exit'
     ]
     rprog = funcs.multi_choice_dialog(question, responses)
 
