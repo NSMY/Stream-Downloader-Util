@@ -1,4 +1,13 @@
 # TODO 
+# [] incorp size of vods into main/ on call from file
+# [] have it error when refreshing json vods file and non streamer name
+# [] be able to call shutdown also with file data, edit startup cmd
+# [] ?change not_downloaded to downloaded?
+# [] figure a way to determine if fully downloaded and set to downloaded in file
+# [] be able to select multiple from file/ download multiple (threading or cueing)
+
+
+
 # TODO more robust dependency searching and downloading (if deleted between settinggs Checks)
 # FEATURE customTKinter GUI??
 # TODO do i ad multi File processing? mp4 wav etc
