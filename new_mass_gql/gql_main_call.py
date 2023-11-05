@@ -4,7 +4,8 @@ import pprint
 import timeit
 
 import requests
-from utility_dir import util_functions as util
+
+from new_mass_gql.utility_dir import util_functions as util
 
 start_time = timeit.default_timer()
 

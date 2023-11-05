@@ -49,9 +49,9 @@ def main_start():
         'Remux': remux,
         'Extract': extract,
         'Download-Shutdown': download_shutdown,
-        'Get-Vod-from-File': retrieve_saved_vod,
-        'Make-New-Vods-File': making_vods_list,
-        'Check-for-New-Vods': check_streams,
+        'Get Vod from File': retrieve_saved_vod,
+        'Create Streamer Vods File': making_vods_list,
+        'Check for New Vods': check_streams,
         'Exit': exit_program,
     }
 
@@ -64,16 +64,16 @@ def main_start():
 
     init_files.version_check()
 
-    question = ('"Download, Re-Mux(Copy), Extract Streams, Vods-File, Check-New-Vods or "'
-                '"Download with PC Shutdown Command Once Finished"')
+    question = ('Download, Re-Mux(Copy), Extract Streams, Vods from File, Check-New-Vods or '
+                'Make new Vods File, Download with PC Shutdown Command Once Finished')
     responses = [
         'Download',
         'Remux',
         'Extract',
         'Download-Shutdown',
-        'Get-Vod-from-File',
-        'Check-for-New-Vods',
-        'Make-New-Vods-File',
+        'Get Vod from File',
+        'Check for New Vods',
+        'Create Streamer Vods File',
         'Exit'
     ]
     rprog = funcs.multi_choice_dialog(question, responses)

@@ -4,9 +4,10 @@
 import json
 import os
 
-from new_mass_gql import gql_main_call
 from new_mass_gql.utility_dir import get_single_vod_ as gsv
 from new_mass_gql.utility_dir import util_functions as util
+
+from . import gql_main_call
 
 # import pretty_errors
 
