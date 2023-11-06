@@ -20,21 +20,25 @@ def check_for_new_vods(
         return None
     query = gql_main_call.query_channel_vods(streamer_user_name, amount_of_vods, sort_by)
     query_resp = gql_main_call.gql_query(query=query)
-    print(query_resp)
     resp = query_resp.json()
     if query_resp.status_code != 200:
         print("Error retrieving Data from GraphQL Twitch API")
     with open(json_file_path, "r") as f:
         file_data = json.load(f)
     if (vod_index := util.compare_latest_vod_index(file_data, resp)) is None:
-        # no new streams
+        print('No new streams\n')
         return file_data
+    print(str(vod_index), ': New Vods')
+    # [] add a print list of added vods.
     return add_new_entries_json(json_file_path, file_data, resp, vod_index)
 
 
 def add_new_entries_json(
-    json_file_path: str, file_data: list[dict], GQLquery, vod_index: int
+    json_file_path: str,
+    file_data: list[dict],
+    GQLquery, vod_index: int
 ) -> list[dict]:
+
     newly_vods = gql_main_call.Vod.create_vods_from_edges(
         GQLquery["data"]["user"]["videos"]["edges"]
     )
