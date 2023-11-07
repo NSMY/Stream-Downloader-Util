@@ -28,7 +28,7 @@ def check_for_new_vods(
     if (vod_index := util.compare_latest_vod_index(file_data, resp)) is None:
         print('No new streams\n')
         return file_data
-    print(str(vod_index), ': New Vods')
+    print(f'\n{str(vod_index)}: New Vods\n')
     # [] add a print list of added vods.
     return add_new_entries_json(json_file_path, file_data, resp, vod_index)
 
@@ -57,11 +57,12 @@ def add_new_entries_json(
     util.dump_json_ind4(
         file_path=json_file_path, content_dump=loaded_list_dicts
     )
-    return loaded_list_dicts
+    return print(loaded_list_dicts[:vod_index])
 
 
 # def start_new_vods(json_file_path, streamer_user_name):
 def start_new_vods():
+    # [] input the best way??
     streamer_name = input('Streamer Name or "saved" to get a list of previous:').lower()
     if streamer_name == "saved":
         streamer_name = util.multi_choice_dialog(

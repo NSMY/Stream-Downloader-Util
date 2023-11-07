@@ -1,3 +1,5 @@
+# Gets specific index data from saved Json dict[list].
+
 import json
 import os
 import pprint
@@ -48,29 +50,15 @@ def get_desired_vod_from_lst(**kwargs) -> dict:
 
 
 def Run_get_vod(streamer_name):
-    r = get_desired_vod_from_lst(streamer=streamer_name)
+    return_data = get_desired_vod_from_lst(streamer=streamer_name)
     return (
-        r['vod_info']["url"],
-        f"{r['vod_info']['displayName']} "
-        f"{util.simple_convert_timestamp(r['vod_info']['publishedAt'])} "
-        f"{r['vod_info']['title']} "
-        f"{r['vod_info']['gameName']}"
+        return_data['vod_info']["url"],
+        f"{return_data['vod_info']['displayName']} "
+        f"{util.simple_convert_timestamp(return_data['vod_info']['publishedAt'])} "
+        f"{return_data['vod_info']['title']} "
+        f"{return_data['vod_info']['gameName']}"
     )
 
 
 if __name__ == '__main__':
     Run_get_vod('')
-
-# print(Run_get_vod(''))
-'''
-if __name__ == '__main__':
-    r = get_desired_vod_from_lst()
-    download_tup = (
-        r['vod_info']["url"],
-        f"{util.simple_convert_timestamp(r['vod_info']['publishedAt'])} "
-        f"{r['vod_info']['title']} "
-        f"{r['vod_info']['gameName']} "
-        f"{r['vod_info']['displayName']}"
-    )
-    print("🐍 File: utility_dir/get_single_vod_.py | Line: 44 | undefined ~ downlaod_tup",download_tup)
-'''
