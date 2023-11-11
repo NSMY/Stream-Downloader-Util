@@ -256,12 +256,20 @@ def First_making_cmds():
     # Convert Vod instances to dictionaries
     vods_dict = [vars(vod) for vod in vods]
     # pprint.pprint(vods_dict)
+
+    if os.path.exists(file_path):
+        print(
+            f'File already Exists\n{file_path}\nContinue and overwrite File?:')
+        outcome = util.multi_choice_dialog('Continue and overwrite', ['Yes', 'No'])
+        if outcome == 'No':
+            return
     util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
+
     # Now you can print each Vod instance
     # for vod in vods:
     #     print(vod)
 
-    pprint.pprint(vods)
+    # pprint.pprint(vods)
 
     # And you can find out how many there are
     # print(f'Found :{len(vods)} Vods')

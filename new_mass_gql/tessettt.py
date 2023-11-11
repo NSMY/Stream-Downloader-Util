@@ -119,5 +119,15 @@
 # #     with open(
 # #     for i in range(x):
 
+import json
+import pprint
 
+vod_index = 6
+json_file_path = r'C:\Users\970EVO-Gamer\Documents\Python_cheats\Stream-Downloader-Util\Stream-Downloader-Util\new_mass_gql\jsons_symlink\deadlyslob.json'
 
+with open(json_file_path, 'r+') as f:
+    data = json.load(f)
+    new_data = data[vod_index:]
+    f.seek(0)
+    json.dump(new_data, f, indent=4)
+    f.truncate()
