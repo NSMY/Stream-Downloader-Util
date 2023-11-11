@@ -6,7 +6,7 @@
 # [] figure a way to determine if fully downloaded and set to downloaded in file
 # [] be able to select multiple from file/ download multiple (threading or cueing)
 # [] make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 
-
+# [] make a combine segments (vids) ffmpeg
 
 # more robust dependency searching and downloading (if deleted between settinggs Checks)
 # customTKinter GUI??

@@ -228,7 +228,7 @@ class Vod:
 # resp = gql_query(query=query).json()
 # print("🐍 File: New-twitch-mass-downloader/gql.py | Line: 214 | undefined ~ resp",resp)
 
-
+# [] Kwargs ??? **kwargs.
 def First_making_cmds():
     streamer_user_name = input("Enter Streamer User Name: ").lower()
     # if file exist ?? .
@@ -256,6 +256,10 @@ def First_making_cmds():
     # Convert Vod instances to dictionaries
     vods_dict = [vars(vod) for vod in vods]
     # pprint.pprint(vods_dict)
+
+    file_path_dir = os.path.dirname(file_path)
+    if not os.path.exists(file_path_dir):
+        os.mkdir(file_path_dir)
 
     if os.path.exists(file_path):
         print(
