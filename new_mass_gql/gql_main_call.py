@@ -206,7 +206,7 @@ class Vod:
             self.gameId = "N/A"
             self.gameName = "N/A"
         self.url = f"https://www.twitch.tv/videos/{self.id}"
-        self.not_downloaded = True
+        self.downloaded = False
 
     def __repr__(self):
         # ID by STREAMER at DATETIME, LENGTH vodbot description
@@ -220,13 +220,8 @@ class Vod:
 
             edge["node"]["game"]["name"] = "".join(g for g in edge["node"]["game"]["name"] if g.isalnum() or g.isspace())
             vods.append(cls(edge["node"]))
-        return vods
+        return [vars(vod) for vod in vods]
 
-
-# streamer_user_name = 'kotton'
-# query = query_channel_vods(streamer_user_name, 100, "TIME")
-# resp = gql_query(query=query).json()
-# print("🐍 File: New-twitch-mass-downloader/gql.py | Line: 214 | undefined ~ resp",resp)
 
 # [] Kwargs ??? **kwargs.
 def First_making_cmds():
@@ -251,11 +246,7 @@ def First_making_cmds():
     # file_path = f"jsons/{streamer_user_name}.json"
     file_path = rf"{util.get_appdata_dir()}\jsons\{streamer_user_name}.json"
 
-    vods = Vod.create_vods_from_edges(resp["data"]["user"]["videos"]["edges"])
-
-    # Convert Vod instances to dictionaries
-    vods_dict = [vars(vod) for vod in vods]
-    # pprint.pprint(vods_dict)
+    vods_dict = Vod.create_vods_from_edges(resp["data"]["user"]["videos"]["edges"])
 
     file_path_dir = os.path.dirname(file_path)
     if not os.path.exists(file_path_dir):
@@ -269,42 +260,6 @@ def First_making_cmds():
             return
     util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
 
-    # Now you can print each Vod instance
-    # for vod in vods:
-    #     print(vod)
-
-    # pprint.pprint(vods)
-
-    # And you can find out how many there are
-    # print(f'Found :{len(vods)} Vods')
-
-
-# First_making_cmds()
-# file_check_path = os.path.exists(file_path)
-
-
-# first_dict_check = vods_dict[0]
-# first_gql_index_id = first_dict_check['id']
-# gql_status_check = first_dict_check['status']
-# print("🐍 File: New-twitch-mass-downloader/gql.py | Line: 161 | undefined ~ gql_status_check",gql_status_check)
-# print(first_gql_index_id)
-
-
-# with open(file_path, 'r') as f:
-#     content = json.load(f)
-
-
-# # # d = str(resp)
-# # # dd = d.split("{\'cursor\'")
-# # # print("🐍 File: Desktop/gql.py | Line: 97 | undefined ~ d",dd)
-# # with open(file_path, 'w') as json_file:
-# #     json.dump(vods, json_file, indent=4)
-
-
-
-
-
-# Your script here
 
 end_time = timeit.default_timer()
 execution_time = end_time - start_time

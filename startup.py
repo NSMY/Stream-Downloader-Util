@@ -64,8 +64,7 @@ def main_start():
 
     init_files.version_check()
 
-    question = ('Download, Re-Mux(Copy), Extract Streams, Vods from File, Check-New-Vods or '
-                'Make new Vods File, Download with PC Shutdown Command Once Finished')
+    question = ('Start Commands')
     responses = [
         'Download',
         'Remux',

@@ -4,7 +4,7 @@
 # [] be able to call shutdown also with file data, edit startup cmd
 # [] ?change not_downloaded to downloaded?
 # [] figure a way to determine if fully downloaded and set to downloaded in file
-# [] be able to select multiple from file/ download multiple (threading or cueing)
+# [] be able to select multiple from file/ [lists] download multiple (threading or cueing)
 # [] make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 
 # [] make a combine segments (vids) ffmpeg
 

@@ -18,6 +18,7 @@ import auth_skip_ads_
 import funcs
 import init_files
 import mux_vid as cpvs
+from new_mass_gql import my_Test_m3u8 as m3
 
 
 def main_script(download_with_Shutdown=None, fromfile=None):
@@ -34,8 +35,25 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         url_ = paste().replace("?filter=archives&sort=time", "")
     else:
         url_ = fromfile[0]
+
+    # URL CleanUp and isVod check for m3u8 Call.
+    last_url_index = urlparse(url_)[2].split('/')
+    url_path = last_url_index[-1].replace(".m3u8", "")
+    is_a_vod = url_path.isnumeric()
+
+    def get_urlm3u8_filesize(urlpath, queue):
+        size_of_vod = m3.m3u8_call_init(video_id=urlpath)
+        return queue.put(size_of_vod)
+
+    if is_a_vod:
+        q2 = Queue()
+        m3u8 = threading.Thread(target=get_urlm3u8_filesize, args=(url_path, q2))
+        m3u8.start()
+    # end m3u8 check.
+
     urlchk = funcs.is_url(url_)
 
+    # Threading start for url check.
     t1 = threading.Thread(target=funcs.is_url, args=(url_,))
     t1.start()
 
@@ -127,6 +145,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     my_choices = list(reversed(result))
     siz_rtn2 = funcs.multi_choice_dialog("What Size to Download?", my_choices)
 
+
     # if not twitch netloc uses default, if twitch asks advanced Options.
     default_download_string = (
         rf'streamlink "{url_}" {siz_rtn2} '
@@ -150,8 +169,23 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         elif dload_via == "Standard":
             download_string = default_download_string
 
-    print("\nQuality Chosen: ", siz_rtn2, "\n")
-    print("CTRL + C to CANCEL Download early if necessary\n")
+    print("\nCTRL + C to CANCEL Download early if necessary")
+
+    if is_a_vod:
+        m3u8.join()
+        m3u8_data = q2.get()
+        try:
+            if siz_rtn2 == 'best':
+                gb_of_vod = list(m3u8_data.values())[0][0]
+            elif siz_rtn2 == 'worst':
+                gb_of_vod = list(m3u8_data.values())[-1][0]
+            else:
+                gb_of_vod = m3u8_data[siz_rtn2][0]
+            print("{:<5}\n{:>31}".format(f'Quality Chosen: {siz_rtn2}', f'{gb_of_vod} GB\n'))
+        except UnboundLocalError and KeyError:
+            print("Quality Chosen: ", siz_rtn2, '\n')
+    else:
+        print("Quality Chosen: ", siz_rtn2, '\n')
 
     # Main Download Process
     process = subprocess.Popen(
@@ -217,7 +251,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
         print(
             "\nRe Run Program? if Yes you need to copy the next URL"
-            " in the clipboard before answering this:\n"
+            " in the clipboard before answering this."
         )
         exit = funcs.multi_choice_dialog("Run Again or Exit?", ["Run Again", "EXIT"])
         if exit == "Run Again":

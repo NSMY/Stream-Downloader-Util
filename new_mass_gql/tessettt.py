@@ -121,7 +121,19 @@
 
 import json
 import pprint
-from re import L
+# # Usage:
+# create_popup("This is some text.")
+import re
+import timeit
+import tkinter as tk
+from re import L, split
+from subprocess import PIPE, Popen
+from urllib.parse import urlparse
+
+# p = Popen('start cmd', stdin=PIPE, shell=True)
+# p.communicate(input='Hello, World!\n'.encode())
+import m3u8
+import requests
 
 # vod_index = 6
 # json_file_path = r'C:\Users\970EVO-Gamer\Documents\Python_cheats\Stream-Downloader-Util\Stream-Downloader-Util\new_mass_gql\jsons_symlink\deadlyslob.json'
@@ -161,9 +173,107 @@ from re import L
 # Now you can use the 'answer' variable in your Inquirer prompts or elsewhere in your application
 
 
-def gettt(**kwargs):
-    hello = ('Hello World')
-    good = 'Good job'
-    print(hello + good)
-    print(kwargs)
-gettt()
+# def gettt(**kwargs):
+#     hello = ('Hello World')
+#     good = 'Good job'
+#     print(hello + good)
+#     print(kwargs)
+# gettt()
+
+
+
+# def create_popup(content):
+#     popup = tk.Tk()
+#     popup.title("Popup Window")
+#     listbox = tk.Listbox(popup)
+#     for key, value in content.items():
+#         listbox.insert(tk.END, f"{key}: {value}")
+#     listbox.pack()
+#     button = tk.Button(popup, text="Close", command=popup.destroy)
+#     button.pack()
+#     # Update the window to calculate the size of the content
+#     popup.update_idletasks()
+#     # Get the width and height of the content
+#     width = popup.winfo_width()
+#     height = popup.winfo_height()
+#     # Add some padding
+#     width += 80
+#     height += 80
+#     # Set the window size
+#     popup.geometry(f"{width}x{height}")
+#     popup.mainloop()
+
+
+
+
+
+# data = ('#EXTM3U\n#EXT-X-TWITCH-INFO:ORIGIN="s3",B="false",REGION="OC",USER-IP="119.12.208.21",SERVING-ID="96d3cfabad3c4ee98dd4e78fec8a62f8",CLUSTER="cloudfront_vod",USER-COUNTRY="AU",MANIFEST-CLUSTER="cloudfront_vod"\n#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="chunked",NAME="1080p60",AUTOSELECT=NO,DEFAULT=NO\n#EXT-X-STREAM-INF:BANDWIDTH=8288000,CODECS="avc1.640032,mp4a.40.2",RESOLUTION=1920x1080,VIDEO="chunked",FRAME-RATE=60.000\nhttps://d1m7jfoe9zdc1j.cloudfront.net/dbc98976c975857c67ba_kotton_49693887389_1699812436/chunked/index-dvr.m3u8\n#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="720p60",NAME="720p60",AUTOSELECT=YES,DEFAULT=YES\n#EXT-X-STREAM-INF:BANDWIDTH=3100000,CODECS="avc1.4D0020,mp4a.40.2",RESOLUTION=1280x720,VIDEO="720p60",FRAME-RATE=60.000\nhttps://d1m7jfoe9zdc1j.cloudfront.net/dbc98976c975857c67ba_kotton_49693887389_1699812436/720p60/index-dvr.m3u8\n#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="480p30",NAME="480p",AUTOSELECT=YES,DEFAULT=YES\n#EXT-X-STREAM-INF:BANDWIDTH=1200000,CODECS="avc1.4D001F,mp4a.40.2",RESOLUTION=852x480,VIDEO="480p30",FRAME-RATE=30.000\nhttps://d1m7jfoe9zdc1j.cloudfront.net/dbc98976c975857c67ba_kotton_49693887389_1699812436/480p30/index-dvr.m3u8\n#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="360p30",NAME="360p",AUTOSELECT=YES,DEFAULT=YES\n#EXT-X-STREAM-INF:BANDWIDTH=630000,CODECS="avc1.4D001E,mp4a.40.2",RESOLUTION=640x360,VIDEO="360p30",FRAME-RATE=30.000\nhttps://d1m7jfoe9zdc1j.cloudfront.net/dbc98976c975857c67ba_kotton_49693887389_1699812436/360p30/index-dvr.m3u8\n#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="160p30",NAME="160p",AUTOSELECT=YES,DEFAULT=YES\n#EXT-X-STREAM-INF:BANDWIDTH=230000,CODECS="avc1.4D000C,mp4a.40.2",RESOLUTION=284x160,VIDEO="160p30",FRAME-RATE=30.000\nhttps://d1m7jfoe9zdc1j.cloudfront.net/dbc98976c975857c67ba_kotton_49693887389_1699812436/160p30/index-dvr.m3u8')
+
+# start_time = timeit.default_timer()
+
+# playlist = m3u8.loads(data)
+# # Hack for temp results make better.
+# url = data.split('\n')[4]
+# seconds_of_Vod = requests.get(url)
+# bandwidth = int(re.search(r'#EXT-X-TWITCH-TOTAL-SECS:(\d+)', seconds_of_Vod.text).group(1))
+
+
+# end_time = timeit.default_timer()
+# execution_time = end_time - start_time
+# print(f"The script took {execution_time} seconds to run.")
+# print(bandwidth)
+# start_time = timeit.default_timer()
+
+# playlist = m3u8.loads(data)
+# # Hack for temp results make better.
+# url = data.split('\n')[4]
+# seconds_of_Vod = requests.get(url)
+# s = seconds_of_Vod.text.split()[7]
+# s2 = s.split(':')
+# s3 = float(s2[1])
+
+
+
+# end_time = timeit.default_timer()
+# execution_time = end_time - start_time
+# print(f"The script took {execution_time} seconds to run.")
+# print(s3)
+
+# dad = ('https://usher.ttvnw.net/vod/1975700991.m3u8?acmb=e30%3D&allow_source=true&cdm=wv&p=2325758&play_session_id=596d3e072599b1bbde0ad336732c756c&player_backend=mediaplayer&player_version=1.23.0&playlist_include_framerate=true&reassignments_supported=true&sig=1fdb105cd2789968727c1202b8896c136c41ae06&supported_codecs=avc1&token=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3A%22L8lFfAYG1PKKuwUFH5gJJhtC4mSOAefS%22%2C%22expires%22%3A1699909269%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3A194301647%2C%22version%22%3A2%2C%22vod_id%22%3A1975700991%7D&transcode_mode=cbr_v1')
+# dad = ('https://usher.ttvnw.net/vod/1976617855.m3u8?acmb=e30%3D&allow_source=true&cdm=wv&p=8204494&play_session_id=d6cdaaecb26c58dafaf16474b5a8eaee&player_backend=mediaplayer&player_version=1.23.0&playlist_include_framerate=true&reassignments_supported=true&sig=f2e612f877cc77067c7940183a8c7a3eae2721a3&supported_codecs=avc1&token=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3A%22L8lFfAYG1PKKuwUFH5gJJhtC4mSOAefS%22%2C%22expires%22%3A1699989123%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3A194301647%2C%22version%22%3A2%2C%22vod_id%22%3A1976617855%7D&transcode_mode=cbr_v1')
+dad = 'https://usher.ttvnw.net/vod/1976337345.m3u8?acmb=e30%3D&allow_source=true&cdm=wv&p=5813174&play_session_id=88d4ecbd8b6a3fa67f198c78f4715f84&player_backend=mediaplayer&player_version=1.23.0&playlist_include_framerate=true&reassignments_supported=true&sig=369eae4dff1be072caf96a0f7920d99eb483cd27&supported_codecs=avc1&token=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3A%22L8lFfAYG1PKKuwUFH5gJJhtC4mSOAefS%22%2C%22expires%22%3A1700007287%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3A194301647%2C%22version%22%3A2%2C%22vod_id%22%3A1976337345%7D&transcode_mode=cbr_v1'
+# dad =  'https://www.twitch.tv/videos/1976721992'
+
+# dad = 'https://d2nvs31859zcd8.cloudfront.net/d95f4532519561cb9e6c_hasanabi_43057162779_1699905626/720p60/index-dvr.m3u8'
+
+# print(dad[2])
+
+variant_m3u8 = m3u8.load(dad)
+# variant_m3u8.is_variant    # in this case will be True
+# print(variant_m3u8.dumps())
+# print(variant_m3u8.playlists[0])
+# print(variant_m3u8)
+for playlist, media in zip(variant_m3u8.playlists, variant_m3u8.media):
+    # print(playlist.uri, '\n')
+    # print(playlist.media, '\n')
+    print(f'{media.name} {playlist.stream_info.bandwidth} {playlist.uri}\n')
+#     # print("{:<5} {:<5} {:<5}".format(playlist.stream_info.frame_rate,playlist.stream_info.resolution[1],playlist.stream_info.bandwidth))
+
+# variant_m3u8 = m3u8.load(dad)
+# variant_m3u8.is_variant    # in this case will be True
+''''''
+# for playlist in variant_m3u8.playlists:
+#     print(playlist.uri)
+#     print(playlist.stream_info.bandwidth)
+# get_variant_url = str(variant_m3u8.playlists[0])
+# base_uri = get_variant_url.split('\n')[1]
+# for pl in variant_m3u8.playlists:
+#     stream_info = pl.stream_info
+#     print( pl.uri)
+
+# variant_m3u8 = m3u8.load(dad, custom_tags_parser=get_totalsecs_from_playlist)
+# print(variant_m3u8.data['#EXT-X-TWITCH-TOTAL-SECS'])'''
+# yo = urlparse(dad)[2].split('/')
+
+# aa = yo[-1].replace(".m3u8", "")
+# print(aa.isnumeric())
