@@ -1,83 +1,3 @@
-# import json
-# import os
-# import pprint
-# import threading
-# from operator import getitem
-
-# from numpy import append
-# from utility_dir import util_functions as utl
-
-# import gql
-
-# json_id = "jsons/deadlyslob"
-
-# file_path = fr'{json_id}.json'
-# # with open(file_path, 'r') as f:
-# #     data = json.load(f)
-
-# # print(data[2].get('title', 'displayName'))
-# # print(len(data))
-# # json_ids = [(vod['url'], vod['displayName'], vod['publishedAt'], vod['gameName'], vod['title']) for vod in data]
-# # json_ids = [(vod) for vod in data]
-# # print(type(json_ids))
-
-# # stream_index:int = 3
-
-# # for key in json_ids[stream_index]:
-# #     print(key.get(**key))
-
-# # streams = []
-# # for id in json_ids:
-# #     streams
-# #     # pprint.pprint(id, indent=4)
-# #     # print(id)
-# # print(json_ids[0]["displayName"]['gameName'])
-
-
-# # new_json_str = '[{"new_key1": "new_value1"}, {"new_key2": "new_value2"}]'
-
-# # # Convert the new JSON string to a Python list of dictionaries:
-# # new_dicts = json.loads(new_json_str)
-
-
-
-
-# # file_path = [
-# #         {
-# #         "creatorId": "12731745",
-# #         "login": "deadlyslob",
-# #         "displayName": "Deadlyslob",
-# #         "idd": "1948982158",
-# #         "title": "SOLO Tarkov  Boss Hunting  Glasses",
-# #         "publishedAt": "2023-10-12T11:13:23Z",
-# #         "broadcastType": "ARCHIVE",
-# #         "status": "RECORDED",
-# #         "lengthSeconds": 28655,
-# #         "viewCount": 20137,
-# #         "gameId": "491931",
-# #         "gameName": "Escape from Tarkov",
-# #         "url": "https://www.twitch.tv/videos/1948982158",
-# #         "not_downloaded": True
-# #     },
-# #     {
-# #         "creatorId": "12731745",
-# #         "login": "deadlyslob",
-# #         "displayName": "Deadlyslob",
-# #         "id": "1948189219",
-# #         "title": "SOLO TARKOV  Boss Hunting  Ranked  Glasses",
-# #         "publishedAt": "2023-10-11T11:45:26Z",
-# #         "broadcastType": "ARCHIVE",
-# #         "status": "RECORDED",
-# #         "lengthSeconds": 26115,
-# #         "viewCount": 19212,
-# #         "gameId": "491931",
-# #         "gameName": "Escape from Tarkov",
-# #         "url": "https://www.twitch.tv/videos/1948189219",
-# #         "not_downloaded": True
-# #     },
-# # ]
-
-
 
 
 # # store = get_index_of_target_id(input_content=file_path, target_id="1948189219")
@@ -119,7 +39,29 @@
 # #     with open(
 # #     for i in range(x):
 
+# def create_popup(content):
+#     popup = tk.Tk()
+#     popup.title("Popup Window")
+#     listbox = tk.Listbox(popup)
+#     for key, value in content.items():
+#         listbox.insert(tk.END, f"{key}: {value}")
+#     listbox.pack()
+#     button = tk.Button(popup, text="Close", command=popup.destroy)
+#     button.pack()
+#     # Update the window to calculate the size of the content
+#     popup.update_idletasks()
+#     # Get the width and height of the content
+#     width = popup.winfo_width()
+#     height = popup.winfo_height()
+#     # Add some padding
+#     width += 80
+#     height += 80
+#     # Set the window size
+#     popup.geometry(f"{width}x{height}")
+#     popup.mainloop()
+import ctypes
 import json
+import os
 import pprint
 # # Usage:
 # create_popup("This is some text.")
@@ -128,6 +70,7 @@ import timeit
 import tkinter as tk
 from re import L, split
 from subprocess import PIPE, Popen
+from turtle import title
 from urllib.parse import urlparse
 
 # p = Popen('start cmd', stdin=PIPE, shell=True)
@@ -181,29 +124,8 @@ import requests
 # gettt()
 
 
-
-# def create_popup(content):
-#     popup = tk.Tk()
-#     popup.title("Popup Window")
-#     listbox = tk.Listbox(popup)
-#     for key, value in content.items():
-#         listbox.insert(tk.END, f"{key}: {value}")
-#     listbox.pack()
-#     button = tk.Button(popup, text="Close", command=popup.destroy)
-#     button.pack()
-#     # Update the window to calculate the size of the content
-#     popup.update_idletasks()
-#     # Get the width and height of the content
-#     width = popup.winfo_width()
-#     height = popup.winfo_height()
-#     # Add some padding
-#     width += 80
-#     height += 80
-#     # Set the window size
-#     popup.geometry(f"{width}x{height}")
-#     popup.mainloop()
-
-
+# [] to build  multiple [list] return of Vods
+# ??retrieve data from TK or just have user input range?. 
 
 
 
@@ -239,6 +161,10 @@ import requests
 # print(f"The script took {execution_time} seconds to run.")
 # print(s3)
 
+
+
+
+'''
 # dad = ('https://usher.ttvnw.net/vod/1975700991.m3u8?acmb=e30%3D&allow_source=true&cdm=wv&p=2325758&play_session_id=596d3e072599b1bbde0ad336732c756c&player_backend=mediaplayer&player_version=1.23.0&playlist_include_framerate=true&reassignments_supported=true&sig=1fdb105cd2789968727c1202b8896c136c41ae06&supported_codecs=avc1&token=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3A%22L8lFfAYG1PKKuwUFH5gJJhtC4mSOAefS%22%2C%22expires%22%3A1699909269%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3A194301647%2C%22version%22%3A2%2C%22vod_id%22%3A1975700991%7D&transcode_mode=cbr_v1')
 # dad = ('https://usher.ttvnw.net/vod/1976617855.m3u8?acmb=e30%3D&allow_source=true&cdm=wv&p=8204494&play_session_id=d6cdaaecb26c58dafaf16474b5a8eaee&player_backend=mediaplayer&player_version=1.23.0&playlist_include_framerate=true&reassignments_supported=true&sig=f2e612f877cc77067c7940183a8c7a3eae2721a3&supported_codecs=avc1&token=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3A%22L8lFfAYG1PKKuwUFH5gJJhtC4mSOAefS%22%2C%22expires%22%3A1699989123%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3A194301647%2C%22version%22%3A2%2C%22vod_id%22%3A1976617855%7D&transcode_mode=cbr_v1')
 dad = 'https://usher.ttvnw.net/vod/1976337345.m3u8?acmb=e30%3D&allow_source=true&cdm=wv&p=5813174&play_session_id=88d4ecbd8b6a3fa67f198c78f4715f84&player_backend=mediaplayer&player_version=1.23.0&playlist_include_framerate=true&reassignments_supported=true&sig=369eae4dff1be072caf96a0f7920d99eb483cd27&supported_codecs=avc1&token=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3A%22L8lFfAYG1PKKuwUFH5gJJhtC4mSOAefS%22%2C%22expires%22%3A1700007287%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3A194301647%2C%22version%22%3A2%2C%22vod_id%22%3A1976337345%7D&transcode_mode=cbr_v1'
@@ -272,8 +198,10 @@ for playlist, media in zip(variant_m3u8.playlists, variant_m3u8.media):
 #     print( pl.uri)
 
 # variant_m3u8 = m3u8.load(dad, custom_tags_parser=get_totalsecs_from_playlist)
-# print(variant_m3u8.data['#EXT-X-TWITCH-TOTAL-SECS'])'''
+# print(variant_m3u8.data['#EXT-X-TWITCH-TOTAL-SECS'])
 # yo = urlparse(dad)[2].split('/')
 
 # aa = yo[-1].replace(".m3u8", "")
 # print(aa.isnumeric())
+'''
+

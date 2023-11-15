@@ -1,19 +1,18 @@
 # TODO 
-# [] incorp size of vods into main/ on call from file
-# [] have it error when refreshing json vods file and non streamer name
+# [x] incorp size of vods into main/ on call from file
+# [x] ?change not_downloaded to downloaded?
+# TRACK have it error when refreshing json vods file and non streamer name
 # [] be able to call shutdown also with file data, edit startup cmd
-# [] ?change not_downloaded to downloaded?
 # [] figure a way to determine if fully downloaded and set to downloaded in file
-# [] be able to select multiple from file/ [lists] download multiple (threading or cueing)
-# [] make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 
-# [] make a combine segments (vids) ffmpeg
+# [TODO] be able to select multiple from file/ [lists] download multiple (threading or cueing)
+# [TODO] make a combine segments [vids] ffmpeg via lists meth
+# JANK make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 
+# THINK do i ad multi File processing? mp4 wav etc
 
 # more robust dependency searching and downloading (if deleted between settinggs Checks)
 # customTKinter GUI??
-# do i ad multi File processing? mp4 wav etc
 # do i make Combine streams Aud/Vid
 # make WEBP converter? New File?
 # make separate download/main thats can get lives and restart if dropouts maybe scheduled  maybe seek notos?
 # Somehow incorporate auto download from noto?
 # Win Alert notos?
-# Keep both Copies Main and With Shutdown?????.
