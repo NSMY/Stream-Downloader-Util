@@ -2,89 +2,154 @@
 import json
 import os
 import tkinter as tk
+from tkinter import ttk
+
+from utility_dir import util_functions
 
 selected_items = []
 
-def create_popup(windowName, content):
+def create_popup1(windowName, columns, data):
     global selected_items
     popup = tk.Tk()
     popup.overrideredirect(False)
     popup.title(windowName)
-    popup.configure(bg="#0b0b13", takefocus=1, borderwidth=0, border=False)
+    style = ttk.Style()
+
+    style.configure("Treeview", background="#0b0b13", foreground="white")
+    tree = ttk.Treeview(popup, style="Treeview")
+    popup.configure(
+        bg="#0b0b13",
+        border=10,
+    )
+
+    label = tk.Label(
+        popup,
+        text=(
+            "Selection/s made by clicking on a Vod/s with Mouse\nUse 'CLOSE' "
+            "(Bottom Right) Button to make selection Dont use (Windows)X"
+        ),
+        bg="#0b0b13",
+        fg="white",
+        highlightcolor="white",
+        justify="left"
+    )
+    label.grid(row=2, column=1, sticky='s')
 
     # Calculate the maximum length of the content
-    max_length = max(len(value) for value in content)
+    # max_length = max(len(value) for value in data)
 
-    listbox = tk.Listbox(popup, selectmode='MULTIPLE', justify='left', width=max_length, height=30, font="Calibri", background="#0b0b13", foreground='white', activestyle='underline', takefocus=1)
-    for value in content:
-        listbox.insert(tk.END, f" {value}")
-    listbox.grid(row=0, column=0, sticky='nsew')  # Use grid instead of pack
+    tree = ttk.Treeview(
+        popup,
+        columns=columns,
+        show='headings',
+        height=17,
+        selectmode='browse',
+        padding=1
+    )
+    tree.grid(row=1, column=1, sticky='nsew')
 
-    # Function to get the selected item(s)
+    for col in columns:
+        tree.heading(col, text=col)
+        if col == 'index':
+            tree.column(col, width=20, stretch=tk.NO)
+        elif col == 'id':
+            tree.column(col, width=75, stretch=tk.YES, anchor='center')
+        elif col == 'downloaded':
+            tree.column(col, width=40, stretch=tk.YES, anchor='center')
+        elif col == 'publishedAt':
+            tree.column(col, width=140, stretch=tk.YES, anchor='center')
+        elif col == 'broadcastType':
+            tree.column(col, width=75, stretch=tk.NO)
+        elif col == 'gameName':
+            tree.column(col, minwidth=90, stretch=tk.YES)
+        elif col == 'title':
+            tree.column(col, minwidth=200, width=500, stretch=tk.YES, anchor="w")
+        else:
+            tree.column(col, width=100, stretch=tk.YES)
+
+    for item in data:
+        tree.insert('', 'end', values=item)
+
     def get_selection(event):
         global selected_items
-        # Get the index of the clicked item
-        clicked_index = listbox.nearest(event.y)
-
-        # Get the text of the clicked item
-        clicked_item = listbox.get(clicked_index)
-
-        # If the item is already in the list, remove it
+        clicked_index = tree.focus()
+        clicked_item = tree.item(clicked_index)['values']
         if clicked_item in selected_items:
             selected_items.remove(clicked_item)
-        # Otherwise, add it to the list
         else:
             selected_items.append(clicked_item)
 
-    # Bind the function to the listbox
-    listbox.bind("<ButtonRelease-1>", get_selection)
+    label2 = tk.Label(
+        popup,
+        text=(f'Vods List for: {windowName.strip('.json').title()}'),
+        bg="#0b0b13",
+        fg="white",
+        highlightcolor="white",
+        justify="center",
+        font="calabri"
+    )
+    label2.grid(row=0, column=1, sticky='nw')
 
-    # Set the window size
-    button1 = tk.Button(popup, text="Close", command=lambda: popup.quit(), height=1, width=4, highlightcolor='yellow', background='#296d8f', foreground='white', activebackground='red', activeforeground='white')
-    button1.grid(row=1, column=0, sticky='se')  # Use grid and place at bottom right
+    tree.bind("<ButtonRelease-1>", get_selection)
 
-    # Configure the grid weights
-    popup.grid_columnconfigure(0, weight=1)
-    popup.grid_rowconfigure(0, weight=1)
+    button1 = tk.Button(
+        popup,
+        text="Make Selection-Close",
+        command=lambda: popup.quit(),
+        height=2,
+        width=17,
+        highlightcolor='yellow',
+        background='#296d8f',
+        foreground='white',
+        activebackground='red',
+        activeforeground='white'
+    )
+    button1.grid(row=2, column=1, sticky='se')
 
-    # Update the window to calculate the size of the content
+    popup.grid_columnconfigure(1, weight=1)
+    popup.grid_rowconfigure(1, weight=1)
+
     popup.update_idletasks()
 
-    # Get the width and height of the content
     width = popup.winfo_width()
     height = popup.winfo_height()
 
-    # Add some padding
     width += 5
     height += 5
 
-    # Set the window size
     popup.geometry(f"{width}x{height}")
     popup.mainloop()
-
-    # Destroy the window
     popup.destroy()
 
 
+def call_tk_vod_view(json_data):
+    winName = os.path.basename(json_data)
+    with open(file, 'r') as f:
+        jsond = json.load(f)
+
+    list1 = []
+    for index, items in enumerate(jsond):
+        vods_desc = (index, items['downloaded'], items['broadcastType'], items['publishedAt'], items['id'], items['gameName'], items['title'])
+        list1.append(f'{vods_desc}')
 
 
+# Define the column names as 'index' and specific keys from the JSON data
+    columns = ['index', 'downloaded', 'id', 'broadcastType', 'publishedAt', 'gameName', 'title']  # replace 'key1', 'key2' with your specific keys
+# Define the data as the index and values of the specific keys in the JSON data
+    data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(jsond)]
+# Call the function
+    try:
+        create_popup1(winName, columns, data)
+    except tk.TclError as e:
+        print(f'Error Closed Window using (X), Terminated early: {e}')
+        create_popup1(winName, columns, data)
 
+    listIndexs = [index[0] for index in selected_items]
+    for index in listIndexs:
+        print(jsond[int(index)].get('title'))
+        print(jsond[int(index)].get('publishedAt'), '\n')
+    return selected_items
 
-file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\klean.json"
-winName = os.path.basename(file)
-with open(file, 'r') as f:
-    jsond = json.load(f)
-list1 = [('{:5}    {:25}    {:20}    {:30}    {:45}    {:25}'.format("Index", "Downloaded", "Vod Style", "VodID", "Game Name", "Title"))]
-for index, items in enumerate(jsond):
-
-    list0 = items['title']
-    list2 = items['id']
-    list3 = items['gameName']
-    list4 = items['broadcastType']
-    list5 = items['downloaded']
-    llist = ('{:7}    {:25}    {:15}    {:25}    {:40}    {:25}'.format(index, f"Downloaded:  {list5}", list4, list2, list3, list0))
-    list1.append(f'{llist}')
-create_popup(winName, list1)
-lists = [items.split() for items in selected_items]
-listIndexs = [index[0] for index in lists]
-print("🐍 File: new_mass_gql/tessettt.py | Line: 196 | undefined ~ hhe",listIndexs)
+file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\shenryyr.json"
+call_tk_vod_view(file)
+input('exit ................')
