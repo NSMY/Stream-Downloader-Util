@@ -7,7 +7,7 @@ from tkinter import ttk
 from utility_dir import util_functions
 
 selected_items = []
-
+# [] Super Twitch ONLY
 def create_popup1(windowName, columns, data):
     global selected_items
     popup = tk.Tk()

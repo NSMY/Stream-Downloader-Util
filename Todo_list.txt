@@ -1,4 +1,9 @@
 # TODO 
+# [] have default call (Main) get stream name??
+# [] at the end of check for new vods run threading to compare Status (set recoding to Recorded)
+#   maybe do something with recording are u sure you want to download in (main.py)/and or make invisible??
+
+
 # [x] incorp size of vods into main/ on call from file
 # [x] ?change not_downloaded to downloaded?
 # TRACK have it error when refreshing json vods file and non streamer name
