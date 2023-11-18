@@ -85,14 +85,22 @@ def get_index_last_vod(content, gql_resp):
         gql_resp (dict): GraphQL response.
 
     Returns:
-        Index of the target id in the list.
+
     """
     id_list = []
-    for edge in gql_resp["data"]["user"]["videos"]["edges"]:
-        id_value = edge["node"].get("id")
-        id_dict = {"id": id_value}
-        id_list.append(id_dict)
+    if isinstance(gql_resp, list):
+        for i in gql_resp:
+            id_value = i.get("id")
+            id_dict = {"id": id_value}
+            id_list.append(id_dict)
+    else:
+        for edge in gql_resp["data"]["user"]["videos"]["edges"]:
+            id_value = edge["node"].get("id")
+            id_dict = {"id": id_value}
+            id_list.append(id_dict)
     targid = content[0]["id"]
+    # [] add return to after the base call not here makes this dependant on Get_index
+    # make return just be the raw data return id_list, targid.
     return get_index_of_target_id(input_content=id_list, target_id=targid)
 
 
@@ -112,7 +120,7 @@ def get_index_of_target_id(*, input_content, target_id: str):
     if isinstance(input_content, list):
         first_id = input_content[0].get("id")
         if first_id == target_id:
-            print("🐍 File: utility_dir/util_functions.py | Line: 105 | get_index_of_target_id ~ first_id",first_id)
+            # print("🐍 File: utility_dir/util_functions.py | Line: 105 | get_index_of_target_id ~ first_id",first_id)
             return 0
         else:
             content = input_content

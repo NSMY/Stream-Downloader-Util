@@ -4,7 +4,9 @@ import os
 import tkinter as tk
 from tkinter import ttk
 
-from utility_dir import util_functions
+from .utility_dir import util_functions
+
+# from utility_dir import util_functions
 
 selected_items = []
 # [] Super Twitch ONLY
@@ -150,6 +152,8 @@ def call_tk_vod_view(json_data):
         print(jsond[int(index)].get('publishedAt'), '\n')
     return selected_items
 
-file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\shenryyr.json"
-call_tk_vod_view(file)
-input('exit ................')
+# file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\shenryyr.json"
+# if __name__ == '__main__':
+#     call_tk_vod_view(file)
+
+# input('exit ................')

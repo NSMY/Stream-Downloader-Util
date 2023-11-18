@@ -12,7 +12,7 @@ from new_mass_gql import check_new_streams, gql_main_call
 from new_mass_gql.utility_dir import get_single_vod_
 
 
-def main_start():
+def main_start(impt_data=None):
 
     def download():
         from Main import main_script
@@ -36,12 +36,18 @@ def main_start():
         gql_main_call.First_making_cmds()
 
     def check_streams():
-        check_new_streams.start_new_vods()
+        mn_rtrn = check_new_streams.start_new_vods()
+        main_start()
 
     def retrieve_saved_vod():
+        if impt_data:
+            aad = get_single_vod_.Run_get_vod('')
         aad = get_single_vod_.Run_get_vod('')
+        print(aad)
         from Main import main_script
-        main_script(fromfile=aad)
+        from new_mass_gql import tk_get_file_list
+        tk_get_file_list.call_tk_vod_view(f'c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/{aad[0]}.json') # FIX sloppy af.
+        main_script(fromfile=aad[1])
 
     # Define your dictionary
     switch = {

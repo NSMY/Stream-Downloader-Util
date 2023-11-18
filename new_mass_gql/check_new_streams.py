@@ -1,6 +1,5 @@
 # first logic for renew jsons.
 
-
 import json
 import os
 from time import sleep
@@ -9,6 +8,7 @@ from new_mass_gql.utility_dir import get_single_vod_ as gsv
 from new_mass_gql.utility_dir import util_functions as util
 
 from . import gql_main_call
+from . import swap_old_data as sod
 
 # import pretty_errors
 
@@ -25,13 +25,26 @@ from . import gql_main_call
 
 
 def check_for_new_vods(
-    json_file_path, streamer_user_name, amount_of_vods: int = 100, sort_by: str = "TIME"
+    json_file_path,
+    streamer_user_name,
+    amount_of_vods: int = 100,
+    sort_by: str = "TIME"
 ):
+    """_summary_
+
+    Args:
+        json_file_path (_type_): _description_
+        streamer_user_name (_type_): _description_
+        amount_of_vods (int, optional): _description_. Defaults to 100.
+        sort_by (str, optional): _description_. Defaults to "TIME".
+
+    Returns:
+        tuple: [0]json_file_path [1]file_data [2]GQLresp [3]vod_index
+    """
     if not os.path.exists(json_file_path):
-        gql_main_call.First_making_cmds()
+        gql_main_call.First_making_cmds(streamer_user_name)
         # [ ] call 1st set up of vods making....
         return None
-
 
     # Blocked OUT USING Fake DATA to stop calls and fasten dev
     query = gql_main_call.query_channel_vods(streamer_user_name, amount_of_vods, sort_by)
@@ -39,14 +52,18 @@ def check_for_new_vods(
     resp = query_resp.json()
     if query_resp.status_code != 200:
         print("Error retrieving Data from GraphQL Twitch API")
+        import startup
+        startup.main_start()
 
     # resp = test_data_for_checkStreams(json_file_path, streamer_user_name, vod_index=6)  # Testing Code Fake data.
+
     with open(json_file_path, "r") as f:
         file_data = json.load(f)
-    if (vod_index := util.compare_latest_vod_index(file_data, resp)) is None:
-        print('No new streams\n')
-        return file_data
-    return add_new_entries_json(json_file_path, file_data, resp, vod_index)
+
+    # one can be threaded.
+    vod_index = util.compare_latest_vod_index(file_data, resp)
+
+    return json_file_path, file_data, resp, vod_index
 
 
 def add_new_entries_json(
@@ -91,6 +108,7 @@ def print_new_vods_from_dictClass(vod_index, vods_dict):
     print(f'\n{(vod_index)}: New Vods\n')
 
 
+
 # def start_new_vods(json_file_path, streamer_user_name):
 def start_new_vods():
     # [] input the best way??
@@ -100,12 +118,21 @@ def start_new_vods():
             # "Who to Check?:", gsv.get_file_list_from_dir("jsons\\")
             "Who to Check?:", gsv.get_file_list_from_dir(rf"{util.get_appdata_dir()}\jsons")
         )
-    return check_for_new_vods(
+    cnv_rtrn = check_for_new_vods(
         rf"{util.get_appdata_dir()}\jsons\{streamer_name}.json",
-        streamer_name,
-        int(input("amount of vods to retrieve:")),
+        streamer_user_name=streamer_name
     )
+    start_point_index = int(util.get_index_last_vod(cnv_rtrn[1], cnv_rtrn[2]))
+    conflict_data = sod.get_conflicting_indexes(cnv_rtrn[1], cnv_rtrn[2], start_point_index, ['downloaded'])
+    newData = sod.new_data_to_json_exclude(cnv_rtrn[1], conflict_data[-1], conflict_data[0], 'downloaded')
+    with open(cnv_rtrn[0], 'w') as f:
+        json.dump(newData, f, indent=4)
 
+
+    if cnv_rtrn[3] is not None:
+        newData = add_new_entries_json(cnv_rtrn[0], cnv_rtrn[1], cnv_rtrn[2], cnv_rtrn[3])
+
+    return newData
     # print(gsv.Run_get_vod(streamer_name))
 
 

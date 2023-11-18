@@ -41,7 +41,7 @@ def get_desired_vod_from_lst(**kwargs) -> dict:
         selected_json = select_json(list_of_streamers_jsons)
     data = creator_load_json_data(selected_json)
     video = select_video(data, selected_json)
-    return {
+    return selected_json, {
         'file': f"{selected_json['streamer']}.json",  # type: ignore will not be None
         'index': video[0],
         'vod_info': video[1]
@@ -50,8 +50,9 @@ def get_desired_vod_from_lst(**kwargs) -> dict:
 
 
 def Run_get_vod(streamer_name):
-    return_data = get_desired_vod_from_lst(streamer=streamer_name)
-    return (
+    return_data = get_desired_vod_from_lst(streamer=streamer_name)[1]
+    streamer_name1 = return_data[0] # to get the tk popup working.
+    return streamer_name1, (
         return_data['vod_info']["url"],
         f"{return_data['vod_info']['displayName']} "
         f"{util.simple_convert_timestamp(return_data['vod_info']['publishedAt'])} "

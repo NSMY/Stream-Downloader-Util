@@ -126,7 +126,7 @@ def query_channel_vods(
 
 
     Returns:
-        GQL Map: [lsit{dict}] of streams info
+        GQL Map: list[dict] of streams info
     """
     pagination = "null"
 
@@ -136,7 +136,6 @@ def query_channel_vods(
         first=num_of_streams,
         sort=sort_by,
     )
-
 
 # [x]HUGE GAINS.
 
@@ -217,19 +216,21 @@ class Vod:
         vods = []
         for edge in edges:
             edge["node"]["title"] = "".join(c for c in edge["node"]["title"] if c.isalnum() or c.isspace())
-
-            edge["node"]["game"]["name"] = "".join(g for g in edge["node"]["game"]["name"] if g.isalnum() or g.isspace())
+            if edge['node']['game'] is not None:
+                edge["node"]["game"]["name"] = "".join(g for g in edge["node"]["game"]["name"] if g.isalnum() or g.isspace())
             vods.append(cls(edge["node"]))
         return [vars(vod) for vod in vods]
 
 
 # [] Kwargs ??? **kwargs.
-def First_making_cmds():
-    streamer_user_name = input("Enter Streamer User Name: ").lower()
+def First_making_cmds(streamer_user_name=None):
+    if not streamer_user_name:
+        streamer_user_name = input("Enter Streamer User Name: ").lower()
     # if file exist ?? .
     query = query_channel_vods(streamer_user_name, 100, "TIME")
     query_resp = gql_query(query=query)
     resp = query_resp.json()
+
     # [] still need to sort our the recording/archive/highlight/upload/premiere
     if query_resp.status_code != 200:
         print("Error retrieving Data from GraphQL Twitch API")
@@ -259,6 +260,7 @@ def First_making_cmds():
         if outcome == 'No':
             return
     util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
+
 
 
 end_time = timeit.default_timer()
