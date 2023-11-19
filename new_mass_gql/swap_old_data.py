@@ -1,8 +1,8 @@
 # Swaps new Data for the old data in the json file while keeping X key/s.
 
-# import json
+import json
 
-# from .utility_dir.util_functions import get_index_last_vod
+from .utility_dir.util_functions import get_index_last_vod
 
 
 def compare_dicts_excluding(dict1, dict2, exclude_keys):
@@ -76,5 +76,4 @@ def new_data_to_json_exclude(file_data, new_data, indexes, exclude_key):
         if exclude_key in file_data[File_index]:
             dict_copy[exclude_key] = file_data[File_index][exclude_key]
         file_data[File_index] = dict_copy
-    print(file_data)
     return file_data

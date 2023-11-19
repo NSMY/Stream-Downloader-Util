@@ -359,3 +359,58 @@ for index, items in enumerate(jsond):
 #     print(jsond[int(index)].get('title'))
 
 """
+
+import subprocess
+
+# choseendir = 'E:/DeleteStreams/FFMPEG__re-Muxed/'
+# for files in os.listdir(choseendir):
+#     # print(files)
+#     fp = os.path.join(choseendir, files)
+#     # print("🐍 File: new_mass_gql/tessettt.py | Line: 368 | undefined ~ fp",fp)
+
+#     dldVid_sizs = subprocess.Popen(
+#         rf'ffprobe -i "{fp}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
+#         shell=False,
+#         stdout=subprocess.PIPE,
+#         stderr=subprocess.PIPE,
+#         universal_newlines=True,
+#         cwd='c:/ffmpeg/'
+#     )
+#     stdout, stderr = dldVid_sizs.communicate()
+#     out_pt, _ = dldVid_sizs.communicate()
+#     dldVid_sizs.wait()
+#     files = files.split('-')
+#     print(f'{out_pt.split('.')[0]}  {files}')
+    
+# # result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
+
+
+cmdd = r"C:/Program Files/Streamlink/ffmpeg/"
+process = subprocess.Popen(r'streamlink https://www.twitch.tv/videos/1981304674 worst --hls-segment-threads 5 -o "C:\Users\970EVO-Gamer\Desktop\junkme.mp4"', stdout=subprocess.PIPE, universal_newlines=True,  cwd=cmdd)
+# stdout, stderr = process.communicate()
+line = ''
+while True:
+    char = process.stdout.read(1)
+    if char == '\n' or char == '\r':
+        print(line)
+        line = ''
+    else:
+        line += char
+    if '[cli][info] Stream ended' in line:
+        print("success")
+    if process.poll() is not None:
+        break
+
+'''# stdout, stderr = process.communicate()
+for line in iter(process.stdout.readline, ''):
+    print(line.rstrip())
+    if '[download]' in line.rstrip():
+        print('Downloading file')
+'''
+
+
+# dd ='[cli][info] Closing currently open stream...'
+# if "Closing " in dd:
+#     print('True')
+# if "Closing " not in dd:
+#     print('False')

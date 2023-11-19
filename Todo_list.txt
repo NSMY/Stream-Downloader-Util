@@ -3,12 +3,15 @@
 # [] at the end of check for new vods run threading to compare Status (set recoding to Recorded)
 #   maybe do something with recording are u sure you want to download in (main.py)/and or make invisible??
 
+# [] ask a Q if download from file about being RECORDING wether to proceed downloading.
+# [] figure a way to determine if fully downloaded and set to downloaded in file  Name+ Total seconds ??
+# [] mak the stup init settings better, maybe into 1 call like if key in settings then call the whole settings thins
+
 
 # [x] incorp size of vods into main/ on call from file
 # [x] ?change not_downloaded to downloaded?
 # TRACK have it error when refreshing json vods file and non streamer name
 # [] be able to call shutdown also with file data, edit startup cmd
-# [] figure a way to determine if fully downloaded and set to downloaded in file
 # [TODO] be able to select multiple from file/ [lists] download multiple (threading or cueing)
 # [TODO] make a combine segments [vids] ffmpeg via lists meth
 # JANK make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 

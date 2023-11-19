@@ -46,8 +46,9 @@ def main_start(impt_data=None):
         print(aad)
         from Main import main_script
         from new_mass_gql import tk_get_file_list
-        tk_get_file_list.call_tk_vod_view(f'c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/{aad[0]}.json') # FIX sloppy af.
-        main_script(fromfile=aad[1])
+        print(aad[0])
+        # tk_get_file_list.call_tk_vod_view(f'c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/{aad[0]}.json') # FIX sloppy af.
+        main_script(fromfile=aad)
 
     # Define your dictionary
     switch = {

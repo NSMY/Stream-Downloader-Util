@@ -38,8 +38,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # []if ?t=03h09m37s make check size negate x time from total secs.
     # be able to insert the time code if desired.
     # teessst.py has a cleeanup start maybe mod.
-    
-    
+
+
     # URL CleanUp and isVod check for m3u8 Call.
     last_url_index = urlparse(url_)[2].split('/')
     url_path = last_url_index[-1].replace(".m3u8", "")
