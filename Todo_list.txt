@@ -1,23 +1,30 @@
 # TODO 
 # [] have default call (Main) get stream name??
-# [] at the end of check for new vods run threading to compare Status (set recoding to Recorded)
+# [x] at the end of check for new vods run threading to compare Status (set recoding to Recorded)
 #   maybe do something with recording are u sure you want to download in (main.py)/and or make invisible??
+
+# [] make chapters in vods? using code > __pycache__/getChaptersCall.py < will require a large rewrite, games will be
+# in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 
 # [] ask a Q if download from file about being RECORDING wether to proceed downloading.
 # [] figure a way to determine if fully downloaded and set to downloaded in file  Name+ Total seconds ??
+# [] make it so u can check if downloaded incase a new json file is made/ overwritten
+# [] be able to manually set if downloaded
+
 # [] mak the stup init settings better, maybe into 1 call like if key in settings then call the whole settings thins
+# more robust dependency searching and downloading (if deleted between settinggs Checks)
 
-
-# [x] incorp size of vods into main/ on call from file
-# [x] ?change not_downloaded to downloaded?
-# TRACK have it error when refreshing json vods file and non streamer name
 # [] be able to call shutdown also with file data, edit startup cmd
-# [TODO] be able to select multiple from file/ [lists] download multiple (threading or cueing)
 # [TODO] make a combine segments [vids] ffmpeg via lists meth
 # JANK make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 
+# TRACK have it error when refreshing json vods file and non streamer name
+# [x] incorp size of vods into main/ on call from file
+# [x] ?change not_downloaded to downloaded? in class
+# [x] be able to select multiple from file/ [lists] download multiple (threading or cueing)
+
+
 # THINK do i ad multi File processing? mp4 wav etc
 
-# more robust dependency searching and downloading (if deleted between settinggs Checks)
 # customTKinter GUI??
 # do i make Combine streams Aud/Vid
 # make WEBP converter? New File?

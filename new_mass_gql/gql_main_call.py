@@ -3,6 +3,7 @@ import os
 import pprint
 import timeit
 
+import httpx
 import requests
 
 from new_mass_gql.utility_dir import util_functions as util
@@ -37,7 +38,7 @@ def _process_query_errors(resp):
 
 def gql_post(json=None, data=None):
     global GQL_URL, GQL_HEADERS
-    resp = requests.post(GQL_URL, json=json, data=data, headers=GQL_HEADERS)
+    resp = httpx.post(GQL_URL, json=json, data=data, headers=GQL_HEADERS)
     _process_query_errors(resp)
     return resp
 
@@ -259,10 +260,12 @@ def First_making_cmds(streamer_user_name=None):
         outcome = util.multi_choice_dialog('Continue and overwrite', ['Yes', 'No'])
         if outcome == 'No':
             return
-    util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
+    # util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
+    print('saving to Desktop fo₹testing')
+    util.dump_json_ind4(file_path='C:/Users/970EVO-Gamer/Desktop/testt.json', content_dump=vods_dict)
 
 
 
-end_time = timeit.default_timer()
-execution_time = end_time - start_time
-print(f"The script took {execution_time} seconds to run.")
+# end_time = timeit.default_timer()
+# execution_time = end_time - start_time
+# print(f"The script took {execution_time} seconds to run.")

@@ -12,11 +12,16 @@ def get_appdata_dir():
     return os.path.join(str(appdata_path), "Stream-Downloader-Util")
 
 
-def convert_seconds(total_seconds):
+def decode_seconds_to_hms(total_seconds):
     hours = total_seconds // 3600
     minutes = (total_seconds % 3600) // 60
     seconds = total_seconds % 60
     return f"{hours}:{minutes}:{seconds}"
+
+def encode_hms_to_seconds(time_str):
+    """input must be hh:mm:ss format separated by :"""
+    hours, minutes, seconds = map(int, time_str.split(":"))
+    return hours * 3600 + minutes * 60 + seconds
 
 
 def dump_json_ind4(*, file_path, content_dump) -> None:
