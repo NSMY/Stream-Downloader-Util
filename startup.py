@@ -43,10 +43,11 @@ def main_start(impt_data=None):
         if impt_data:
             aad = get_single_vod_.Run_get_vod('')
         aad = get_single_vod_.Run_get_vod('')
-        print(aad)
+        # print(aad)
         from Main import main_script
-        from new_mass_gql import tk_get_file_list
-        print(aad[0])
+
+        # from new_mass_gql import tk_get_file_list
+        # print(aad[0])
         # tk_get_file_list.call_tk_vod_view(f'c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/{aad[0]}.json') # FIX sloppy af.
         main_script(fromfile=aad)
 

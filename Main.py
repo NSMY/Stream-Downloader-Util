@@ -101,11 +101,12 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     def get_vid_resolutions(slinkDir, url_, queue, auth_String=""):
         try:
             rw_stream = subprocess.Popen(
-                rf'cd "{slinkDir}" && streamlink "{url_}" {auth_String}',
+                rf'streamlink "{url_}" {auth_String}',
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 universal_newlines=True,
+                cwd=slinkDir
             )
             stdout, stderr = rw_stream.communicate()
 
