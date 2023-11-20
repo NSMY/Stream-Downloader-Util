@@ -100,7 +100,7 @@ def print_new_vods_from_dictClass(vod_index, vods_dict):
             f'{util.simple_convert_timestamp(vod['publishedAt'])}, '
             f'{vod['gameName']}, '
             f'{vod['title']}, '
-            f'{util.convert_seconds(vod['lengthSeconds'])} '
+            f'{util.decode_seconds_to_HMS(vod['lengthSeconds'])} '
             f'\n{vod['url']}'
         )
         if index == vod_index - 1:

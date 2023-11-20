@@ -28,7 +28,7 @@ def creator_load_json_data(selected_json):
 
 
 def select_video(data, selected_json):
-    quick_desc_ = [(i, util.simple_convert_timestamp(d['publishedAt']), util.convert_seconds(d['lengthSeconds']), d['gameName'], d['title'], d['downloaded']) for i, d in enumerate(data)]
+    quick_desc_ = [(i, util.simple_convert_timestamp(d['publishedAt']), util.decode_seconds_to_HMS(d['lengthSeconds']), d['gameName'], d['title'], d['downloaded']) for i, d in enumerate(data)]
     stream = util.multi_choice_dialog(f'What Vod do you want form {selected_json['streamer']}----------', choice_s=quick_desc_)
     index = int(stream.strip('(').split(',')[0])  # type: ignore will not be None
     return (index, data[index])
