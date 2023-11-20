@@ -260,9 +260,9 @@ def First_making_cmds(streamer_user_name=None):
         outcome = util.multi_choice_dialog('Continue and overwrite', ['Yes', 'No'])
         if outcome == 'No':
             return
-    # util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
-    print('saving to Desktop fo₹testing')
-    util.dump_json_ind4(file_path='C:/Users/970EVO-Gamer/Desktop/testt.json', content_dump=vods_dict)
+    util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
+    # print('saving to Desktop fortesting')
+    # util.dump_json_ind4(file_path='C:/Users/970EVO-Gamer/Desktop/testt.json', content_dump=vods_dict)
 
 
 
