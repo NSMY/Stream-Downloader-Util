@@ -7,6 +7,23 @@ from datetime import datetime, timezone
 import inquirer
 
 
+def update_downloaded_to_resolution(target_id, new_value):
+    jsonss_dir = f'{get_appdata_dir()}/jsons/'
+
+    for filename in os.listdir(jsonss_dir):
+        if filename.endswith('.json'):  # Assuming the dicts are stored in .json files
+            file = os.path.join(jsonss_dir, filename)
+            with open(file, 'r') as f:
+                data = json.load(f)
+                for i, d in enumerate(data):
+                    if d.get('id') == target_id:
+                        # target_file_obj = {filename: i}
+                        data[i]['downloaded'] = new_value
+                        break  # If you want to stop searching after finding the first match
+            with open(file, 'w') as f:
+                json.dump(data, f, indent=4)
+
+
 def get_appdata_dir():
     appdata_path = os.getenv("LOCALAPPDATA")
     return os.path.join(str(appdata_path), "Stream-Downloader-Util")

@@ -50,15 +50,7 @@ def get_desired_vod_from_lst(**kwargs) -> dict:
 
 
 def Run_get_vod(streamer_name):
-    return_data = get_desired_vod_from_lst(streamer=streamer_name)[1]
-    # streamer_name1 = return_data[0] # to get the tk popup working.
-    return (
-        return_data['vod_info']["url"],
-        f"{return_data['vod_info']['displayName']} - "
-        f"{util.simple_convert_timestamp(return_data['vod_info']['publishedAt'])} "
-        f"{return_data['vod_info']['title']} "
-        f"{return_data['vod_info']['gameName']}"
-    )
+    return get_desired_vod_from_lst(streamer=streamer_name)
 
 
 if __name__ == '__main__':

@@ -77,29 +77,10 @@ def get_totalsecs_from_playlist(line, lineno, data, state):
 
 
 def m3u8_call_init(video_id):
-    # def m3u8_call_init():
-    # video_id = urlparse(paste())[2].strip("videos/")
     netlock = "https://usher.ttvnw.net"
     url = f"{netlock}/vod/{video_id}.m3u8"
-
-    # Grab access token
     access_token = gql.get_access_token(video_id)
 
-    # Get M3U8 playlist, and parse them
-    # (first URI is always source quality!)
     resolutions_uris = get_playlist_uris(video_id, access_token)
-    # for key, value in resolutions_uris[0].items():
-    #     print("{:<5} {:<10}".format(f'{key}', f'{value} GB'))
-    # value = uris[0]['720']
-    # print("🐍 File: new_mass_gql/my_Test_m3u8.py | Line: 67 | m3u8_call_init ~ value",value)
-    # print("{:<5} {:<10}".format(f'{key}', f'{value} GB'))
-    # source_uri = uris[1][0]
-    # print("🐍 File: new_mass_gql/my_Test_m3u8.py | Line: 123 | undefined ~ source_uri",source_uri)
+    print("🐍 File: new_mass_gql/my_Test_m3u8.py | Line: 91 | m3u8_call_init ~ resolutions_uris",resolutions_uris)
     return resolutions_uris
-
-
-# m3u8_call_init()
-
-# passd_size = '1008'
-
-# print("{:<5} {:<10}".format(passd_size, f'{m3u8_call_init(video_id='1975917753')[0][passd_size]} GB'))

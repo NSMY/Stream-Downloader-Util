@@ -18,10 +18,22 @@ import auth_skip_ads_
 import funcs
 import init_files
 import mux_vid as cpvs
-from new_mass_gql import my_Test_m3u8 as m3
+from new_mass_gql import get_vods_sizes_m3u8 as m3
+from new_mass_gql.utility_dir import util_functions
 
 
 def main_script(download_with_Shutdown=None, fromfile=None):
+    if fromfile:
+        fromfile = (
+            fromfile[1]['vod_info']["url"],
+            fromfile[1]['index'],
+            fromfile[1]['vod_info'],
+            f"{fromfile[1]['vod_info']['displayName']} - "
+            f"{util_functions.simple_convert_timestamp(fromfile[1]['vod_info']['publishedAt'])} "
+            f"{fromfile[1]['vod_info']['title']} "
+            f"{fromfile[1]['vod_info']['gameName']}"
+        )
+
     sd_type = None
     if download_with_Shutdown:
         sd_type = funcs.multi_choice_dialog(
@@ -49,11 +61,6 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         size_of_vod = m3.m3u8_call_init(video_id=urlpath)
         return queue.put(size_of_vod)
 
-    if is_a_vod:
-        q2 = Queue()
-        m3u8 = threading.Thread(target=get_urlm3u8_filesize, args=(url_path, q2))
-        m3u8.start()
-    # end m3u8 check.
 
     urlchk = funcs.is_url(url_)
 
@@ -135,9 +142,18 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     q = Queue()
     result = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
     result.start()
+    
+    if is_a_vod:
+        q2 = Queue()
+        m3u8 = threading.Thread(target=get_urlm3u8_filesize, args=(url_path, q2))
+        m3u8.start()
+        # end m3u8 check.
 
+    # BUG lags out on the return bugs out the inquirer, maybe flush buff may fix maybe re-Place this?
+    if fromfile:
+        print(fromfile[1])
     # saving file path.
-    file_path = funcs.saveFile(fromfile[1]) if fromfile else funcs.saveFile()
+    file_path = funcs.saveFile(fromfile[-1]) if fromfile else funcs.saveFile()
 
     # Naming the Terminal.
     terminal_Naming = os.path.basename(file_path)
@@ -179,6 +195,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     if is_a_vod:
         m3u8.join()
         m3u8_data = q2.get()
+        print("🐍 File: Stream-Downloader-Util/Main.py | Line: 196 | get_vid_resolutions ~ m3u8_data",m3u8_data)
         try:
             if siz_rtn2 == 'best':
                 gb_of_vod = list(m3u8_data.values())[0][0]
@@ -213,6 +230,12 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     # Reset the signal handler for SIGINT to its default behavior (kill terminal)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    # LOOK Temp code to make feat work as proof more complex here than necessary
+    # needs more comparing, this changes every time not if complete and or further comparisons
+    # working Great, need a Pointer to file/or date dld in file??.
+    if urlparse(url_).path.split('/')[-1].isnumeric():
+        util_functions.update_downloaded_to_resolution(urlparse(url_).path.split('/')[-1], siz_rtn2)
 
     if download_with_Shutdown:
         if sd_type == "Auto":
