@@ -8,7 +8,7 @@ import winsound
 import zipfile
 from datetime import datetime, timedelta
 from tkinter import filedialog
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 import inquirer
 import psutil
@@ -595,3 +595,16 @@ def manual_shutdown_timer():
     seconds = (hours * 3600) + (minutes * 60)
     os.system(f"shutdown -s -t {seconds}")
     print(f"Shutdown in {seconds} seconds")
+
+
+def parse_url_twitch(url):
+    urlparsed = urlparse(url)
+    if not urlparsed.path.split('/')[-1].isnumeric():
+        return urlunparse(urlparsed), urlparsed
+    if urlparsed.query.startswith(('t=', 'acmb=')):
+        return url, urlparsed
+    elif urlparsed.query.startswith('filter='):
+        new_url_parts = (urlparsed.scheme, urlparsed.netloc, urlparsed.path, '', '', '')
+        return urlunparse(new_url_parts), urlparsed
+    else:
+        return url, urlparsed

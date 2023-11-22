@@ -4,8 +4,6 @@ import signal
 import subprocess
 import sys
 import threading
-import time
-import webbrowser
 import winsound
 from ast import arg
 from datetime import datetime
@@ -19,19 +17,29 @@ import funcs
 import init_files
 import mux_vid as cpvs
 from new_mass_gql import get_vods_sizes_m3u8 as m3
-from new_mass_gql.utility_dir import util_functions
+from utility_dir import util_functions
 
 
 def main_script(download_with_Shutdown=None, fromfile=None):
     if fromfile:
+        if (
+            fromfile[1]["vod_info"].get("status") == "RECORDING"
+            and funcs.multi_choice_dialog(
+                "VOD is still recording, Continue to download", ["No", "Yes"]
+            )
+            == "No"
+        ):
+            from startup import main_start
+            main_start()
+
         fromfile = (
-            fromfile[1]['vod_info']["url"],
-            fromfile[1]['index'],
-            fromfile[1]['vod_info'],
+            fromfile[1]["vod_info"]["url"],
+            fromfile[1]["index"],
+            fromfile[1]["vod_info"],
             f"{fromfile[1]['vod_info']['displayName']} - "
             f"{util_functions.simple_convert_timestamp(fromfile[1]['vod_info']['publishedAt'])} "
             f"{fromfile[1]['vod_info']['title']} "
-            f"{fromfile[1]['vod_info']['gameName']}"
+            f"{fromfile[1]['vod_info']['gameName']}",
         )
 
     sd_type = None
@@ -43,27 +51,26 @@ def main_script(download_with_Shutdown=None, fromfile=None):
             funcs.manual_shutdown_timer()
 
     # Retrieves Last item in Clipboard(ctrl v).
-    if fromfile is None:
-        url_ = paste().replace("?filter=archives&sort=time", "")
-    else:
-        url_ = fromfile[0]
-    # []if ?t=03h09m37s make check size negate x time from total secs.
-    # be able to insert the time code if desired.
-    # teessst.py has a cleeanup start maybe mod.
+    url = paste() if fromfile is None else fromfile[0]
 
+    url_bits = funcs.parse_url_twitch(url)
+    url_ = url_bits[0]
+
+    # TODO download at specified time needs work.
+    # if not url_bits[1].query.startswith('t='):
+    #     timecode = input('Start Download at Spesific Time ? 00h00m00s. enter 6 numbers separated by Space. EG 01 25 35 :').split(' ')
+    #     url_ = rf'{url_}?t=h{timecode[0]}m{timecode[1]}s{timecode[2]}'
+    #     print("🐍 File: Stream-Downloader-Util/Main.py | Line: 57 | main_script ~ url_",url_)
 
     # URL CleanUp and isVod check for m3u8 Call.
-    last_url_index = urlparse(url_)[2].split('/')
-    url_path = last_url_index[-1].replace(".m3u8", "")
-    is_a_vod = url_path.isnumeric()
+    is_url_path_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
+    url_path = url_bits[1].path.split("/", -1)[-1]
 
-    def get_urlm3u8_filesize(urlpath, queue):
-        size_of_vod = m3.m3u8_call_init(video_id=urlpath)
+    def get_urlm3u8_filesize(url_, queue):
+        size_of_vod = m3.m3u8_call_init(video_id=url_)
         return queue.put(size_of_vod)
 
-
     urlchk = funcs.is_url(url_)
-
     # Threading start for url check.
     t1 = threading.Thread(target=funcs.is_url, args=(url_,))
     t1.start()
@@ -72,7 +79,9 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     try:
         check_settings = funcs.loadSettings(keys=["LastSave", "streamlinkPath"])
     except FileNotFoundError as e:
+        print(e)
         init_files.initSettings()
+        os.system("cls")
         main_script()
 
     is_a_fresh_save = [funcs.is_less_than_30days(check_settings[0])]  # type: ignore possible unbound
@@ -96,7 +105,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 "Type or paste (Must Include http://www.) " "URL HERE: "
             ).replace("?filter=archives&sort=time", "")
             urlchk = funcs.is_url(url_)
-            if urlchk == True:
+            if urlchk == True:  # FIX == True or Is True?.
                 print(url_)
                 break
             main_script()
@@ -113,7 +122,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 universal_newlines=True,
-                cwd=slinkDir
+                cwd=slinkDir,
             )
             stdout, stderr = rw_stream.communicate()
 
@@ -129,7 +138,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
                 queue.put(result)
         except Exception as e:
-            print("OSE Error:")
+            print(e, "OSE Error:")
 
     # Checks if a Twitch URL.
     twitch_netloc = ["www.twitch.tv", "usher.ttvnw.net"]
@@ -142,21 +151,21 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     q = Queue()
     result = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
     result.start()
-    
-    if is_a_vod:
+
+    if is_url_path_vod:
         q2 = Queue()
         m3u8 = threading.Thread(target=get_urlm3u8_filesize, args=(url_path, q2))
         m3u8.start()
         # end m3u8 check.
 
-    # BUG lags out on the return bugs out the inquirer, maybe flush buff may fix maybe re-Place this?
-    if fromfile:
+    if fromfile:  # FIXME whats this for??.
         print(fromfile[1])
+
     # saving file path.
-    file_path = funcs.saveFile(fromfile[-1]) if fromfile else funcs.saveFile()
+    download_file_path = funcs.saveFile(fromfile[-1]) if fromfile else funcs.saveFile()
 
     # Naming the Terminal.
-    terminal_Naming = os.path.basename(file_path)
+    terminal_Naming = os.path.basename(download_file_path)
     os.system(f"title {terminal_Naming}")
 
     # Return of get_vid_resolutions threading.
@@ -164,50 +173,52 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     result = q.get()
 
     my_choices = list(reversed(result))
-    siz_rtn2 = funcs.multi_choice_dialog("What Size to Download?", my_choices)
-
+    chosen_resolution = funcs.multi_choice_dialog("What Size to Download?", my_choices)
 
     # if not twitch netloc uses default, if twitch asks advanced Options.
     default_download_string = (
-        rf'streamlink "{url_}" {siz_rtn2} '
-        f'--stream-segment-threads 5 -o "{file_path}"'
+        rf'streamlink "{url_}" {chosen_resolution} '
+        f'--stream-segment-threads 5 -o "{download_file_path}"'
     )
     if not is_it_a_twitch_url:
         download_string = default_download_string
     else:
-        dload_via = funcs.multi_choice_dialog(
+        twitch_options_choice = funcs.multi_choice_dialog(
             "Streamlink Twitch Flags Download:"
             "Standard, Advanced(No Ads, Auth Token)"
             "",
             ["Standard", "Advanced"],
         )
-        if dload_via == "Advanced":
+        if twitch_options_choice == "Advanced":
             skip_ads_rtrn = auth_skip_ads_.skip_ads()
             download_string = (
-                rf'streamlink {skip_ads_rtrn} "{url_}" {siz_rtn2}'
-                f' --stream-segment-threads 5 -o "{file_path}"'
+                rf'streamlink {skip_ads_rtrn} "{url_}" {chosen_resolution}'
+                f' --stream-segment-threads 5 -o "{download_file_path}"'
             )
-        elif dload_via == "Standard":
+        elif twitch_options_choice == "Standard":
             download_string = default_download_string
 
     print("\nCTRL + C to CANCEL Download early if necessary")
 
-    if is_a_vod:
+    if is_url_path_vod:
         m3u8.join()
         m3u8_data = q2.get()
-        print("🐍 File: Stream-Downloader-Util/Main.py | Line: 196 | get_vid_resolutions ~ m3u8_data",m3u8_data)
         try:
-            if siz_rtn2 == 'best':
+            if chosen_resolution == "best":
                 gb_of_vod = list(m3u8_data.values())[0][0]
-            elif siz_rtn2 == 'worst':
+            elif chosen_resolution == "worst":
                 gb_of_vod = list(m3u8_data.values())[-1][0]
             else:
-                gb_of_vod = m3u8_data[siz_rtn2][0]
-            print("{:<5}\n{:>31}".format(f'Quality Chosen: {siz_rtn2}', f'{gb_of_vod} GB\n'))
+                gb_of_vod = m3u8_data[chosen_resolution][0]
+            print(
+                "{:<5}\n{:>31}".format(
+                    f"Quality Chosen: {chosen_resolution}", f"{gb_of_vod} GB\n"
+                )
+            )
         except UnboundLocalError and KeyError:
-            print("Quality Chosen: ", siz_rtn2, '\n')
+            print("Quality Chosen: ", chosen_resolution, "\n")
     else:
-        print("Quality Chosen: ", siz_rtn2, '\n')
+        print("Quality Chosen: ", chosen_resolution, "\n")
 
     # Main Download Process
     process = subprocess.Popen(
@@ -231,22 +242,52 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # Reset the signal handler for SIGINT to its default behavior (kill terminal)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    # LOOK Temp code to make feat work as proof more complex here than necessary
-    # needs more comparing, this changes every time not if complete and or further comparisons
-    # working Great, need a Pointer to file/or date dld in file??.
-    if urlparse(url_).path.split('/')[-1].isnumeric():
-        util_functions.update_downloaded_to_resolution(urlparse(url_).path.split('/')[-1], siz_rtn2)
+    if is_url_path_vod:
+
+        # FIX will need to include ffprobe in main settings checks to use this.
+        get_len_of_vod_file = subprocess.Popen(
+            rf'ffprobe -i "{download_file_path}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            cwd='c:/ffmpeg/'  # FIX replace me.
+        )
+        stdout, stderr = get_len_of_vod_file.communicate()
+        get_len_of_vod_file.wait()
+        len_of_vod = int(stdout.split('.')[0])
+        # print("🐍 File: zextra_Funcs_/Testcode.py | Line: 126 | undefined ~ len_of_vod",len_of_vod)
+
+        if (ulr_query := urlparse(url).query).startswith('t='):
+            url_split = re.split('[=hms]', ulr_query)
+            secs_to_subt_from_file = util_functions.encode_hms_to_seconds(':'.join(url_split[1:-1]))
+            # if len_of_vod - secs_to_subt_from_file == 0:
+            if len_of_vod - secs_to_subt_from_file == 0:
+                # LOOK Temp code to make feat work as proof more complex here than necessary
+                # needs more comparing, this changes every time not if complete and or further comparisons
+                # working Great, need a Pointer to file/or date dld in file??.
+                util_functions.update_downloaded_to_resolution(
+                    urlparse(url_).path.split("/")[-1], chosen_resolution
+                )
+        elif len_of_vod - fromfile[2].get('lengthSeconds') == 0:
+
+            # LOOK Temp code to make feat work as proof more complex here than necessary
+            # needs more comparing, this changes every time not if complete and or further comparisons
+            # working Great, need a Pointer to file/or date dld in file??.
+            util_functions.update_downloaded_to_resolution(
+                urlparse(url_).path.split("/")[-1], chosen_resolution
+            )
 
     if download_with_Shutdown:
         if sd_type == "Auto":
-            savepath = os.path.dirname(file_path)
-            with open(f"{savepath}/downloadCompleteTime.txt", "w") as f:
+            save_path = os.path.dirname(download_file_path)
+            with open(f"{save_path}/downloadCompleteTime.txt", "w") as f:
                 f.write(
                     datetime.now().strftime(
                         f"{terminal_Naming}\nCompleted at:---- %H:%M:%S ----\n"
                     )
                 )
-            cpvs.mux(file_path)
+            cpvs.mux(download_file_path)
             os.system("shutdown -s -t 200")
     else:
         print(
@@ -270,12 +311,12 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
         # sends the file(name) to be mux'd via mux_vid.py
         convert = funcs.multi_choice_dialog("Convert?", ["yes", "no"])
-        print(file_path)
+        print(download_file_path)
         if convert == "yes":
-            cpvs.mux(file_path)
+            cpvs.mux(download_file_path)
             print("\nDone!!")
         else:
-            funcs.open_directory_Force_front(file_path)
+            funcs.open_directory_Force_front(download_file_path)
 
         print(
             "\nRe Run Program? if Yes you need to copy the next URL"
@@ -284,6 +325,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         exit = funcs.multi_choice_dialog("Run Again or Exit?", ["Run Again", "EXIT"])
         if exit == "Run Again":
             from startup import main_start
+
             main_start()
         else:
             sys.exit()

@@ -2,7 +2,7 @@
 
 import json
 
-from .utility_dir.util_functions import get_index_last_vod
+from utility_dir.util_functions import get_index_last_vod
 
 
 def compare_dicts_excluding(dict1, dict2, exclude_keys):

@@ -53,7 +53,8 @@ def ffmpegextract():
 
     if selected_channels == "Exit":
         os.system("cls")
-        funcs.main_start()
+        from startup import main_start
+        main_start()
 
     message = "Do you want to extract the video stream?"
     video_answers = funcs.multi_choice_dialog(message, ["Yes", "No"], "int")
@@ -61,8 +62,10 @@ def ffmpegextract():
 
     # creates adjacent Dir
     name = os.path.splitext(os.path.basename(filename))[0]
-    outname = os.path.join(os.path.dirname(filename),
-                            f"{name} audio streams", name)
+    outname = os.path.join(
+        os.path.dirname(filename),
+        f"{name} audio streams", name
+    )
     os.makedirs(os.path.dirname(outname), exist_ok=True)
 
     num_channels = int(mxChann[-1])
@@ -76,10 +79,9 @@ def ffmpegextract():
         total_num_channels=num_channels,
         input_audio_codec_type=opus,
         video_file_type=file_type,
-        export_codec=".aac", #non implemented choice export codec
+        export_codec=".aac",  # non implemented choice export codec
     )
-    
-    
+
     if opus == "opus":
         command = vid_initializer.opus_factory()
     elif copy_video == "Yes":
@@ -88,8 +90,12 @@ def ffmpegextract():
         command = vid_initializer.non_video_extraction()
 
     try:
-        extct = subprocess.Popen(command, shell=True, universal_newlines=True,
-                                    cwd=ffmpeg_dir)
+        extct = subprocess.Popen(
+            command,
+            shell=True,
+            universal_newlines=True,
+            cwd=ffmpeg_dir
+        )
         extct.wait()
         os.startfile(os.path.dirname(fr'{outname}'))
     except subprocess.CalledProcessError as ce:

@@ -4,7 +4,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 
-from .utility_dir import util_functions
+from ..utility_dir import util_functions
 
 # from utility_dir import util_functions
 

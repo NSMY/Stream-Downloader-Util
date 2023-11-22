@@ -1,12 +1,12 @@
 # TODO 
-# [] have default call (Main) get stream name??
-# [x] at the end of check for new vods run threading to compare Status (set recoding to Recorded)
+# [x] have default call (Main) get stream name??
+# [] at the end of check for new vods run threading to compare Status (set recoding to Recorded)
 #   maybe do something with recording are u sure you want to download in (main.py)/and or make invisible??
 
-# [] make chapters in vods? using code > __pycache__/getChaptersCall.py < will require a large rewrite, games will be
+# LEFTHERE make chapters in vods? using code > __pycache__/getChaptersCall.py < will require a large rewrite, games will be
 # in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 
-# [] ask a Q if download from file about being RECORDING wether to proceed downloading.
+# [x] ask a Q if download from file about being RECORDING wether to proceed downloading.
 # [] figure a way to determine if fully downloaded and set to downloaded in file  Name+ Total seconds ??
 # [] make it so u can check if downloaded incase a new json file is made/ overwritten
 # [] be able to manually set if downloaded

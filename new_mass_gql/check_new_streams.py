@@ -4,8 +4,8 @@ import json
 import os
 from time import sleep
 
-from new_mass_gql.utility_dir import get_single_vod_ as gsv
-from new_mass_gql.utility_dir import util_functions as util
+from utility_dir import get_single_vod_ as gsv
+from utility_dir import util_functions as util
 
 from . import gql_main_call
 from . import swap_old_data as sod
@@ -112,28 +112,31 @@ def print_new_vods_from_dictClass(vod_index, vods_dict):
 # def start_new_vods(json_file_path, streamer_user_name):
 def start_new_vods():
     # [] input the best way??
-    streamer_name = input('Streamer Name or "saved" to get a list of previous:').lower()
-    if streamer_name == "saved":
-        streamer_name = util.multi_choice_dialog(
-            # "Who to Check?:", gsv.get_file_list_from_dir("jsons\\")
-            "Who to Check?:", gsv.get_file_list_from_dir(rf"{util.get_appdata_dir()}\jsons")
-        )
-    cnv_rtrn = check_for_new_vods(
-        rf"{util.get_appdata_dir()}\jsons\{streamer_name}.json",
-        streamer_user_name=streamer_name
+    # print(type(gsv.get_file_list_from_dir(rf"{util.get_appdata_dir()}\jsons")))
+    # streamer_name = input('Streamer Name or "saved" to get a list of previous:').lower()
+    # if streamer_name == "saved":
+    streamer_name = util.multi_choice_dialog(
+        # "Who to Check?:", gsv.get_file_list_from_dir("jsons\\")
+        "Who?", gsv.get_file_list_from_dir(rf"{util.get_appdata_dir()}\jsons") + ['[New Streamer to Add]']
     )
-    start_point_index = int(util.get_index_last_vod(cnv_rtrn[1], cnv_rtrn[2]))
-    conflict_data = sod.get_conflicting_indexes(cnv_rtrn[1], cnv_rtrn[2], start_point_index, ['downloaded'])
-    newData = sod.new_data_to_json_exclude(cnv_rtrn[1], conflict_data[-1], conflict_data[0], 'downloaded')
-    with open(cnv_rtrn[0], 'w') as f:
-        json.dump(newData, f, indent=4)
+    if not streamer_name == "[New Streamer to Add]":
+        cnv_rtrn = check_for_new_vods(
+            rf"{util.get_appdata_dir()}\jsons\{streamer_name}.json",
+            streamer_user_name=streamer_name
+        )
+        start_point_index = int(util.get_index_last_vod(cnv_rtrn[1], cnv_rtrn[2]))
+        conflict_data = sod.get_conflicting_indexes(cnv_rtrn[1], cnv_rtrn[2], start_point_index, ['downloaded'])
+        newData = sod.new_data_to_json_exclude(cnv_rtrn[1], conflict_data[-1], conflict_data[0], 'downloaded')
+        with open(cnv_rtrn[0], 'w') as f:
+            json.dump(newData, f, indent=4)
 
+        if cnv_rtrn[3] is not None:
+            newData = add_new_entries_json(cnv_rtrn[0], cnv_rtrn[1], cnv_rtrn[2], cnv_rtrn[3])
 
-    if cnv_rtrn[3] is not None:
-        newData = add_new_entries_json(cnv_rtrn[0], cnv_rtrn[1], cnv_rtrn[2], cnv_rtrn[3])
-
-    return newData
-    # print(gsv.Run_get_vod(streamer_name))
+        return newData
+        # print(gsv.Run_get_vod(streamer_name))
+    else:
+        gql_main_call.First_making_cmds(input('User Name:').lower())
 
 
 if __name__ == "__main__":

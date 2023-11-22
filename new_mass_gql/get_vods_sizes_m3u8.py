@@ -82,5 +82,5 @@ def m3u8_call_init(video_id):
     access_token = gql.get_access_token(video_id)
 
     resolutions_uris = get_playlist_uris(video_id, access_token)
-    print("🐍 File: new_mass_gql/my_Test_m3u8.py | Line: 91 | m3u8_call_init ~ resolutions_uris",resolutions_uris)
+    # print("🐍 File: new_mass_gql/my_Test_m3u8.py | Line: 91 | m3u8_call_init ~ resolutions_uris",resolutions_uris)
     return resolutions_uris

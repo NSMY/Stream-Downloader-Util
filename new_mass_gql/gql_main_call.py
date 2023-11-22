@@ -1,12 +1,15 @@
-import json
+# import json
 import os
 import pprint
 import timeit
 
 import httpx
-import requests
+from tqdm import tqdm
 
-from new_mass_gql.utility_dir import util_functions as util
+from utility_dir import util_functions as util
+
+# import requests
+
 
 start_time = timeit.default_timer()
 
@@ -138,38 +141,6 @@ def query_channel_vods(
         sort=sort_by,
     )
 
-# [x]HUGE GAINS.
-
-
-# TODO Combine new with old from testttt and resave _ sep class and the saving of the class.
-
-# resp2 = json.loads(resp)
-
-
-# print(resp2)
-# print(type(resp2))
-# print(resp2.get("id"))
-# print("🐍 File: Desktop/gql.py | Line: 72 | undefined ~ resp",resp)
-# for item in resp:
-#     print(item['1'])
-
-
-# pprint.pprint(resp)
-
-# # Loop over the dictionaries in the list
-# for item in resp:
-#     # Get the 'title' field
-#     title = item['title']
-
-#     # Filter out non-alphabet characters from the title
-#     filtered_title = ''.join(c for c in title if c.isalpha() or c.isspace())
-
-#     # Replace the 'title' field with the filtered title
-#     item['title'] = filtered_title
-
-
-# print("🐍 File: New-twitch-mass-downloader/gql.py | Line: 124 | undefined ~ resp",resp)
-
 
 class Vod:
     """
@@ -222,15 +193,21 @@ class Vod:
             vods.append(cls(edge["node"]))
         return [vars(vod) for vod in vods]
 
+from yaspin import yaspin
+
 
 # [] Kwargs ??? **kwargs.
 def First_making_cmds(streamer_user_name=None):
     if not streamer_user_name:
         streamer_user_name = input("Enter Streamer User Name: ").lower()
     # if file exist ?? .
+    # spinner = yaspin(text="Making Requests...") # LOOK Cool but dont show in the py terminal
+    # spinner = yaspin()
+    # spinner.start()
     query = query_channel_vods(streamer_user_name, 100, "TIME")
     query_resp = gql_query(query=query)
     resp = query_resp.json()
+    # spinner.stop()
 
     # [] still need to sort our the recording/archive/highlight/upload/premiere
     if query_resp.status_code != 200:
@@ -261,9 +238,11 @@ def First_making_cmds(streamer_user_name=None):
         if outcome == 'No':
             return
     util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
+    os.system('cls')
+    from startup import main_start
+    main_start()
     # print('saving to Desktop fortesting')
     # util.dump_json_ind4(file_path='C:/Users/970EVO-Gamer/Desktop/testt.json', content_dump=vods_dict)
-
 
 
 # end_time = timeit.default_timer()

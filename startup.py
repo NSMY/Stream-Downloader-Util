@@ -9,7 +9,7 @@ import funcs
 import init_files
 from ffmpegExtract import ffmpegextract
 from new_mass_gql import check_new_streams, gql_main_call
-from new_mass_gql.utility_dir import get_single_vod_
+from utility_dir import get_single_vod_
 
 
 def main_start(impt_data=None):

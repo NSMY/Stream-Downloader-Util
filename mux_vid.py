@@ -1,7 +1,6 @@
 import os
 import subprocess
 import winsound
-from sys import exit
 
 from pyperclip import copy, paste
 from send2trash import send2trash
@@ -12,7 +11,7 @@ import init_files
 # TODO webm?
 
 
-def mux(file_path_inpt=paste(), ran_as_main: bool=False):
+def mux(file_path_inpt=paste(), ran_as_main: bool = False):
     try:
         check_settings = funcs.loadSettings(['LastSave', 'ffmpegpath'])
     except FileNotFoundError as e:
@@ -41,12 +40,12 @@ def mux(file_path_inpt=paste(), ran_as_main: bool=False):
     new_file_path = os.path.join(new_file_path, old_file_name)
     print(old_file_name)
 
-
-    # checks if file exists if so. 
+    # checks if file exists if so.
     # send file to trash if Overwritten is chosen.
     if os.path.isfile(new_file_path):
-        exists = funcs.multi_choice_dialog('File already Exists, Overwrite or '
-                                            'Rename', ['Overwrite', 'Rename']
+        exists = funcs.multi_choice_dialog(
+            'File already Exists, Overwrite or '
+            'Rename', ['Overwrite', 'Rename']
         )
         if exists == 'Overwrite':
             send2trash(rf'{new_file_path}')
@@ -72,14 +71,19 @@ def mux(file_path_inpt=paste(), ran_as_main: bool=False):
         try:
             send2trash(rf'{file_path}')
         except Exception:
-            print(f'Error... with {view_fp} \n or {view_nfp}'
-                    '\nTried to move {view_fp} \nto trash\n')
+            print(
+                f'Error... with {view_fp} \n or {view_nfp}'
+                '\nTried to move {view_fp} \nto trash\n'
+            )
         else:
             if not os.path.isfile(f'{file_path}'):
-                winsound.PlaySound('C:\\Windows\\Media\\Recycle.wav',
-                                winsound.SND_FILENAME)
-                print(f'\nMoved: {view_fp} \nto Trash...'
-                    f'\nSaved in to: {view_nfp}\nRe-Muxed..\n')
+                winsound.PlaySound(
+                    'C:\\Windows\\Media\\Recycle.wav',
+                    winsound.SND_FILENAME)
+                print(
+                    f'\nMoved: {view_fp} \nto Trash...'
+                    f'\nSaved in to: {view_nfp}\nRe-Muxed..\n'
+                )
 
     funcs.open_directory_Force_front(new_file_path)
 

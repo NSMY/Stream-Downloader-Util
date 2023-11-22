@@ -2,35 +2,50 @@
 # import json
 import json
 import os
+# # dload_predicted_size = ''
+# # dld_filepath = r'E:\DeleteStreams\FFMPEG__re-Muxed\Kotton - 18-11-2023 Selling Base Today  Archonexus pt 2  500 BrutalCassandra mods RimWorld.mp4'
+# # slinkDir = 'C:/ffmpeg/'
+# # string = f'ffprobe -i "{dld_filepath}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1'
+# # dld_vid_size = subprocess.Popen(string, stdout=subprocess.PIPE, text=True, cwd=slinkDir)
+# # out_pt = dld_vid_size.stdout.read()
+# # # print(str(out_pt.strip()).split("'")[1])
+# # print(int(float(out_pt)))
+# # print(utill.decode_seconds_to_hms(int(float(out_pt))))
+import re
+import sys
+from pathlib import Path
+from re import L
 from urllib.parse import urlparse, urlunparse
 
 import m3u8
 
-from new_mass_gql.utility_dir import util_functions as utill
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+# # [] have to  make a if file is dld voa nested iffs if len if size if title?? if date?
+# # [] then have to check if the input is ?t=04h55m35s then offset timecode with total 
+# # [] to get true len/size
+# # [] maybe need pass total seconds from get vodsize call in order to get non file vods
+# # [] also might need to do the pipout stdOut and look for stream ended / error etc
+# # however it may block streamlink y/n questions??.
+import subprocess
+
+from utility_dir import util_functions as utill
+
+# from new_mass_gql.utility_dir import util_functions as utill
 
 # url = 'https://www.twitch.tv/videos/1972875530'
 # url = 'https://www.twitch.tv/videos/1982124389?t=01h14m26s'
 # url = 'https://www.twitch.tv/videos/1981192341?filter=archives&sort=time'
 # # url = 'https://www.twitch.tv/etalyx'
 # # url = 'https://usher.ttvnw.net/vod/1982669879.m3u8?acmb=e30%3D&allow_source=true&browser_family=firefox&browser_version=119.0&cdm=wv&os_name=Windows&os_version=NT%2010.0&p=602199&platform=web&play_session_id=4829124e3474f79b5cb7c29f5c7e7e65&player_backend=mediaplayer&player_version=1.23.0&playlist_include_framerate=true&reassignments_supported=true&sig=3432efaaeef66d80b6920db6f0718e9ab21fd391&supported_codecs=h264&token=%7B%22authorization%22%3A%7B%22forbidden%22%3Afalse%2C%22reason%22%3A%22%22%7D%2C%22chansub%22%3A%7B%22restricted_bitrates%22%3A%5B%5D%7D%2C%22device_id%22%3A%22L8lFfAYG1PKKuwUFH5gJJhtC4mSOAefS%22%2C%22expires%22%3A1700633570%2C%22https_required%22%3Atrue%2C%22privileged%22%3Afalse%2C%22user_id%22%3A194301647%2C%22version%22%3A2%2C%22vod_id%22%3A1982669879%7D&transcode_mode=cbr_v1'
-# # url = 'https://www.youtube.com/watch?v=NE4Exqt_0z8'
+# url = 'https://www.youtube.com/watch?v=NE4Exqt_0z8'
 # # url = 'https://d2nvs31859zcd8.cloudfront.net/0a8060ce24c8559879af_trash_dev_43092903451_1700500921/chunked/index-dvr.m3u8'
 
-# urlparsed = urlparse(url)
-# # print(urlparsed)
-# def parse_url_twitch(url):
-#     if not urlparsed.path.split('/')[-1].isnumeric():
-#         return urlunparse(urlparsed)
-#     if urlparsed.query.startswith(('t=', 'acmb=')):
-#         return url
-#     elif urlparsed.query.startswith('filter='):
-#         new_url_parts = (urlparsed.scheme, urlparsed.netloc, urlparsed.path, '', '', '')
-#         return urlunparse(new_url_parts)
-#     else:
-#         return url
+# print(urlparsed)
+
 # url_ = parse_url_twitch(url)
 # # playlist = m3u8.load(url)
-# # get_variant_url = str(playlist.playlists[0])
+# get_variant_url = str(playlist.playlists[0])
 # # print("🐍 File: zextra_Funcs_/Testcode.py | Line: 26 | undefined ~ get_variant_url",get_variant_url)
 # print("🐍 File: Stream-Downloader-Util/Testcode.py | Line: 23 | undefined ~ url_",url_)
 
@@ -87,28 +102,55 @@ from new_mass_gql.utility_dir import util_functions as utill
 # print(xfile /20)
 # print(compare_sizes(xfile, zfile, xfile/20 ))
 
-# # [] have to  make a if file is dld voa nested iffs if len if size if title?? if date?
-# # [] then have to check if the input is ?t=04h55m35s then offset timecode with total 
-# # [] to get true len/size
-# # [] maybe need pass total seconds from get vodsize call in order to get non file vods
-# # [] also might need to do the pipout stdOut and look for stream ended / error etc
-# # however it may block streamlink y/n questions??.
+
+file = r'E:\DeleteStreams\FFMPEG__re-Muxed\Deadlyslob - 21-11-2023 Richard Heads Sturgian Conquest  Day 5  Glasses Mount  Blade II Bannerlord.mp4'
+url = 'https://www.twitch.tv/videos/1982124389?t=03h42m00s'
+with open('c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/deadlyslob.json', 'r') as f:
+    data = json.load(f)[0]
+# print(data)
+
+# gets true Length if downloaded with a time offset
+# and cross checks if the vod and file(length) == the same with offest.
 
 
-# # dload_predicted_size = ''
-# # dld_filepath = r'E:\DeleteStreams\FFMPEG__re-Muxed\Kotton - 18-11-2023 Selling Base Today  Archonexus pt 2  500 BrutalCassandra mods RimWorld.mp4'
-# # slinkDir = 'C:/ffmpeg/'
-# # string = f'ffprobe -i "{dld_filepath}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1'
-# # dld_vid_size = subprocess.Popen(string, stdout=subprocess.PIPE, text=True, cwd=slinkDir)
-# # out_pt = dld_vid_size.stdout.read()
-# # # print(str(out_pt.strip()).split("'")[1])
-# # print(int(float(out_pt)))
-# # print(utill.decode_seconds_to_hms(int(float(out_pt))))
+# FIX will need to include ffprobe in main settings checks to use this.
+get_len_of_vod_file = subprocess.Popen(
+    rf'ffprobe -i "{file}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
+    shell=False,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    universal_newlines=True,
+    cwd='c:/ffmpeg/' # FIX replace me.
+)
+stdout, stderr = get_len_of_vod_file.communicate()
+get_len_of_vod_file.wait()
+len_of_vod = int(stdout.split('.')[0])
+# print("🐍 File: zextra_Funcs_/Testcode.py | Line: 126 | undefined ~ len_of_vod",len_of_vod)
 
 
-target_id = '1709345985'
-new_value = '720p60'
+if (ulr_query := urlparse(url).query).startswith('t='):
+    url_split = re.split('[=hms]', ulr_query)
+    secs_to_subt_from_file = utill.encode_hms_to_seconds(':'.join(url_split[1:-1]))
+    # if len_of_vod - secs_to_subt_from_file == 0:
+    if len_of_vod - data.get('lengthSeconds') == 0:
+        print('wePassed')
+        # Code Here.
+        # set downloaded status.
+        # pass
+elif len_of_vod - data.get('lengthSeconds') == 0:
+    print('wePassed')
+    # Code Here.
+    # set downloaded status.
+        
 
+# print(utill.decode_seconds_to_hms(4466))
 
+# # finds string in Dir.
+# targ_str = 'thePrimeagen $60 Million Loss From ONE Line Of Code'
+# targdir = r'E:\DeleteStreams\FFMPEG__re-Muxed'
 
+# for f in os.listdir(targdir):
+#     if targ_str in f:
+        
+#         print(f)
 

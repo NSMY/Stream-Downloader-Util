@@ -67,7 +67,9 @@ def version_check():
             print('Settings Files Deleted, Outdated Version')
             shutil.rmtree(settings_dir)
             # funcs.send_to_trash(settings_dir)
-            funcs.main_start()
+            from startup import main_start
+            main_start()
     except PermissionError as f:
         # print("Permission error")
-        funcs.main_start()
+        from startup import main_start
+        main_start()
