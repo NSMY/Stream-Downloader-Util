@@ -1,13 +1,21 @@
 # Global variable to hold the selected items
 import json
 import os
+import sys
 import tkinter as tk
+from pathlib import Path
 from tkinter import ttk
 
-from ..utility_dir import util_functions
+from utility_dir import util_functions
 
-# from utility_dir import util_functions
+# from ..utility_dir import util_functions
 
+
+
+""" # to make the file work as a stand alone
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from utility_dir import util_functions
+"""
 selected_items = []
 # [] Super Twitch ONLY
 def create_popup1(windowName, columns, data):
@@ -30,10 +38,14 @@ def create_popup1(windowName, columns, data):
             "Selection/s made by clicking on a Vod/s with Mouse\nUse 'CLOSE' "
             "(Bottom Right) Button to make selection Dont use (Windows)X"
         ),
-        bg="#0b0b13",
+        bg="#0b0a0d",
         fg="white",
         highlightcolor="white",
-        justify="left"
+        justify="left",
+        highlightbackground='#853a3a',
+        highlightthickness=1,
+        padx=5,
+
     )
     label.grid(row=2, column=1, sticky='s')
 
@@ -46,9 +58,14 @@ def create_popup1(windowName, columns, data):
         show='headings',
         height=17,
         selectmode='browse',
-        padding=1
+        padding=1,
+        takefocus=2
     )
     tree.grid(row=1, column=1, sticky='nsew')
+
+    vsb = ttk.Scrollbar(popup, orient="vertical", command=tree.yview)
+    vsb.grid(row=1, column=2, sticky='nse')
+    tree.configure(yscrollcommand=vsb.set)
 
     for col in columns:
         tree.heading(col, text=col)
@@ -57,7 +74,7 @@ def create_popup1(windowName, columns, data):
         elif col == 'id':
             tree.column(col, width=75, stretch=tk.YES, anchor='center')
         elif col == 'downloaded':
-            tree.column(col, width=40, stretch=tk.YES, anchor='center')
+            tree.column(col, width=55, stretch=tk.YES, anchor='center')
         elif col == 'publishedAt':
             tree.column(col, width=140, stretch=tk.YES, anchor='center')
         elif col == 'broadcastType':
@@ -83,12 +100,18 @@ def create_popup1(windowName, columns, data):
 
     label2 = tk.Label(
         popup,
-        text=(f'Vods List for: {windowName.strip('.json').title()}'),
-        bg="#0b0b13",
-        fg="white",
-        highlightcolor="white",
+        text=(f'Vods List for : {windowName.split('.')[0].title()}'),
+        bg="#0b0a0d",
+        fg="#296d8f",
+        highlightcolor="red",
         justify="center",
-        font="calabri"
+        font="calabri",
+        relief='groove',
+        state='disabled',
+        disabledforeground='white',
+        activebackground='red',
+        pady=5,
+        padx=4,
     )
     label2.grid(row=0, column=1, sticky='nw')
 
@@ -103,10 +126,32 @@ def create_popup1(windowName, columns, data):
         highlightcolor='yellow',
         background='#296d8f',
         foreground='white',
-        activebackground='red',
-        activeforeground='white'
+        activebackground='#ff004c',
+        activeforeground='white',
+        underline=5,
+        relief="groove",
+        overrelief='ridge',
+        pady=1
     )
     button1.grid(row=2, column=1, sticky='se')
+
+    button3 = tk.Button(
+        popup,
+        text="Open Folder",
+        underline=5,
+        justify='center',
+        relief='flat',
+        overrelief='raised',
+        command=lambda: os.startfile(os.path.dirname(file)),  # NOTE gets link from File arg.
+        height=1,
+        width=9,
+        highlightcolor='red',
+        background='#125c81',
+        foreground='white',
+        activebackground='#1b582b',
+        activeforeground='white'
+    )
+    button3.grid(row=2, column=1, sticky='sw')
 
     popup.grid_columnconfigure(1, weight=1)
     popup.grid_rowconfigure(1, weight=1)
@@ -124,9 +169,9 @@ def create_popup1(windowName, columns, data):
     popup.destroy()
 
 
-def call_tk_vod_view(json_data):
-    winName = os.path.basename(json_data)
-    with open(file, 'r') as f:
+def call_tk_vod_view(file_path):
+    winName = os.path.basename(file_path)
+    with open(file_path, 'r') as f:
         jsond = json.load(f)
 
     list1 = []
@@ -152,8 +197,8 @@ def call_tk_vod_view(json_data):
         print(jsond[int(index)].get('publishedAt'), '\n')
     return selected_items
 
-# file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\shenryyr.json"
-# if __name__ == '__main__':
-#     call_tk_vod_view(file)
+# file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\sequisha.json"
+if __name__ == '__main__':
+    call_tk_vod_view(file_path)
 
 # input('exit ................')

@@ -10,6 +10,11 @@
 # [] figure a way to determine if fully downloaded and set to downloaded in file  Name+ Total seconds ??
 # [] make it so u can check if downloaded incase a new json file is made/ overwritten
 # [] be able to manually set if downloaded
+# [] in the check new stream -- what to do for deleted /hidden vods on channels? 
+
+# [] make a loop to get all new vods in dir 
+
+
 
 # [] mak the stup init settings better, maybe into 1 call like if key in settings then call the whole settings thins
 # more robust dependency searching and downloading (if deleted between settinggs Checks)

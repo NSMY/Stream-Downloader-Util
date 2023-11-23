@@ -159,7 +159,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         # end m3u8 check.
 
     if fromfile:  # FIXME whats this for??.
-        print(fromfile[1])
+        print(fromfile[-1])
 
     # saving file path.
     download_file_path = funcs.saveFile(fromfile[-1]) if fromfile else funcs.saveFile()

@@ -35,26 +35,26 @@ from subprocess import PIPE, Popen
 from turtle import title
 from urllib.parse import urlparse
 
-# for loop to get all sizes of vids in dir.
-choseendir = 'E:/DeleteStreams/FFMPEG__re-Muxed/'
-for files in os.listdir(choseendir):
-    # print(files)
-    fp = os.path.join(choseendir, files)
-    # print("🐍 File: new_mass_gql/tessettt.py | Line: 368 | undefined ~ fp",fp)
+# # for loop to get all sizes of vids in dir.
+# choseendir = 'E:/DeleteStreams/FFMPEG__re-Muxed/'
+# for files in os.listdir(choseendir):
+#     # print(files)
+#     fp = os.path.join(choseendir, files)
+#     # print("🐍 File: new_mass_gql/tessettt.py | Line: 368 | undefined ~ fp",fp)
 
-    dldVid_sizs = subprocess.Popen(
-        rf'ffprobe -i "{fp}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
-        shell=False,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        cwd='c:/ffmpeg/'
-    )
-    stdout, stderr = dldVid_sizs.communicate()
-    out_pt, _ = dldVid_sizs.communicate()
-    dldVid_sizs.wait()
-    files = files.split('-')
-    print(f'{out_pt.split('.')[0]}  {files}')
+#     dldVid_sizs = subprocess.Popen(
+#         rf'ffprobe -i "{fp}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
+#         shell=False,
+#         stdout=subprocess.PIPE,
+#         stderr=subprocess.PIPE,
+#         universal_newlines=True,
+#         cwd='c:/ffmpeg/'
+#     )
+#     stdout, stderr = dldVid_sizs.communicate()
+#     out_pt, _ = dldVid_sizs.communicate()
+#     dldVid_sizs.wait()
+#     files = files.split('-')
+#     print(f'{out_pt.split('.')[0]}  {files}')
     
 # result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
 
@@ -93,3 +93,10 @@ for line in iter(process.stdout.readline, ''):
 # if (url := urlparse(url).path.rsplit('/')[-1]).isnumeric():
 # # (url := url.split('/', -1))
 #     print(url)
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from new_mass_gql.tk_get_file_list import call_tk_vod_view
+
+print(call_tk_vod_view('C:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/shenryyr.json'))
