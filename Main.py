@@ -38,7 +38,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
             fromfile[1]["vod_info"],
             f"{fromfile[1]['vod_info']['displayName']} - "
             f"{util_functions.simple_convert_timestamp(fromfile[1]['vod_info']['publishedAt'])} "
-            f"{fromfile[1]['vod_info']['title']} "
+            f"{fromfile[1]['vod_info']['title']}_"
             f"{fromfile[1]['vod_info']['gameName']}",
         )
 
@@ -276,7 +276,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
             # working Great, need a Pointer to file/or date dld in file??.
             util_functions.update_downloaded_to_resolution(
                 urlparse(url_).path.split("/")[-1], chosen_resolution
-            )
+            )# BUG seemed not to trigger on 14-10 vod of kotton?.
 
     if download_with_Shutdown:
         if sd_type == "Auto":

@@ -13,8 +13,11 @@
 # [] in the check new stream -- what to do for deleted /hidden vods on channels? 
 
 # [] make a loop to get all new vods in dir 
-
-
+# [] put somewhere prob check for new vods return the ['status'] eg RECORDING. to knwo if still LIVE
+# BUG why does check for new vods Print all the vods? not just new seems to be ALL one the check call [in a double line info then url]
+# prints 0 new vods anyway?.
+# [] make a way to back out of get vods if chosen wrong file. (probs add a exit string/if to the multi choice)
+# [] have a waiting indication on (particular req calls) something not spinners as they seem to not work on old cmd
 
 # [] mak the stup init settings better, maybe into 1 call like if key in settings then call the whole settings thins
 # more robust dependency searching and downloading (if deleted between settinggs Checks)

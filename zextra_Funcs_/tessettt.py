@@ -1,3 +1,19 @@
+import ctypes
+import json
+import os
+import pprint
+import re
+import subprocess
+import sys
+import timeit
+import tkinter as tk
+from pathlib import Path
+from re import L, split
+from subprocess import PIPE, Popen
+from turtle import title
+from urllib.parse import urlparse
+
+from numpy import append, size
 
 # def create_popup(content):
 #     popup = tk.Tk()
@@ -22,19 +38,6 @@
 
 # ffmpeg -i "C:\Users\970EVO-Gamer\Desktop\Jason Parris X My Buddy Mike ft. Neon Hitch - No Warning.mp3" -c copy "C:\Users\970EVO-Gamer\Desktop\Jason Parris X My Buddy Mike ft. Neon Hitch - No Warning.wav"  
 
-import ctypes
-import json
-import os
-import pprint
-import re
-import subprocess
-import timeit
-import tkinter as tk
-from re import L, split
-from subprocess import PIPE, Popen
-from turtle import title
-from urllib.parse import urlparse
-
 # # for loop to get all sizes of vids in dir.
 # choseendir = 'E:/DeleteStreams/FFMPEG__re-Muxed/'
 # for files in os.listdir(choseendir):
@@ -55,7 +58,7 @@ from urllib.parse import urlparse
 #     dldVid_sizs.wait()
 #     files = files.split('-')
 #     print(f'{out_pt.split('.')[0]}  {files}')
-    
+
 # result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
 
 
@@ -74,15 +77,15 @@ from urllib.parse import urlparse
 #         print("success")
 #     if process.poll() is not None:
 #         break
-
-'''# stdout, stderr = process.communicate()
+'''
+# stdout, stderr = process.communicate()
 for line in iter(process.stdout.readline, ''):
     print(line.rstrip())
     if '[download]' in line.rstrip():
         print('Downloading file')
 '''
 
-
+'''
 # dd ='[cli][info] Closing currently open stream...'
 # if "Closing " in dd:
 #     print('True')
@@ -93,10 +96,11 @@ for line in iter(process.stdout.readline, ''):
 # if (url := urlparse(url).path.rsplit('/')[-1]).isnumeric():
 # # (url := url.split('/', -1))
 #     print(url)
-import sys
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from new_mass_gql.tk_get_file_list import call_tk_vod_view
+# # tk gui
+# sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# from new_mass_gql.tk_get_file_list import call_tk_vod_view
 
-print(call_tk_vod_view('C:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/shenryyr.json'))
+# print(call_tk_vod_view('C:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/shenryyr.json'))
+'''
+
