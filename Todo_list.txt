@@ -12,6 +12,8 @@
 # [] be able to manually set if downloaded
 # [] in the check new stream -- what to do for deleted /hidden vods on channels? 
 
+# [] have settings snapshot sys?/mass check installed apps eg if running terminal or old cmd to be able to do more advamced gui stuff????
+
 # [] make a loop to get all new vods in dir 
 # [] put somewhere prob check for new vods return the ['status'] eg RECORDING. to knwo if still LIVE
 # BUG why does check for new vods Print all the vods? not just new seems to be ALL one the check call [in a double line info then url]
