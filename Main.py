@@ -5,7 +5,6 @@ import subprocess
 import sys
 import threading
 import winsound
-from ast import arg
 from datetime import datetime
 from queue import Queue
 from urllib.parse import urlparse
