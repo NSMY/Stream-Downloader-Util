@@ -6,16 +6,16 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import ttk
 
-from utility_dir import util_functions
+# from utility_dir import util_functions
 
 # from ..utility_dir import util_functions
 
 
 
-""" # to make the file work as a stand alone
+ # to make the file work as a stand alone
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from utility_dir import util_functions
-"""
+
 selected_items = []
 # [] Super Twitch ONLY
 def create_popup1(windowName, columns, data):
@@ -29,48 +29,59 @@ def create_popup1(windowName, columns, data):
     tree = ttk.Treeview(popup, style="Treeview")
     popup.configure(
         bg="#0b0b13",
-        border=10,
+        highlightbackground="#296D8F",
+        highlightcolor='#0b0b13',
+        highlightthickness=5
     )
+    frame1 = tk.Frame(popup, bg="#0b0a0d",) #borderwidth=3, highlightthickness=1, highlightbackground='yellow')
+    frame2 = tk.Frame(popup, bg="#0b0a0d", borderwidth=3) #, highlightthickness=1, highlightbackground='violet')
+    frame3 = tk.Frame(popup, bg="#0b0a0d",) #borderwidth=3, highlightthickness=1, highlightbackground='white')
+    frame4 = tk.Frame(popup, bg="#0b0a0d", borderwidth=3, highlightbackground='yellow', relief="raised")
 
     label = tk.Label(
-        popup,
+        frame2,
         text=(
             "Selection/s made by clicking on a Vod/s with Mouse\nUse 'CLOSE' "
             "(Bottom Right) Button to make selection Dont use (Windows)X"
         ),
         bg="#0b0a0d",
         fg="white",
+        font=("Calibri", 10, "bold"),
         highlightcolor="white",
         justify="left",
-        highlightbackground='#853a3a',
-        highlightthickness=1,
+        # highlightbackground='#853a3a',
+        # highlightthickness=1,
+        relief='sunken',
+        borderwidth=3,
         padx=5,
+        pady=2,
+        state="active",
+        activebackground="silver"
 
     )
-    label.grid(row=2, column=1, sticky='s')
+    # label.grid(row=2, column=1, sticky='n', pady=5)
 
     # Calculate the maximum length of the content
     # max_length = max(len(value) for value in data)
 
     tree = ttk.Treeview(
-        popup,
+        frame1,
         columns=columns,
         show='headings',
         height=17,
         selectmode='browse',
-        padding=1,
         takefocus=2
     )
-    tree.grid(row=1, column=1, sticky='nsew')
+    # tree.grid(row=1, column=1, sticky='nsew')
 
-    vsb = ttk.Scrollbar(popup, orient="vertical", command=tree.yview)
-    vsb.grid(row=1, column=2, sticky='nse')
+    vsb = ttk.Scrollbar(frame3, orient="vertical", command=tree.yview, style='')
+    # vsb.grid(row=1, column=2, sticky='nsw')
     tree.configure(yscrollcommand=vsb.set)
 
     for col in columns:
         tree.heading(col, text=col)
         if col == 'index':
-            tree.column(col, width=20, stretch=tk.NO)
+            tree.column(col, width=20, stretch=tk.NO, anchor="w")
         elif col == 'id':
             tree.column(col, width=75, stretch=tk.YES, anchor='center')
         elif col == 'downloaded':
@@ -78,7 +89,7 @@ def create_popup1(windowName, columns, data):
         elif col == 'publishedAt':
             tree.column(col, width=140, stretch=tk.YES, anchor='center')
         elif col == 'broadcastType':
-            tree.column(col, width=75, stretch=tk.NO)
+            tree.column(col, width=75, stretch=tk.NO, anchor='center')
         elif col == 'gameName':
             tree.column(col, minwidth=90, stretch=tk.YES)
         elif col == 'title':
@@ -99,30 +110,34 @@ def create_popup1(windowName, columns, data):
             selected_items.append(clicked_item)
 
     label2 = tk.Label(
-        popup,
+        frame4,
         text=(f'Vods List for : {windowName.split('.')[0].title()}'),
         bg="#0b0a0d",
-        fg="#296d8f",
-        highlightcolor="red",
+        # fg="#296d8f",
+        # highlightcolor="red",
         justify="center",
-        font="calabri",
-        relief='groove',
+        font=("calabri", 12, "bold"),
+        relief='raised',
+        highlightbackground='#096597',
+        # highlightthickness=16,
+        border=3,
         state='disabled',
-        disabledforeground='white',
+        disabledforeground='#BBD5F0',
         activebackground='red',
         pady=5,
         padx=4,
     )
-    label2.grid(row=0, column=1, sticky='nw')
+    # label2.grid(row=1, rowspan=3, column=3, padx=5, pady=5)
 
     tree.bind("<ButtonRelease-1>", get_selection)
 
     button1 = tk.Button(
-        popup,
+        frame4,
         text="Make Selection-Close",
         command=lambda: popup.quit(),
         height=2,
         width=17,
+        font=("calabri", 10, "bold", "italic"),
         highlightcolor='yellow',
         background='#296d8f',
         foreground='white',
@@ -131,15 +146,16 @@ def create_popup1(windowName, columns, data):
         underline=5,
         relief="groove",
         overrelief='ridge',
-        pady=1
+        pady=7
     )
-    button1.grid(row=2, column=1, sticky='se')
+    # button1.grid(row=1, rowspan=3, column=3, padx=5, pady=5)
 
     button3 = tk.Button(
-        popup,
+        frame4,
         text="Open Folder",
         underline=5,
         justify='center',
+        font=("Calabri", 8),
         relief='flat',
         overrelief='raised',
         command=lambda: os.startfile(os.path.dirname(file)),  # NOTE gets link from File arg.
@@ -149,9 +165,25 @@ def create_popup1(windowName, columns, data):
         background='#125c81',
         foreground='white',
         activebackground='#1b582b',
-        activeforeground='white'
+        activeforeground='white',
+        pady=3
     )
-    button3.grid(row=2, column=1, sticky='sw')
+    # button3.grid(row=1, rowspan=3, column=3, padx=5, pady=5)
+
+    frame1.grid(row=1, column=1, sticky="nsew")
+    tree.pack(side='left', fill='both', anchor='ne', expand=True)
+    vsb.pack(side="left", fill="y", anchor='nw', expand=True, padx=2)
+
+    frame2.grid(row=2, column=1, sticky="nsew")
+    label.pack(side="right")
+
+    frame3.grid(row=1, column=2, sticky="nsew")
+
+    frame4.grid(row=1, column=3, sticky="nsew")
+
+    label2.pack(side="top", fill="x", padx=5, pady=5)
+    button1.pack(side="bottom", fill="x", padx=5, pady=5 )
+    button3.pack(side="bottom", fill="x", padx=5, pady=5 )
 
     popup.grid_columnconfigure(1, weight=1)
     popup.grid_rowconfigure(1, weight=1)
@@ -197,8 +229,9 @@ def call_tk_vod_view(file_path):
         print(jsond[int(index)].get('publishedAt'), '\n')
     return selected_items
 
-# file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\sequisha.json"
-if __name__ == '__main__':
-    call_tk_vod_view(file_path)
+file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\kotton.json"
+call_tk_vod_view(file)
+# if __name__ == '__main__':
+#     call_tk_vod_view(file_path)
 
 # input('exit ................')

@@ -4,7 +4,7 @@
 file_extentions/
 hall.ico
 .vscode
-# Testcode.py
+CTK_test.py
 __pycache__
 utility_dir\__pycache__
 \jsons
