@@ -2,19 +2,27 @@
 import json
 import os
 import sys
+import threading
 import tkinter as tk
+from concurrent.futures import thread
 from pathlib import Path
 from tkinter import ttk
 
-# from utility_dir import util_functions
+from utility_dir import util_functions
 
 # from ..utility_dir import util_functions
 
 
 
- # to make the file work as a stand alone
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from utility_dir import util_functions
+
+
+#  # to make the file work as a stand alone
+# sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# from utility_dir import util_functions
+
+# json_dir = f'{util_functions.get_appdata_dir()}/jsons'
+
+# FEATURE Make a Class ????.
 
 selected_items = []
 # [] Super Twitch ONLY
@@ -23,9 +31,11 @@ def create_popup1(windowName, columns, data):
     popup = tk.Tk()
     popup.overrideredirect(False)
     popup.title(windowName)
-    style = ttk.Style()
+    style = ttk.Style(popup)
+    style.theme_use("clam")
+    style.configure("Treeview", background="#0b0a0d", fieldbackground="#0b0a0d", foreground="white")
 
-    style.configure("Treeview", background="#0b0b13", foreground="white")
+    # style.configure("Treeview", background="#0b0b13", foreground="white")
     tree = ttk.Treeview(popup, style="Treeview")
     popup.configure(
         bg="#0b0b13",
@@ -68,7 +78,7 @@ def create_popup1(windowName, columns, data):
         frame1,
         columns=columns,
         show='headings',
-        height=17,
+        height=(len(data) if len(data) < 17 else 17),
         selectmode='browse',
         takefocus=2
     )
@@ -158,7 +168,7 @@ def create_popup1(windowName, columns, data):
         font=("Calabri", 8),
         relief='flat',
         overrelief='raised',
-        command=lambda: os.startfile(os.path.dirname(file)),  # NOTE gets link from File arg.
+        command=lambda: os.startfile(json_dir),  # NOTE gets link from File arg.
         height=1,
         width=9,
         highlightcolor='red',
@@ -201,36 +211,48 @@ def create_popup1(windowName, columns, data):
     popup.destroy()
 
 
-def call_tk_vod_view(file_path):
-    winName = os.path.basename(file_path)
-    with open(file_path, 'r') as f:
-        jsond = json.load(f)
-
-    list1 = []
-    for index, items in enumerate(jsond):
-        vods_desc = (index, items['downloaded'], items['broadcastType'], items['publishedAt'], items['id'], items['gameName'], items['title'])
-        list1.append(f'{vods_desc}')
-
-
-# Define the column names as 'index' and specific keys from the JSON data
+def process_data(input_data, windName):
+    # Define the column names as 'index' and specific keys from the JSON data
     columns = ['index', 'downloaded', 'id', 'broadcastType', 'publishedAt', 'gameName', 'title']  # replace 'key1', 'key2' with your specific keys
-# Define the data as the index and values of the specific keys in the JSON data
-    data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(jsond)]
-# Call the function
+    # Define the data as the index and values of the specific keys in the JSON data
+    data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(input_data)]
+    # Call the function
     try:
-        create_popup1(winName, columns, data)
+        create_popup1(windName, columns, data)
     except tk.TclError as e:
         print(f'Error Closed Window using (X), Terminated early: {e}')
-        create_popup1(winName, columns, data)
+        create_popup1(windName, columns, data)
 
     listIndexs = [index[0] for index in selected_items]
     for index in listIndexs:
-        print(jsond[int(index)].get('title'))
-        print(jsond[int(index)].get('publishedAt'), '\n')
+        print(input_data[int(index)].get('title'))
+        print(input_data[int(index)].get('publishedAt'), '\n')
     return selected_items
 
-file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\kotton.json"
-call_tk_vod_view(file)
+
+def call_tk_file(file_path):
+    windName = os.path.basename(file_path)
+    with open(file_path, 'r') as f:
+        jsond = json.load(f)
+    return process_data(jsond, windName)
+    # list1 = []
+    # for index, items in enumerate(jsond):
+    #     vods_desc = (index, items['downloaded'], items['broadcastType'], items['publishedAt'], items['id'], items['gameName'], items['title'])
+    #     list1.append(f'{vods_desc}')
+
+
+def call_tk_data(data):
+    # windName = os.path.basename(data)
+    # print(data)
+    windName = data[0].get('displayName')
+    t1 = threading.Thread(target=process_data, args=(data, windName)) 
+    t1.start()
+    return
+
+
+
+# file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\kotton.json"
+# call_tk_file(file)
 # if __name__ == '__main__':
 #     call_tk_vod_view(file_path)
 

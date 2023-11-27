@@ -2,8 +2,11 @@
 
 import json
 import os
+import threading
+from ast import arg
 from time import sleep
 
+import spinner as spn
 from utility_dir import get_single_vod_ as gsv
 from utility_dir import util_functions as util
 
@@ -48,8 +51,11 @@ def check_for_new_vods(
 
     # Blocked OUT USING Fake DATA to stop calls and fasten dev
     query = gql_main_call.query_channel_vods(streamer_user_name, amount_of_vods, sort_by)
+    spinner1 = spn.Spinner()
+    spinner1.start()
     query_resp = gql_main_call.gql_query(query=query)
     resp = query_resp.json()
+    spinner1.stop()
     if query_resp.status_code != 200:
         print("Error retrieving Data from GraphQL Twitch API")
         import startup
@@ -95,21 +101,42 @@ def add_new_entries_json(
 
 
 def print_new_vods_from_dictClass(vod_index, vods_dict):
-    for index, vod in enumerate(vods_dict):
-        print(
-            f'{util.simple_convert_timestamp(vod['publishedAt'])}, '
-            f'{vod['gameName']}, '
-            f'{vod['title']}, '
-            f'{util.decode_seconds_to_hms(vod['lengthSeconds'])} '
-            f'\n{vod['url']}'
-        )
-        if index == vod_index - 1:
-            break
+    if vod_index != 0:
+        # sends it to Tkinter instead of print outs.
+        from new_mass_gql import tk_get_file_list
+        tk_get_file_list.call_tk_data(vods_dict[:vod_index]) # WATCH Works But has the selection version of tk popup, class it or make new version??.
+
+        # for index, vod in enumerate(vods_dict):
+        #     print(
+        #         f'{util.simple_convert_timestamp(vod['publishedAt'])}, '
+        #         f'{vod['gameName']}, '
+        #         f'{vod['title']}, '
+        #         f'{util.decode_seconds_to_hms(vod['lengthSeconds'])} '
+        #         f'\n{vod['url']}'
+        #     )
+        #     if index == vod_index - 1:
+        #         break
     print(f'\n{(vod_index)}: New Vods\n')
 
 
-
 # def start_new_vods(json_file_path, streamer_user_name):
+
+
+def update_json_data(cnv_rtrn):
+    spinner1 = spn.Spinner()
+    spinner1.start()
+    start_point_index = int(util.get_index_last_vod(cnv_rtrn[1], cnv_rtrn[2]))
+    conflict_data = sod.get_conflicting_indexes(cnv_rtrn[1], cnv_rtrn[2], start_point_index, ['downloaded'])
+    newData = sod.new_data_to_json_exclude(cnv_rtrn[1], conflict_data[-1], conflict_data[0], 'downloaded')
+    with open(cnv_rtrn[0], 'w') as f:
+        json.dump(newData, f, indent=4)
+
+    if cnv_rtrn[3] is not None:
+        newData = add_new_entries_json(cnv_rtrn[0], cnv_rtrn[1], cnv_rtrn[2], cnv_rtrn[3])
+    spinner1.stop()
+    return newData
+    # print(gsv.Run_get_vod(streamer_name))
+
 def start_new_vods():
     # [] input the best way??
     # print(type(gsv.get_file_list_from_dir(rf"{util.get_appdata_dir()}\jsons")))
@@ -124,17 +151,15 @@ def start_new_vods():
             rf"{util.get_appdata_dir()}\jsons\{streamer_name}.json",
             streamer_user_name=streamer_name
         )
-        start_point_index = int(util.get_index_last_vod(cnv_rtrn[1], cnv_rtrn[2]))
-        conflict_data = sod.get_conflicting_indexes(cnv_rtrn[1], cnv_rtrn[2], start_point_index, ['downloaded'])
-        newData = sod.new_data_to_json_exclude(cnv_rtrn[1], conflict_data[-1], conflict_data[0], 'downloaded')
-        with open(cnv_rtrn[0], 'w') as f:
-            json.dump(newData, f, indent=4)
-
-        if cnv_rtrn[3] is not None:
-            newData = add_new_entries_json(cnv_rtrn[0], cnv_rtrn[1], cnv_rtrn[2], cnv_rtrn[3])
-
-        return newData
-        # print(gsv.Run_get_vod(streamer_name))
+        # print("cvn_rtrn", cnv_rtrn)
+        if cnv_rtrn[-1] == 0:
+            update_info = threading.Thread(target=update_json_data, args=(cnv_rtrn, ))
+            update_info.start()
+            # print('in the if')
+            return
+        else:
+            # print("else\n\n")
+            return update_json_data(cnv_rtrn)
     else:
         gql_main_call.First_making_cmds(input('User Name:').lower())
 

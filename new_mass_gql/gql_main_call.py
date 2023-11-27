@@ -6,6 +6,7 @@ import timeit
 import httpx
 from tqdm import tqdm
 
+import spinner as spn
 from utility_dir import util_functions as util
 
 # import requests
@@ -201,13 +202,12 @@ def First_making_cmds(streamer_user_name=None):
     if not streamer_user_name:
         streamer_user_name = input("Enter Streamer User Name: ").lower()
     # if file exist ?? .
-    # spinner = yaspin(text="Making Requests...") # LOOK Cool but dont show in the py terminal
-    # spinner = yaspin()
-    # spinner.start()
+    spinner1 = spn.Spinner()
+    spinner1.start()
     query = query_channel_vods(streamer_user_name, 100, "TIME")
     query_resp = gql_query(query=query)
     resp = query_resp.json()
-    # spinner.stop()
+    spinner1.stop()
 
     # [] still need to sort our the recording/archive/highlight/upload/premiere
     if query_resp.status_code != 200:
@@ -231,15 +231,16 @@ def First_making_cmds(streamer_user_name=None):
     if not os.path.exists(file_path_dir):
         os.mkdir(file_path_dir)
 
+    from startup import main_start
     if os.path.exists(file_path):
         print(
             f'File already Exists\n{file_path}\nContinue and overwrite File?:')
         outcome = util.multi_choice_dialog('Continue and overwrite', ['Yes', 'No'])
         if outcome == 'No':
-            return
+            os.system('cls')
+            return main_start()
     util.dump_json_ind4(file_path=file_path, content_dump=vods_dict)
     os.system('cls')
-    from startup import main_start
     main_start()
     # print('saving to Desktop fortesting')
     # util.dump_json_ind4(file_path='C:/Users/970EVO-Gamer/Desktop/testt.json', content_dump=vods_dict)

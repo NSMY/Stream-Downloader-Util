@@ -9,7 +9,7 @@ from extraction_factory import VideoBlueprint
 
 
 def ffmpegextract():
-    #FIXIT if file is NOT muxed it returns [ALL 0 0 Exit] channels
+    #FIXIT if file is NOT originally (straight from streamlink) muxed it returns [ALL 0 0 Exit] channels
     try:
         check_settings = funcs.loadSettings(['LastSave', 'ffprobepath', 'ffmpegpath'])
     except FileNotFoundError as e:

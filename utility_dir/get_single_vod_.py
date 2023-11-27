@@ -17,8 +17,19 @@ def get_file_list_from_dir(vods_dir) -> list:
 
 
 def select_json(list_of_streamer_jsons):
-    string_list_of_streamer_jsons = ', '.join(list_of_streamer_jsons)
-    return util.multi_choice_dialog('List of saved Jsons', choice_s=list_of_streamer_jsons, return_options="dict", keys_name='streamer')
+    string_list_of_streamer_jsons = ', '.join(list_of_streamer_jsons) + 'Cancel'
+    list_of_streamer_jsons.append('Cancel')
+    choice = util.multi_choice_dialog(
+        'List of saved Jsons',
+        choice_s=list_of_streamer_jsons,
+        return_options="dict",
+        keys_name='streamer'
+    )
+    if choice.get("streamer") == 'Cancel': # WATCH Implemented only for multichoise, if tkinter maybe take OUT.
+        import startup
+        os.system("cls")
+        startup.main_start()
+    return choice
 
 
 def creator_load_json_data(selected_json):
@@ -29,8 +40,12 @@ def creator_load_json_data(selected_json):
 
 def select_video(data, selected_json):
     quick_desc_ = [(i, util.simple_convert_timestamp(d['publishedAt']), util.decode_seconds_to_hms(d['lengthSeconds']), d['gameName'], d['title'], d['downloaded']) for i, d in enumerate(data)]
+    quick_desc_.append("Cancel")
     stream = util.multi_choice_dialog(f'What Vod do you want form {selected_json['streamer']}----------', choice_s=quick_desc_)
-    index = int(stream.strip('(').split(',')[0])  # type: ignore will not be None
+    if stream == "Cancel":
+        get_desired_vod_from_lst()  # WATCH Implemented only for multichoise, if tkinter maybe take OUT.
+    else:
+        index = int(stream.strip('(').split(',')[0])  # type: ignore will not be None
     return (index, data[index])
 
 

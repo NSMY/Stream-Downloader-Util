@@ -15,6 +15,7 @@ import auth_skip_ads_
 import funcs
 import init_files
 import mux_vid as cpvs
+import spinner as spn
 from new_mass_gql import get_vods_sizes_m3u8 as m3
 from utility_dir import util_functions
 
@@ -151,13 +152,15 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     result = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
     result.start()
 
+
     if is_url_path_vod:
         q2 = Queue()
         m3u8 = threading.Thread(target=get_urlm3u8_filesize, args=(url_path, q2))
         m3u8.start()
+
         # end m3u8 check.
 
-    if fromfile:  # FIXME whats this for??.
+    if fromfile:
         print(fromfile[-1])
 
     # saving file path.
@@ -166,9 +169,12 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # Naming the Terminal.
     terminal_Naming = os.path.basename(download_file_path)
     os.system(f"title {terminal_Naming}")
+    spinner2 = spn.Spinner()
+    spinner2.start()
 
     # Return of get_vid_resolutions threading.
     result.join()
+    spinner2.stop()
     result = q.get()
 
     my_choices = list(reversed(result))
@@ -200,7 +206,10 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     print("\nCTRL + C to CANCEL Download early if necessary")
 
     if is_url_path_vod:
+        spinner1 = spn.Spinner()
+        spinner1.start()
         m3u8.join()
+        spinner1.stop()
         m3u8_data = q2.get()
         try:
             if chosen_resolution == "best":
@@ -275,7 +284,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
             # working Great, need a Pointer to file/or date dld in file??.
             util_functions.update_downloaded_to_resolution(
                 urlparse(url_).path.split("/")[-1], chosen_resolution
-            )# BUG seemed not to trigger on 14-10 vod of kotton?.
+            )# BUG seemed not to trigger on 14-10 vod of kotton maybe dl size dont match close enough?.
 
     if download_with_Shutdown:
         if sd_type == "Auto":
@@ -317,17 +326,17 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         else:
             funcs.open_directory_Force_front(download_file_path)
 
-        print(
-            "\nRe Run Program? if Yes you need to copy the next URL"
-            " in the clipboard before answering this."
-        )
-        exit = funcs.multi_choice_dialog("Run Again or Exit?", ["Run Again", "EXIT"])
-        if exit == "Run Again":
-            from startup import main_start
+        # print(
+        #     "\nRe Run Program? if Yes you need to copy the next URL"
+        #     " in the clipboard before answering this."
+        # )
+        # exit = funcs.multi_choice_dialog("Run Again or Exit?", ["Run Again", "EXIT"])
+        # if exit == "Run Again":
+        from startup import main_start
 
-            main_start()
-        else:
-            sys.exit()
+        main_start()
+        # else:
+        #     sys.exit()
 
 
 if __name__ == "__main__":
