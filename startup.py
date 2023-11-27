@@ -49,7 +49,11 @@ def main_start(impt_data=None):
         # from new_mass_gql import tk_get_file_list
         # print(aad[0])
         # tk_get_file_list.call_tk_vod_view(f'c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/{aad[0]}.json') # FIX sloppy af.
-        main_script(fromfile=aad)
+        if funcs.multi_choice_dialog('Download Type', ['Normal', 'Auto Shutdown']) == "Normal":
+            main_script(fromfile=aad)
+        else:
+            main_script(download_with_Shutdown=True, fromfile=aad)
+
 
     # Define your dictionary
     switch = {
