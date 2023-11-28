@@ -246,7 +246,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     thread_popen.start()
     # Wait for the thread to finish
     thread_popen.join()
-
+    # BUG if i cancel i got a synatx error ??
     # Reset the signal handler for SIGINT to its default behavior (kill terminal)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
