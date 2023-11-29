@@ -16,8 +16,9 @@ prints 0 new vods anyway?.
 
 [] make chapters in vods? using code > [Code](zextra_Funcs_/getChaptersCall.py) < will require a large rewrite, games will be
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
+[] make able to get from file and dld from a time cmd and have it calc the right size minus'ing time-- think i have code somewhere 
 
-LEFTHERE [Working](zextra_Funcs_/check_old_files_downloaded.py#L136)figure a way to determine if fully downloaded and set to downloaded in file  Name+ Total seconds ??
+TODO [Working](zextra_Funcs_/check_old_files_downloaded.py#L136)figure a way to determine if fully downloaded and set to downloaded in file  Name+ Total seconds ??
 [] [Working](zextra_Funcs_/check_old_files_downloaded.py#L136): make it so u can check if downloaded incase a new json file is made/ overwritten
 
 [] be able to manually set if downloaded maybe with TKPopup?????
@@ -31,6 +32,7 @@ more robust dependency searching and downloading (if deleted between settinggs C
 THINK make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 
 TRACK have it error when refreshing json vods file and non streamer name
 
+LEFTHERE [neeed to make the comparision](zextra_Funcs_\check_old_files_downloaded.py)
 
 THINK do i ad multi File processing? mp4 wav etc
 
