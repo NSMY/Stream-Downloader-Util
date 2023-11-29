@@ -98,6 +98,8 @@ def create_popup1(windowName, columns, data):
             tree.column(col, width=55, stretch=tk.YES, anchor='center')
         elif col == 'publishedAt':
             tree.column(col, width=140, stretch=tk.YES, anchor='center')
+        elif col == 'status':
+            tree.column(col, width=80, stretch=tk.YES, anchor='center')
         elif col == 'broadcastType':
             tree.column(col, width=75, stretch=tk.NO, anchor='center')
         elif col == 'gameName':
@@ -213,7 +215,7 @@ def create_popup1(windowName, columns, data):
 
 def process_data(input_data, windName):
     # Define the column names as 'index' and specific keys from the JSON data
-    columns = ['index', 'downloaded', 'id', 'broadcastType', 'publishedAt', 'gameName', 'title']  # replace 'key1', 'key2' with your specific keys
+    columns = ['index', 'downloaded', 'id', 'broadcastType', 'status', 'publishedAt', 'gameName', 'title']  # replace 'key1', 'key2' with your specific keys
     # Define the data as the index and values of the specific keys in the JSON data
     data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(input_data)]
     # Call the function
@@ -249,9 +251,9 @@ def call_tk_data(data):
     t1.start()
     return
 
+# TODOmake another button that sets as downloaded.
 
-
-# file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\kotton.json"
+# file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\deadlyslob.json"
 # call_tk_file(file)
 # if __name__ == '__main__':
 #     call_tk_vod_view(file_path)

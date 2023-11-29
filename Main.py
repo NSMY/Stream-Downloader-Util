@@ -286,6 +286,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 urlparse(url_).path.split("/")[-1], chosen_resolution
             )# BUG seemed not to trigger on 14-10 vod of kotton maybe dl size dont match close enough?.
 
+    # HERE have the dld conformation be size GB and/or seconds(len) of vid and be like 5 seconds adjustable
+
     if download_with_Shutdown:
         if sd_type == "Auto":
             save_path = os.path.dirname(download_file_path)

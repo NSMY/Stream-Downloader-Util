@@ -11,15 +11,21 @@
         "ffprobepath",
         "fprobe",
         "funcs",
+        "gamename",
+        "jsons",
         "mssg",
         "Muxed",
         "Muxing",
         "newfolder",
+        "nokey",
+        "noprint",
         "outname",
         "Remux",
         "sourcery",
+        "titlename",
         "Usettings",
         "vods",
         "Vods"
+    ]
 
 }
