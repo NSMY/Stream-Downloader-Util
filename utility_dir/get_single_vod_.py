@@ -4,11 +4,10 @@ import json
 import os
 import pprint
 
-from . import util_functions as util
-
 # import util_functions as util  # Only to test code inside this module
+from new_mass_gql.tk_get_file_list import call_tk_file
 
-
+from . import util_functions as util
 
 
 def get_file_list_from_dir(vods_dir) -> list:
@@ -39,14 +38,23 @@ def creator_load_json_data(selected_json):
 
 
 def select_video(data, selected_json):
-    quick_desc_ = [(i, util.simple_convert_timestamp(d['publishedAt']), util.decode_seconds_to_hms(d['lengthSeconds']), d['gameName'], d['title'], d['downloaded']) for i, d in enumerate(data)]
-    quick_desc_.append("Cancel")
-    stream = util.multi_choice_dialog(f'What Vod do you want form {selected_json['streamer']}----------', choice_s=quick_desc_)
-    if stream == "Cancel":
+    # quick_desc_ = [(i, util.simple_convert_timestamp(d['publishedAt']), util.decode_seconds_to_hms(d['lengthSeconds']), d['gameName'], d['title'], d['downloaded']) for i, d in enumerate(data)]
+    # quick_desc_.append("Cancel")
+    # stream = util.multi_choice_dialog(f'What Vod do you want form {selected_json['streamer']}----------', choice_s=quick_desc_)
+    # if stream == "Cancel":
+    #     get_desired_vod_from_lst()  # WATCH Implemented only for multichoise, if tkinter maybe take OUT.
+
+    stream = call_tk_file(rf'{util.get_appdata_dir()}\jsons\{selected_json['streamer']}.json')
+    # print("🐍 File: utility_dir/get_single_vod_.py | Line: 49 | select_video ~ stream",stream)
+    
+    if stream == []:
         get_desired_vod_from_lst()  # WATCH Implemented only for multichoise, if tkinter maybe take OUT.
     else:
-        index = int(stream.strip('(').split(',')[0])  # type: ignore will not be None
-    return (index, data[index])
+        return stream # type: ignore will not be None
+    # else:
+    #     index = int(stream.strip('(').split(',')[0])  # type: ignore will not be None
+    # return (index, data[index])
+    # return (index, data[index])
 
 
 def get_desired_vod_from_lst(**kwargs) -> dict:
@@ -61,6 +69,11 @@ def get_desired_vod_from_lst(**kwargs) -> dict:
         'index': video[0],
         'vod_info': video[1]
     }
+    # return selected_json, {
+    #     'file': f"{selected_json['streamer']}.json",  # type: ignore will not be None
+    #     'index': video[0],
+    #     'vod_info': video[1]
+    # }
     # webbrowser.open(video[1]['url'])
 
 

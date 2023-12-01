@@ -250,41 +250,41 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # Reset the signal handler for SIGINT to its default behavior (kill terminal)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    if is_url_path_vod:
+    # if is_url_path_vod:
 
-        # FIX will need to include ffprobe in main settings checks to use this.
-        get_len_of_vod_file = subprocess.Popen(
-            rf'ffprobe -i "{download_file_path}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
-            shell=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            cwd='c:/ffmpeg/'  # FIX replace me.
-        )
-        stdout, stderr = get_len_of_vod_file.communicate()
-        get_len_of_vod_file.wait()
-        len_of_vod = int(stdout.split('.')[0])
-        # print("🐍 File: zextra_Funcs_/Testcode.py | Line: 126 | undefined ~ len_of_vod",len_of_vod)
+    #     # FIX will need to include ffprobe in main settings checks to use this.
+    #     get_len_of_vod_file = subprocess.Popen(
+    #         rf'ffprobe -i "{download_file_path}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
+    #         shell=False,
+    #         stdout=subprocess.PIPE,
+    #         stderr=subprocess.PIPE,
+    #         universal_newlines=True,
+    #         cwd='c:/ffmpeg/'  # FIX replace me.
+    #     )
+    #     stdout, stderr = get_len_of_vod_file.communicate()
+    #     get_len_of_vod_file.wait()
+    #     len_of_vod = int(stdout.split('.')[0]) #    len_of_vod = int(stdout.split('.')[0]) ValueError: invalid literal for int() with base 10: '' ## cant get len_of_vod bcoz not muxed
+    #     # print("🐍 File: zextra_Funcs_/Testcode.py | Line: 126 | undefined ~ len_of_vod",len_of_vod)
 
-        if (ulr_query := urlparse(url).query).startswith('t='):
-            url_split = re.split('[=hms]', ulr_query)
-            secs_to_subt_from_file = util_functions.encode_hms_to_seconds(':'.join(url_split[1:-1]))
-            # if len_of_vod - secs_to_subt_from_file == 0:
-            if len_of_vod - secs_to_subt_from_file == 0:
-                # LOOK Temp code to make feat work as proof more complex here than necessary
-                # needs more comparing, this changes every time not if complete and or further comparisons
-                # working Great, need a Pointer to file/or date dld in file??.
-                util_functions.update_downloaded_to_resolution(
-                    urlparse(url_).path.split("/")[-1], chosen_resolution
-                )
-        elif len_of_vod - fromfile[2].get('lengthSeconds') == 0:
+    #     if (ulr_query := urlparse(url).query).startswith('t='):
+    #         url_split = re.split('[=hms]', ulr_query)
+    #         secs_to_subt_from_file = util_functions.encode_hms_to_seconds(':'.join(url_split[1:-1]))
+    #         # if len_of_vod - secs_to_subt_from_file == 0:
+    #         if len_of_vod - secs_to_subt_from_file == 0:
+    #             # LOOK Temp code to make feat work as proof more complex here than necessary
+    #             # needs more comparing, this changes every time not if complete and or further comparisons
+    #             # working Great, need a Pointer to file/or date dld in file??.
+    #             util_functions.update_downloaded_to_resolution(
+    #                 urlparse(url_).path.split("/")[-1], chosen_resolution
+    #             )
+    #     elif len_of_vod - fromfile[2].get('lengthSeconds') == 0:
 
-            # LOOK Temp code to make feat work as proof more complex here than necessary
-            # needs more comparing, this changes every time not if complete and or further comparisons
-            # working Great, need a Pointer to file/or date dld in file??.
-            util_functions.update_downloaded_to_resolution(
-                urlparse(url_).path.split("/")[-1], chosen_resolution
-            )# BUG seemed not to trigger on 14-10 vod of kotton maybe dl size dont match close enough?.
+    #         # LOOK Temp code to make feat work as proof more complex here than necessary
+    #         # needs more comparing, this changes every time not if complete and or further comparisons
+    #         # working Great, need a Pointer to file/or date dld in file??.
+    #         util_functions.update_downloaded_to_resolution(
+    #             urlparse(url_).path.split("/")[-1], chosen_resolution
+    #         )# BUG seemed not to trigger on 14-10 vod of kotton maybe dl size dont match close enough?.
 
     # HERE have the dld conformation be size GB and/or seconds(len) of vid and be like 5 seconds adjustable
 
