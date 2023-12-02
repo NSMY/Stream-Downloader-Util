@@ -8,11 +8,12 @@ from concurrent.futures import thread
 from pathlib import Path
 from tkinter import IntVar, Radiobutton, Toplevel, messagebox, ttk
 
-from numpy import append
-
-# from ..utility_dir import util_functions
+# # from ..utility_dir import util_functions
 import spinner
 from utility_dir import util_functions
+
+# from numpy import append
+
 
 # # to make the file work as a stand alone
 # sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -31,6 +32,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
     popup = tk.Tk()
     popup.overrideredirect(False)
     popup.title(windowName)
+    popup.minsize(1350,500)
     style = ttk.Style(popup)
     style.theme_use("clam")
     style.configure("Treeview", background="#0b0a0d", fieldbackground="#0b0a0d", foreground="white")
@@ -142,10 +144,12 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
 
     # tree.bind("<ButtonRelease-1>", get_selection)
 
-
     def quit_with_selection():
         if selected_items == []:
-            q =messagebox.askyesno(title='QUITTING!!', message='No Selection has Been Made,\nAre you Sure you want to proceed?')
+            q = messagebox.askyesno(
+                title='QUITTING!!',
+                message='No Selection has Been Made,\nAre you Sure you want to proceed?'
+            )
             if q:
                 popup.destroy()
         else:
@@ -157,7 +161,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
         command=quit_with_selection,
         height=2,
         width=17,
-        font=("calabri", 10, "bold", "italic"),
+        font=("Calabri", 10, "bold", "italic"),
         highlightcolor='yellow',
         background='#296d8f',
         foreground='white',
@@ -168,7 +172,6 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
         overrelief='ridge',
         pady=7,
         cursor="star"
-        
     )
 
 
@@ -228,7 +231,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
     # new_win.title('Set Item Downloaded')
 
     def set_item_downloaded(rawdata, file_path, selected_resolution):
-        question = messagebox.askyesno("Change Item Downloaded Status", f"Set Item/s to '{resolutions[selected_resolution.get()]}p' Download status ?")
+        question = messagebox.askyesno("Change Item Downloaded Status", f"Set Item/s to '{resolutions[selected_resolution.get()]}' Download status ?")
         if selected_items is []:
             if question is False:
                 print("User Closed Window")
@@ -239,7 +242,8 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
                 items_selected.append(i[0])
             # print(items_selected, "\n")
             for i in items_selected:
-                rawdata[i]["downloaded"] = f"{resolutions[selected_resolution.get()]}p"
+                selected_value = resolutions[selected_resolution.get()]
+                rawdata[i]["downloaded"] = False if selected_value == 'False' else selected_value
                 # print(json.dumps(rawdata[i], indent=4))
 
             # Update the data for the Treeview
@@ -362,7 +366,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
 # -----------------------------------------------------------------------------------
 
 
-    resolutions = ["1080", "720", "480", "360", "160"]
+    resolutions = ["1080p", "720p", "480p", "360p", "160p", 'False']
     x = IntVar()
     for index in range(len(resolutions)):
         radiobutton = Radiobutton(
@@ -422,7 +426,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
 
 
 
-def process_data(input_data, windName, file_path):
+def process_data(input_data, windName, file_path)  -> tuple | None:
     # print(input_data, "Processing data")
     spinner1 = spinner.Spinner()
     spinner1.start()
@@ -439,16 +443,18 @@ def process_data(input_data, windName, file_path):
     listIndexs = [(index[0], input_data[index[0]]) for index in selected_items]
     print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 440 | undefined ~ listIndexs",listIndexs)
     print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 440 | undefined ~ selected_items",selected_items)
- 
+
     # for index in listIndexs:
     #     print(input_data[int(index)].get('title'))
     #     print(input_data[int(index)].get('publishedAt'), '\n')
     spinner1.stop()
 
-    return listIndexs[0] # WATCH set this to 0 index as haven't implemented multi downloading
+    return listIndexs[0] if listIndexs else None
+    # BUG if empty close will be an empty [] and errors as it has no indexes[0].
+    # WATCH set this to 0 index as haven't implemented multi downloading
 
 
-def call_tk_file(file_path):
+def call_tk_file(file_path) -> tuple| None:
     windName = os.path.basename(file_path)
     with open(file_path, 'r') as f:
         jsond = json.load(f)
@@ -463,7 +469,7 @@ def call_tk_data(data):
     # windName = os.path.basename(data)
     # print(data)
     windName = data[0].get('displayName')
-    t1 = threading.Thread(target=process_data, args=(data, windName)) 
+    t1 = threading.Thread(target=process_data, args=(data, windName))
     t1.start()
     return
 
@@ -471,7 +477,7 @@ def call_tk_data(data):
 
 # file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\algobro.json"
 # call_tk_file(file)
-if __name__ == '__main__':
-    call_tk_file(file_path)
+# if __name__ == '__main__':
+#     call_tk_file(file_path)
 
 # input('exit ................')
