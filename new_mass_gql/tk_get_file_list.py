@@ -4,6 +4,7 @@ import os
 import sys
 import threading
 import tkinter as tk
+import webbrowser
 from concurrent.futures import thread
 from pathlib import Path
 from tkinter import IntVar, Radiobutton, Toplevel, messagebox, ttk
@@ -27,7 +28,8 @@ from utility_dir import util_functions
 
 selected_items = []
 # [] Super Twitch ONLY
-def create_popup1(windowName, columns, processed_data, rawdata, file_path):
+def create_popup1(windowName, columns, processed_data, rawdata, file_path, **visual_only):
+
     global selected_items
     popup = tk.Tk()
     popup.overrideredirect(False)
@@ -35,30 +37,30 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
     popup.minsize(1350,500)
     style = ttk.Style(popup)
     style.theme_use("clam")
-    style.configure("Treeview", background="#0b0a0d", fieldbackground="#0b0a0d", foreground="white")
+    style.configure("Treeview", background="#191825", fieldbackground="#191825", foreground="white")
 
     # style.configure("Treeview", background="#0b0b13", foreground="white")
     tree = ttk.Treeview(popup, style="Treeview")
     popup.configure(
-        bg="#0b0b13",
+        bg="#191825",
         highlightbackground="#296D8F",
         highlightcolor='#0b0b13',
         highlightthickness=5,
         height=min(len(processed_data), 17)
     )
-    frame1 = tk.Frame(popup, bg="#0b0a0d",) #borderwidth=3, highlightthickness=1, highlightbackground='yellow')
-    frame2 = tk.Frame(popup, bg="#0b0a0d", borderwidth=3) #, highlightthickness=1, highlightbackground='violet')
-    frame3 = tk.Frame(popup, bg="#0b0a0d",) #borderwidth=3, highlightthickness=1, highlightbackground='white')
-    frame4 = tk.Frame(popup, bg="#0b0a0d", borderwidth=3, highlightbackground='yellow', relief="raised")
+    frame1 = tk.Frame(popup, bg="#191825",) #borderwidth=3, highlightthickness=1, highlightbackground='yellow')
+    frame2 = tk.Frame(popup, bg="#191825", borderwidth=3) #, highlightthickness=1, highlightbackground='violet')
+    frame3 = tk.Frame(popup, bg="#191825",) #borderwidth=3, highlightthickness=1, highlightbackground='white')
+    frame4 = tk.Frame(popup, bg="#191825", borderwidth=3, highlightbackground='yellow', relief="raised")
     frame2_subframe = tk.Frame(frame2, relief="sunken")
 
     explainer_lable = tk.Label(
         frame2,
         text=(
             "Selection/s made by clicking on a Vod/s with Mouse (Multi Hold Shift)\n"
-            "Use 'Make Selection-Close' (Right) Button to make selection Dont use (Windows)X"
+            "Use 'Make Selection-Close' (Right) Button to make selection."
         ),
-        bg="#0b0a0d",
+        bg="#191825",
         fg="white",
         font=("Calibri", 10, "bold"),
         highlightcolor="white",
@@ -115,7 +117,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
     title_lable = tk.Label(
         frame4,
         text=(f'Vods List for : {windowName.split('.')[0].title()}'),
-        bg="#0b0a0d",
+        bg="#191825",
         # fg="#296d8f",
         # highlightcolor="red",
         justify="center",
@@ -125,7 +127,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
         # highlightthickness=16,
         border=3,
         state='disabled',
-        disabledforeground='#BBD5F0',
+        disabledforeground='#dedbd2',
         activebackground='red',
         pady=5,
         padx=4,
@@ -163,10 +165,10 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
         width=17,
         font=("Calabri", 10, "bold", "italic"),
         highlightcolor='yellow',
-        background='#296d8f',
+        background='#4895ef',
         foreground='white',
         activebackground='#00ff00',
-        activeforeground='white',
+        activeforeground='black',
         underline=5,
         relief="groove",
         overrelief='ridge',
@@ -268,10 +270,10 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
         width=13,
         font=("Arial", 9, "bold"),
         highlightcolor='yellow',
-        background='#4d5a8f',
+        background='#4895ef',
         foreground='white',
-        activebackground='#a18542',
-        activeforeground='white',
+        activebackground='#FECD1A',
+        activeforeground='black',
         underline=0,
         relief="groove",
         overrelief='ridge',
@@ -279,8 +281,8 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
         cursor="exchange"
     )
 
-    selections_listbox = tk.Listbox(frame2_subframe, highlightbackground='#242c53', selectbackground='#0b0a0d', height=4, width=120, justify="left", bg='#0b0a0d', fg='white', activestyle="underline")
-    selections_listbox.pack(side="left")
+    selections_listbox = tk.Listbox(frame2_subframe, highlightbackground='#242c53', selectbackground='#191825', height=4, width=120, justify="left", bg='#191825', fg='white', activestyle="underline")
+    selections_listbox.pack(fill="both")
 
     # tree.bind('<ButtonRelease-1>', delete_item)
 
@@ -312,22 +314,45 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
         underline=5,
         justify='center',
         font=("Calabri", 8),
-        relief='flat',
-        overrelief='raised',
+        relief='raised',
+        overrelief='groove',
         command=lambda: os.startfile(json_dir),  # NOTE gets link from File arg.
         height=1,
         width=9,
         highlightcolor='red',
-        background='#125c81',
+        background='#4361ee',
         foreground='white',
-        activebackground='#1b582b',
+        activebackground='#003554',
         activeforeground='white',
         pady=3
     )
 
-    list_name_label = tk.Label(frame2, text="Selection List", font=('Arial', 10, "bold"), bg='#1d1515', fg="White", padx=2, highlightbackground="#737373", highlightthickness=2)
+    list_name_label = tk.Label(frame2, text="Selection List", font=('Arial', 10, "bold"), bg='#1B192B', fg="White", padx=2, highlightbackground="#453303", highlightthickness=2)
     explainer_lable.pack(side="right", anchor="e", fill="y")
-    list_name_label.pack(anchor="nw", pady=1)
+    list_name_label.pack(anchor="nw", pady=1, fill="both")
+
+
+    def open_in_browser():
+        for vods in selected_items: #selected_items:
+            webbrowser.open(f'www.twitch.tv/videos/{vods[2]}')
+
+    open_twitch_btn = tk.Button(
+        frame4,
+        text="Open Vod's in Browser",
+        font=('Arial', 7, "bold"),
+        command=open_in_browser,
+        bg="#4361ee",
+        fg="#fdfdfd",
+        underline=14,
+        overrelief="ridge",
+        activebackground="#003554",
+        activeforeground='white',
+        pady=2,
+        padx=5
+    )
+    open_twitch_btn.pack(side="top", padx=5, pady=3)
+
+
 
     def on_close():
         # Put your cleanup code here
@@ -340,7 +365,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
     popup.protocol("WM_DELETE_WINDOW", on_close)
 # -----------------------------------------------------------------------------------
 
-    frame2_subframe.pack(side="left", expand=False, fill="both")
+    frame2_subframe.pack(fill="both")
     # frame2_subframe.grid()
 
     frame1.grid(row=1, column=1, sticky="nsew")
@@ -365,28 +390,28 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
     sep.pack(side='top', fill='x', padx=10, pady=10, expand=False)
 # -----------------------------------------------------------------------------------
 
-
-    resolutions = ["1080p", "720p", "480p", "360p", "160p", 'False']
-    x = IntVar()
-    for index in range(len(resolutions)):
-        radiobutton = Radiobutton(
-            frame4,
-            bg='#0b0a0d',
-            fg='#8c75ff',
-            activebackground="#0b0a0d",
-            activeforeground='#00ff95',
-            highlightbackground='yellow',
-            # selectcolor='aqua',
-            anchor='w',
-            text=resolutions[index], #adds text to radio buttons
-            variable=x, #groups radiobuttons together if they share the same variable
-            value=index, #assigns each radiobutton a different value
-            padx=1, #adds padding on x-axis
-            font=("Impact", 12),
-            compound='left', #adds image & text (left-side)
-            # style="switch",
-        )
-        radiobutton.pack(fill="both", anchor='w')
+    if not visual_only:
+        resolutions = ["1080p", "720p", "480p", "360p", "160p", 'False']
+        x = IntVar()
+        for index in range(len(resolutions)):
+            radiobutton = Radiobutton(
+                frame4,
+                bg='#191825',
+                fg='#0576A7',
+                activebackground="#191825",
+                activeforeground='#00ff95',
+                highlightbackground='yellow',
+                # selectcolor='aqua',
+                anchor='w',
+                text=resolutions[index], #adds text to radio buttons
+                variable=x, #groups radiobuttons together if they share the same variable
+                value=index, #assigns each radiobutton a different value
+                padx=1, #adds padding on x-axis
+                font=("Impact", 12),
+                compound='left', #adds image & text (left-side)
+                # style="switch",
+            )
+            radiobutton.pack(fill="both", anchor='w')
 
     set_downloaded_btn.pack(side="top", fill="x", padx=1, pady=5)
 # -----------------------------------------------------------------------------------
@@ -403,7 +428,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
     delete_btn.pack(fill="x", side="bottom", padx=1, pady=2)
 
     clear_btn.pack(side="bottom", fill="x", padx=1, pady=2)
-    
+
 
 
 
@@ -418,6 +443,24 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
     # width += 5
     # height += 5
 
+
+    if visual_only:
+        print(visual_only)
+        # tree.config(selectmode="none")
+        # clear_btn.pack_forget()
+        # clear_btn.pack_forget()
+        # delete_btn.pack_forget()
+        make_selec_btn.config(text="Exit", command=popup.destroy, cursor="")
+        set_downloaded_btn.pack_forget()
+        explainer_lable.pack_forget()
+        # selections_listbox.pack_forget()
+        # frame2_subframe.pack_forget()
+        # list_name_label.pack_forget()
+        # frame4.pack_forget()
+        title_lable.config(text=f'New Vods for : {windowName.split('.')[0].title()}')
+
+
+
     popup.geometry(f"{width}x{height}")
     popup.mainloop()
 
@@ -426,7 +469,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path):
 
 
 
-def process_data(input_data, windName, file_path)  -> tuple | None:
+def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
     # print(input_data, "Processing data")
     spinner1 = spinner.Spinner()
     spinner1.start()
@@ -437,7 +480,11 @@ def process_data(input_data, windName, file_path)  -> tuple | None:
     data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(input_data)]
     # Call the function
 
-    create_popup1(windName, columns, data, input_data, file_path)
+    if kwargs:
+        create_popup1(windName, columns, data, input_data, file_path, visual_only=kwargs['arg1'])
+    else:
+        create_popup1(windName, columns, data, input_data, file_path)
+
 # -----------------------------------------------------------------------------------
 
     listIndexs = [(index[0], input_data[index[0]]) for index in selected_items]
@@ -469,13 +516,18 @@ def call_tk_data(data):
     # windName = os.path.basename(data)
     # print(data)
     windName = data[0].get('displayName')
-    t1 = threading.Thread(target=process_data, args=(data, windName))
+    kwargs = {'arg1': True}
+    t1 = threading.Thread(target=process_data, args=(data, windName, ''), kwargs=kwargs)
     t1.start()
     return
 
 # TODOmake another button that sets as downloaded.
 
 # file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\algobro.json"
+# with open(file, 'r') as f:
+#     data = json.load(f)
+
+# call_tk_data(data)
 # call_tk_file(file)
 # if __name__ == '__main__':
 #     call_tk_file(file_path)
