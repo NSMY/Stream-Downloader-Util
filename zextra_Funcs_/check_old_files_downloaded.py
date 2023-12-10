@@ -223,7 +223,7 @@ def change_download_status(total_names_from_dld_dir, appdir, compare_data):
             for vodfile in compare_data:
                 if compare_data[vodfile]['username'].lower() == i:
                     # Compare 'username' with 'id'
-                    if compare_data[vodfile]['username'] == jdata['displayName'] and compare_sizes(compare_data[vodfile]['length'], jdata['lengthSeconds'], 20) and compare_data[vodfile].get('title') == jdata['title']:
+                    if compare_data[vodfile]['username'] == jdata['displayName'] and compare_sizes(compare_data[vodfile]['length'], jdata['lengthSeconds'], 20) and compare_data[vodfile].get('title') == jdata['title'] and jdata['downloaded'] is False:
                         innerdata[index]['downloaded'] = compare_data[vodfile]['height_fps']
         with open(f'{appdir}/{i}.json', 'w') as wf:
             json.dump(innerdata, wf, indent=4)
