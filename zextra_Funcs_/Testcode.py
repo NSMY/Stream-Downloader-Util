@@ -103,7 +103,9 @@ from utility_dir import util_functions as utill
 # print(compare_sizes(xfile, zfile, xfile/20 ))
 
 
-file = r'E:\DeleteStreams\FFMPEG__re-Muxed\Deadlyslob - 21-11-2023 Richard Heads Sturgian Conquest  Day 5  Glasses Mount  Blade II Bannerlord.mp4'
+# file = r'E:\DeleteStreams\Kotton - 12-11-2023.mp4'
+file = r'E:\DeleteStreams\Kotton - 12-11-2023 Big Rim Plays  Archonexus pt 2  500 BrutalCassandra mods_RimWorld.mp4'
+# file = r'E:\DeleteStreams\FFMPEG__re-Muxed\!Stream Mass storgae\Kotton - 2023-11-04 Nexus Pt2  New Base  500 BrutalCassandra mods_RimWorld.mp4'
 url = 'https://www.twitch.tv/videos/1982124389?t=03h42m00s'
 with open('c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/deadlyslob.json', 'r') as f:
     data = json.load(f)[0]
@@ -111,34 +113,49 @@ with open('c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/dead
 
 # gets true Length if downloaded with a time offset
 # and cross checks if the vod and file(length) == the same with offest.
+stdout = None
+try:
+    # FIX will need to include ffprobe in main settings checks to use this.
+    get_len_of_vod_file = subprocess.Popen(
+        f'ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 "{file}"',
+        shell=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+        text=True,
+        cwd='c:/ffmpeg/' # FIX replace me.
+    )
+    stdout, stderr = get_len_of_vod_file.communicate()
+    # get_len_of_vod_file.wait()
+    # len_of_vod = int(stdout.split('.')[0])
+    # stdout = stdout.split('\n')[0]
+    if isinstance(stdout, str):
+        numerator, denominator = map(int, stdout.split('/'))
+        result = numerator / denominator
+        print(str(round(result)))
+    # print(stdout.split('\n')[0])
+    # print(type(stdout))
+    # print(stdout)
+except ValueError as e :
+    stdout = stdout.split('/')[0]
+    print(stdout)
+    print(e)
+    pass
+    # print(f'{stdout.split('/')[0]}')
 
 
-# FIX will need to include ffprobe in main settings checks to use this.
-get_len_of_vod_file = subprocess.Popen(
-    rf'ffprobe -i "{file}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
-    shell=False,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    universal_newlines=True,
-    cwd='c:/ffmpeg/' # FIX replace me.
-)
-stdout, stderr = get_len_of_vod_file.communicate()
-get_len_of_vod_file.wait()
-len_of_vod = int(stdout.split('.')[0])
-# print("🐍 File: zextra_Funcs_/Testcode.py | Line: 126 | undefined ~ len_of_vod",len_of_vod)
 
-
-if (ulr_query := urlparse(url).query).startswith('t='):
-    url_split = re.split('[=hms]', ulr_query)
-    secs_to_subt_from_file = utill.encode_hms_to_seconds(':'.join(url_split[1:-1]))
-    # if len_of_vod - secs_to_subt_from_file == 0:
-    if len_of_vod - data.get('lengthSeconds') == 0:
-        print('wePassed')
-        # Code Here.
-        # set downloaded status.
-        # pass
-elif len_of_vod - data.get('lengthSeconds') == 0:
-    print('wePassed')
+# if (ulr_query := urlparse(url).query).startswith('t='):
+#     url_split = re.split('[=hms]', ulr_query)
+#     secs_to_subt_from_file = utill.encode_hms_to_seconds(':'.join(url_split[1:-1]))
+#     # if len_of_vod - secs_to_subt_from_file == 0:
+#     if len_of_vod - data.get('lengthSeconds') == 0:
+#         print('wePassed')
+#         # Code Here.
+#         # set downloaded status.
+#         # pass
+# elif len_of_vod - data.get('lengthSeconds') == 0:
+#     print('wePassed')
     # Code Here.
     # set downloaded status.
         

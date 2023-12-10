@@ -62,7 +62,7 @@ def simple_convert_timestamp(timestamp):
         Readable Time from twitch gql query.
     """
     dt = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
-    return dt.strftime("%d-%m-%Y")
+    return dt.strftime("%Y-%m-%d")
 
 
 def days_ago(timestamp):

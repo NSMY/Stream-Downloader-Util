@@ -64,11 +64,17 @@ def get_desired_vod_from_lst(**kwargs) -> dict:
         selected_json = select_json(list_of_streamers_jsons)
     data = creator_load_json_data(selected_json)
     video = select_video(data, selected_json)
-    return selected_json, {
-        'file': f"{selected_json['streamer']}.json",  # type: ignore will not be None
-        'index': video[0],
-        'vod_info': video[1]
-    }
+    if video:
+        return selected_json, {
+            'file': f"{selected_json['streamer']}.json",  # type: ignore will not be None
+            'index': video[0],
+            'vod_info': video[1]
+        }
+    else:
+        os.system('cls')
+        print('No Selection Made!\n')
+        import startup
+        startup.main_start()
     # return selected_json, {
     #     'file': f"{selected_json['streamer']}.json",  # type: ignore will not be None
     #     'index': video[0],

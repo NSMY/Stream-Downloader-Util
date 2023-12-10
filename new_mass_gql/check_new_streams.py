@@ -96,7 +96,6 @@ def add_new_entries_json(
     util.dump_json_ind4(
         file_path=json_file_path, content_dump=loaded_list_dicts
     )
-    sleep(3)
     return loaded_list_dicts[:vod_index]
 
 

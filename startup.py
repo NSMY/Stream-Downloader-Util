@@ -8,7 +8,7 @@ import auth_skip_ads_
 import funcs
 import init_files
 from ffmpegExtract import ffmpegextract
-from new_mass_gql import check_new_streams, gql_main_call
+from new_mass_gql import check_new_streams, gql_main_call, tk_get_file_list
 from utility_dir import get_single_vod_
 
 
@@ -54,6 +54,9 @@ def main_start(impt_data=None):
         else:
             main_script(download_with_Shutdown=True, fromfile=aad)
 
+    def list_view():
+        tk_get_file_list.call_as_solo()
+        main_start()
 
     # Define your dictionary
     switch = {
@@ -64,6 +67,7 @@ def main_start(impt_data=None):
         'Get Vod from File': retrieve_saved_vod,
         'Create Streamer Vods File': making_vods_list,
         'Check for New Vods': check_streams,
+        'List View': list_view,
         'Exit': exit_program,
     }
 
@@ -85,13 +89,14 @@ def main_start(impt_data=None):
         'Get Vod from File',
         'Check for New Vods',
         'Create Streamer Vods File',
+        'List View',
         'Exit'
     ]
     rprog = funcs.multi_choice_dialog(question, responses)
 
     # Get the function from the dictionary
     func = switch.get(rprog)  #ignore: E262
-
+    when_= 4-8
     # Call the function if it's not None
     if func:
         func()

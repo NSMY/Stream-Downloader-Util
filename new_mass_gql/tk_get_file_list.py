@@ -6,39 +6,51 @@ import threading
 import tkinter as tk
 import webbrowser
 from concurrent.futures import thread
+from csv import excel
+from datetime import datetime
 from pathlib import Path
 from tkinter import IntVar, Radiobutton, Toplevel, messagebox, ttk
 
+# import funcs
+
 # # from ..utility_dir import util_functions
-import spinner
-from utility_dir import util_functions
+# import spinner
+# from utility_dir import util_functions
 
 # from numpy import append
 
 
-# # to make the file work as a stand alone
-# sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-# import spinner
-# from utility_dir import util_functions
+# to make the file work as a stand alone
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import funcs
+import spinner
+from utility_dir import util_functions
 
-# json_dir = f'{util_functions.get_appdata_dir()}/jsons'
+json_dir = f'{util_functions.get_appdata_dir()}/jsons'
 
 # FEATURE Make a Class ????.
+
+
+style_theme_names = ('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 'xpnative')
 
 
 selected_items = []
 # [] Super Twitch ONLY
 def create_popup1(windowName, columns, processed_data, rawdata, file_path, **visual_only):
 
+    global Main_bg
+    Main_bg = '#191825'
     global selected_items
     popup = tk.Tk()
     popup.overrideredirect(False)
     popup.title(windowName)
-    popup.minsize(1350,500)
+    popup.minsize(1350, 500)
     style = ttk.Style(popup)
-    style.theme_use("clam")
+    style.theme_use("alt")
     style.configure("Treeview", background="#191825", fieldbackground="#191825", foreground="white")
-
+    
+    # style.configure("TButton", background=[("pressed", "red"), ("active", Main_bg)], foreground='white')
+    
     # style.configure("Treeview", background="#0b0b13", foreground="white")
     tree = ttk.Treeview(popup, style="Treeview")
     popup.configure(
@@ -50,9 +62,25 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     )
     frame1 = tk.Frame(popup, bg="#191825",) #borderwidth=3, highlightthickness=1, highlightbackground='yellow')
     frame2 = tk.Frame(popup, bg="#191825", borderwidth=3) #, highlightthickness=1, highlightbackground='violet')
-    frame3 = tk.Frame(popup, bg="#191825",) #borderwidth=3, highlightthickness=1, highlightbackground='white')
+    frame3 = tk.Frame(popup, bg=Main_bg,) #borderwidth=3, highlightthickness=1, highlightbackground='white')
     frame4 = tk.Frame(popup, bg="#191825", borderwidth=3, highlightbackground='yellow', relief="raised")
     frame2_subframe = tk.Frame(frame2, relief="sunken")
+
+
+
+
+    style1 = ttk.Style()
+    style1.configure("new.TNotebook", background=Main_bg, foreground="#272525")
+    notebook = ttk.Notebook(frame4, style="new.TNotebook")#, width=400)
+    tab1 = tk.Frame(notebook, bg=Main_bg)
+    tab2 = tk.Frame(notebook, bg=Main_bg)
+
+    notebook.add(tab1, text="Page 1", compound="center")
+    notebook.add(tab2, text="Page 2", compound="center")
+
+
+
+
 
     explainer_lable = tk.Label(
         frame2,
@@ -71,9 +99,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         pady=2,
         state="active",
         activebackground="silver",
-
     )
-
 # -----------------------------------------------------------------------------------
 
     tree = ttk.Treeview(
@@ -92,19 +118,21 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         tree.heading(col, text=col)
         if col == 'index':
             tree.column(col, width=20, stretch=tk.NO, anchor="w")
-        elif col == 'id':
+        elif col == 'Dld Status':
             tree.column(col, width=75, stretch=tk.YES, anchor='center')
-        elif col == 'downloaded':
+        elif col == 'Date':
             tree.column(col, width=75, stretch=tk.YES, anchor='center')
-        elif col == 'publishedAt':
-            tree.column(col, width=140, stretch=tk.YES, anchor='center')
-        elif col == 'status':
+        elif col == 'Vod Length':
+            tree.column(col, width=75, stretch=tk.YES, anchor='center')
+        elif col == 'Current Status':
             tree.column(col, width=80, stretch=tk.YES, anchor='center')
-        elif col == 'broadcastType':
+        elif col == 'Storage type':
             tree.column(col, width=75, stretch=tk.NO, anchor='center')
-        elif col == 'gameName':
+        elif col == 'Vod Id':
+            tree.column(col, width=75, stretch=tk.YES, anchor='center')
+        elif col == 'Stream Category':
             tree.column(col, minwidth=90, stretch=tk.YES)
-        elif col == 'title':
+        elif col == 'Title':
             tree.column(col, minwidth=200, width=500, stretch=tk.YES, anchor="w")
         else:
             tree.column(col, width=100, stretch=tk.YES)
@@ -174,6 +202,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         overrelief='ridge',
         pady=7,
         cursor="star"
+        # style="TButton"
     )
 
 
@@ -183,10 +212,12 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
             selected_item = tree.item(i)['values']
             if selected_item in selected_items:
                 selected_items.remove(selected_item)
+        count_var.set(f"Selection List: {len(selected_items)}")
 
         selections_listbox.delete(0, tk.END)
         for items in selected_items:
-            selections_listbox.insert(tk.END, f"Title Name: {items[0]}    {items[7]}")
+            selections_listbox.insert(tk.END, f"# {items[0]}    {days_ago_simple(items[5])} :Days ago    {items[6]}    {items[7]}")
+            
         # print(selected_items)
 
     delete_btn = tk.Button(
@@ -209,6 +240,8 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
     def clear_item():
         selected_items.clear()
+        count_var.set(f"Selection List: {len(selected_items)}")
+
         selections_listbox.delete(0, tk.END)
 
     clear_btn = tk.Button(
@@ -263,7 +296,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
             selected_items.clear()
 
     set_downloaded_btn = tk.Button(
-        frame4,
+        tab2,
         text='Set Item/s to "Downloaded"',
         command=lambda: set_item_downloaded(rawdata, file_path, x),
         height=1,
@@ -286,6 +319,16 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
     # tree.bind('<ButtonRelease-1>', delete_item)
 
+    def days_ago_simple(timestamp):
+        """
+        Returns:
+            int of days ago
+        """
+        dt = datetime.strptime(timestamp, "%d-%m-%Y")
+        now = datetime.now()
+        difference = now - dt
+        return difference.days
+
     def select_items(_):
         global selected_items
 
@@ -303,13 +346,15 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         # print(selected_items, "\n")
         selections_listbox.delete(0, tk.END)
         for items in selected_items:
-            selections_listbox.insert(tk.END, f"Title Name: {items[0]}    {items[7]}")
+            selections_listbox.insert(tk.END, f"# {items[0]}    {days_ago_simple(items[5])} :Days ago    {items[6]}    {items[7]}")
+        count_var.set(f"Selection List: {len(selected_items)}")
+
 
     tree.bind('<<TreeviewSelect>>', select_items)
 
 
     open_appdata_btn = tk.Button(
-        frame4,
+        tab1,
         text="Open Folder",
         underline=5,
         justify='center',
@@ -327,9 +372,14 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         pady=3
     )
 
-    list_name_label = tk.Label(frame2, text="Selection List", font=('Arial', 10, "bold"), bg='#1B192B', fg="White", padx=2, highlightbackground="#453303", highlightthickness=2)
+
+    # Create a StringVar() variable
+    count_var = tk.StringVar()
+    count_var.set(f"Selection List: {len(selected_items)}")
+    list_name_label = tk.Label(frame2, textvariable=count_var, font=('Arial', 8, "bold"), bg='#1B192B', fg="White", padx=2, highlightbackground="#453303", highlightthickness=2)
     explainer_lable.pack(side="right", anchor="e", fill="y")
-    list_name_label.pack(anchor="nw", pady=1, fill="both")
+    list_name_label.pack(anchor="nw", pady=1, fill="both",)
+
 
 
     def open_in_browser():
@@ -337,7 +387,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
             webbrowser.open(f'www.twitch.tv/videos/{vods[2]}')
 
     open_twitch_btn = tk.Button(
-        frame4,
+        tab1,
         text="Open Vod's in Browser",
         font=('Arial', 7, "bold"),
         command=open_in_browser,
@@ -382,6 +432,16 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     open_appdata_btn.pack(side="top", fill="both", padx=5, pady=2)
 
     title_lable.pack(side="top", fill="x", padx=5, pady=2)
+# -----------------------------------------------------------------------------------
+
+    style = ttk.Style()
+    style.configure("Line.TSeparator", background="#44296e")
+    sep = ttk.Separator(frame4, orient="horizontal", style='Line.TSeparator')
+    sep.pack(side='top', fill='x', padx=10, pady=10, expand=False)
+# -----------------------------------------------------------------------------------
+
+    notebook.pack(side='top', fill="both", expand=True, anchor="nw")
+
 
 # -----------------------------------------------------------------------------------
     style = ttk.Style()
@@ -395,7 +455,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         x = IntVar()
         for index in range(len(resolutions)):
             radiobutton = Radiobutton(
-                frame4,
+                tab2,
                 bg='#191825',
                 fg='#0576A7',
                 activebackground="#191825",
@@ -415,11 +475,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
     set_downloaded_btn.pack(side="top", fill="x", padx=1, pady=5)
 # -----------------------------------------------------------------------------------
-    style = ttk.Style()
-    style.configure("Line.TSeparator", background="#44296e")
-    sep = ttk.Separator(frame4, orient="horizontal", style='Line.TSeparator')
-    sep.pack(side='top', fill='x', padx=10, pady=10, expand=False)
-# -----------------------------------------------------------------------------------
+
 
 
     make_selec_btn.pack(side="bottom", fill="x", padx=1, pady=2)
@@ -468,22 +524,33 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
 
 
-
 def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
     # print(input_data, "Processing data")
     spinner1 = spinner.Spinner()
     spinner1.start()
 
+
     # Define the column names as 'index' and specific keys from the JSON data
-    columns = ['index', 'downloaded', 'id', 'broadcastType', 'status', 'publishedAt', 'gameName', 'title']  # replace 'key1', 'key2' with your specific keys
-    # Define the data as the index and values of the specific keys in the JSON data
-    data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(input_data)]
+    columns = ['index', 'downloaded', 'publishedAt', 'lengthSeconds', 'status', 'broadcastType', 'id', 'gameName', 'title']  # Add 'totalSeconds' to your columns
+    column_re_namesd = ['index', 'Dld Status', 'Date', 'Vod Length', 'Current Status', 'Storage type', 'Vod Id', 'Stream Category', 'Title']  # Add 'totalSeconds' to your columns
+
+    data = [[index] + [
+        util_functions.simple_convert_timestamp(item[key])
+        if key == 'publishedAt'
+        else util_functions.decode_seconds_to_hms(item[key])
+        if key == 'lengthSeconds'
+        else item[key]
+        for key in columns[1:]
+    ]
+        for index, item in enumerate(input_data)
+    ]
+    # data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(input_data)]
     # Call the function
 
     if kwargs:
-        create_popup1(windName, columns, data, input_data, file_path, visual_only=kwargs['arg1'])
+        create_popup1(windName, column_re_namesd, data, input_data, file_path, visual_only=kwargs['arg1'])
     else:
-        create_popup1(windName, columns, data, input_data, file_path)
+        create_popup1(windName, column_re_namesd, data, input_data, file_path)
 
 # -----------------------------------------------------------------------------------
 
@@ -496,12 +563,13 @@ def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
     #     print(input_data[int(index)].get('publishedAt'), '\n')
     spinner1.stop()
 
+
     return listIndexs[0] if listIndexs else None
     # BUG if empty close will be an empty [] and errors as it has no indexes[0].
     # WATCH set this to 0 index as haven't implemented multi downloading
 
 
-def call_tk_file(file_path) -> tuple| None:
+def call_tk_file(file_path) -> tuple | None:
     windName = os.path.basename(file_path)
     with open(file_path, 'r') as f:
         jsond = json.load(f)
@@ -520,6 +588,15 @@ def call_tk_data(data):
     t1 = threading.Thread(target=process_data, args=(data, windName, ''), kwargs=kwargs)
     t1.start()
     return
+
+def call_as_solo():
+    appdata_dir = rf'{util_functions.get_appdata_dir()}\jsons'
+    list_files = []
+    for files in os.listdir(appdata_dir):
+        list_files.append(files)
+    chosen_dir = rf'{appdata_dir}\{funcs.multi_choice_dialog('Open:', list_files)}'
+    return call_tk_file(chosen_dir)
+
 
 # TODOmake another button that sets as downloaded.
 
