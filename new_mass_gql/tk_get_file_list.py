@@ -1,30 +1,24 @@
-# Global variable to hold the selected items
+# File to visualize json data
+
 import json
 import os
-import sys
 import threading
 import tkinter as tk
 import webbrowser
-from concurrent.futures import thread
-from csv import excel
 from datetime import datetime
-from pathlib import Path
-from tkinter import IntVar, Radiobutton, Toplevel, messagebox, ttk
+from tkinter import IntVar, Radiobutton, messagebox, ttk
 
-# import funcs
-
-# # from ..utility_dir import util_functions
-# import spinner
-# from utility_dir import util_functions
-
-# from numpy import append
-
-
-# to make the file work as a stand alone
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import funcs
 import spinner
 from utility_dir import util_functions
+
+# # from ..utility_dir import util_functions
+
+# # to make the file work as a stand alone
+# sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# import funcs
+# import spinner
+# from utility_dir import util_functions
 
 json_dir = f'{util_functions.get_appdata_dir()}/jsons'
 
@@ -35,7 +29,7 @@ style_theme_names = ('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 
 
 
 selected_items = []
-# [] Super Twitch ONLY
+# [] Super Twitch ONLY data window
 def create_popup1(windowName, columns, processed_data, rawdata, file_path, **visual_only):
 
     global Main_bg
@@ -48,9 +42,9 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     style = ttk.Style(popup)
     style.theme_use("alt")
     style.configure("Treeview", background="#191825", fieldbackground="#191825", foreground="white")
-    
+
     # style.configure("TButton", background=[("pressed", "red"), ("active", Main_bg)], foreground='white')
-    
+
     # style.configure("Treeview", background="#0b0b13", foreground="white")
     tree = ttk.Treeview(popup, style="Treeview")
     popup.configure(
@@ -67,8 +61,6 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     frame2_subframe = tk.Frame(frame2, relief="sunken")
 
 
-
-
     style1 = ttk.Style()
     style1.configure("new.TNotebook", background=Main_bg, foreground="#272525")
     notebook = ttk.Notebook(frame4, style="new.TNotebook")#, width=400)
@@ -77,9 +69,6 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
     notebook.add(tab1, text="Page 1", compound="center")
     notebook.add(tab2, text="Page 2", compound="center")
-
-
-
 
 
     explainer_lable = tk.Label(
@@ -216,8 +205,8 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
         selections_listbox.delete(0, tk.END)
         for items in selected_items:
-            selections_listbox.insert(tk.END, f"# {items[0]}    {days_ago_simple(items[5])} :Days ago    {items[6]}    {items[7]}")
-            
+            selections_listbox.insert(tk.END, f"# {items[0]}    {days_ago_simple(items[2])} :Days ago    {items[-2]}    {items[-1]}")
+
         # print(selected_items)
 
     delete_btn = tk.Button(
@@ -241,7 +230,6 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     def clear_item():
         selected_items.clear()
         count_var.set(f"Selection List: {len(selected_items)}")
-
         selections_listbox.delete(0, tk.END)
 
     clear_btn = tk.Button(
@@ -324,7 +312,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         Returns:
             int of days ago
         """
-        dt = datetime.strptime(timestamp, "%d-%m-%Y")
+        dt = datetime.strptime(timestamp, "%Y-%m-%d")
         now = datetime.now()
         difference = now - dt
         return difference.days
@@ -346,7 +334,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         # print(selected_items, "\n")
         selections_listbox.delete(0, tk.END)
         for items in selected_items:
-            selections_listbox.insert(tk.END, f"# {items[0]}    {days_ago_simple(items[5])} :Days ago    {items[6]}    {items[7]}")
+            selections_listbox.insert(tk.END, f"# {items[0]}    {days_ago_simple(items[2])} :Days ago    {items[-2]}    {items[-1]}")
         count_var.set(f"Selection List: {len(selected_items)}")
 
 
@@ -409,6 +397,9 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         print("Window is closing")
         close_conf = messagebox.askyesno(title="CLOSE?", message="Close Window?")
         if close_conf:
+            selected_items.clear()
+            count_var.set(f"Selection List: {len(selected_items)}")
+            selections_listbox.delete(0, tk.END)
             popup.destroy()
 
     # Change the behavior of the close button
@@ -476,16 +467,11 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     set_downloaded_btn.pack(side="top", fill="x", padx=1, pady=5)
 # -----------------------------------------------------------------------------------
 
-
-
     make_selec_btn.pack(side="bottom", fill="x", padx=1, pady=2)
-
 
     delete_btn.pack(fill="x", side="bottom", padx=1, pady=2)
 
     clear_btn.pack(side="bottom", fill="x", padx=1, pady=2)
-
-
 
 
     popup.grid_columnconfigure(1, weight=1)
@@ -496,44 +482,29 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     width = popup.winfo_width()
     height = popup.winfo_height()
 
-    # width += 5
-    # height += 5
-
-
     if visual_only:
-        print(visual_only)
+        make_selec_btn.config(text="Exit", command=popup.destroy, cursor="")
+        set_downloaded_btn.pack_forget()
+        explainer_lable.pack_forget()
+        title_lable.config(text=f'New Vods for : {windowName.split('.')[0].title()}')
         # tree.config(selectmode="none")
         # clear_btn.pack_forget()
         # clear_btn.pack_forget()
         # delete_btn.pack_forget()
-        make_selec_btn.config(text="Exit", command=popup.destroy, cursor="")
-        set_downloaded_btn.pack_forget()
-        explainer_lable.pack_forget()
         # selections_listbox.pack_forget()
         # frame2_subframe.pack_forget()
         # list_name_label.pack_forget()
         # frame4.pack_forget()
-        title_lable.config(text=f'New Vods for : {windowName.split('.')[0].title()}')
-
-
 
     popup.geometry(f"{width}x{height}")
     popup.mainloop()
 
 
-
-
-
 def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
-    # print(input_data, "Processing data")
     spinner1 = spinner.Spinner()
     spinner1.start()
-
-
-    # Define the column names as 'index' and specific keys from the JSON data
-    columns = ['index', 'downloaded', 'publishedAt', 'lengthSeconds', 'status', 'broadcastType', 'id', 'gameName', 'title']  # Add 'totalSeconds' to your columns
-    column_re_namesd = ['index', 'Dld Status', 'Date', 'Vod Length', 'Current Status', 'Storage type', 'Vod Id', 'Stream Category', 'Title']  # Add 'totalSeconds' to your columns
-
+    columns = ['index', 'downloaded', 'publishedAt', 'lengthSeconds', 'status', 'broadcastType', 'id', 'gameName', 'title']
+    column_re_namesd = ['index', 'Dld Status', 'Date', 'Vod Length', 'Current Status', 'Storage type', 'Vod Id', 'Stream Category', 'Title']
     data = [[index] + [
         util_functions.simple_convert_timestamp(item[key])
         if key == 'publishedAt'
@@ -544,28 +515,15 @@ def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
     ]
         for index, item in enumerate(input_data)
     ]
-    # data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(input_data)]
-    # Call the function
-
     if kwargs:
         create_popup1(windName, column_re_namesd, data, input_data, file_path, visual_only=kwargs['arg1'])
     else:
         create_popup1(windName, column_re_namesd, data, input_data, file_path)
 
-# -----------------------------------------------------------------------------------
-
     listIndexs = [(index[0], input_data[index[0]]) for index in selected_items]
-    print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 440 | undefined ~ listIndexs",listIndexs)
-    print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 440 | undefined ~ selected_items",selected_items)
-
-    # for index in listIndexs:
-    #     print(input_data[int(index)].get('title'))
-    #     print(input_data[int(index)].get('publishedAt'), '\n')
     spinner1.stop()
-
-
     return listIndexs[0] if listIndexs else None
-    # BUG if empty close will be an empty [] and errors as it has no indexes[0].
+    # FIX if empty close will be an empty [] and errors as it has no indexes[0]| error handling on the call but still not ideally what i want.
     # WATCH set this to 0 index as haven't implemented multi downloading
 
 
@@ -574,20 +532,15 @@ def call_tk_file(file_path) -> tuple | None:
     with open(file_path, 'r') as f:
         jsond = json.load(f)
     return process_data(jsond, windName, file_path)
-    # list1 = []
-    # for index, items in enumerate(jsond):
-    #     vods_desc = (index, items['downloaded'], items['broadcastType'], items['publishedAt'], items['id'], items['gameName'], items['title'])
-    #     list1.append(f'{vods_desc}')
 
 
 def call_tk_data(data):
-    # windName = os.path.basename(data)
-    # print(data)
     windName = data[0].get('displayName')
     kwargs = {'arg1': True}
     t1 = threading.Thread(target=process_data, args=(data, windName, ''), kwargs=kwargs)
     t1.start()
     return
+
 
 def call_as_solo():
     appdata_dir = rf'{util_functions.get_appdata_dir()}\jsons'
@@ -597,8 +550,6 @@ def call_as_solo():
     chosen_dir = rf'{appdata_dir}\{funcs.multi_choice_dialog('Open:', list_files)}'
     return call_tk_file(chosen_dir)
 
-
-# TODOmake another button that sets as downloaded.
 
 # file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\algobro.json"
 # with open(file, 'r') as f:
