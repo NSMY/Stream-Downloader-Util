@@ -291,7 +291,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     if download_with_Shutdown:
         if sd_type == "Auto":
             save_path = os.path.dirname(download_file_path)
-            with open(f"{save_path}/downloadCompleteTime.txt", "w") as f:
+            with open(f"{save_path}/downloadCompleteTime.txt", "a") as f:
                 f.write(
                     datetime.now().strftime(
                         f"{terminal_Naming}\nCompleted at:---- %H:%M:%S ----\n"
@@ -306,7 +306,6 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 f"{terminal_Naming}\nCompleted at:---- %H:%M:%S ----\n"
             ),
         )
-
         # Plays Sound at this point.
         winsound.PlaySound(
             sound="C:\\Windows\\Media\\Windows Proximity Notification.wav",
