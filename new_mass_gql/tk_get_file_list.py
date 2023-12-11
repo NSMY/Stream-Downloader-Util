@@ -20,20 +20,31 @@ from utility_dir import util_functions
 # import spinner
 # from utility_dir import util_functions
 
-json_dir = f'{util_functions.get_appdata_dir()}/jsons'
+json_dir = f"{util_functions.get_appdata_dir()}/jsons"
 
 # FEATURE Make a Class ????.
 
 
-style_theme_names = ('winnative', 'clam', 'alt', 'default', 'classic', 'vista', 'xpnative')
+style_theme_names = (
+    "winnative",
+    "clam",
+    "alt",
+    "default",
+    "classic",
+    "vista",
+    "xpnative",
+)
 
 
 selected_items = []
-# [] Super Twitch ONLY data window
-def create_popup1(windowName, columns, processed_data, rawdata, file_path, **visual_only):
 
+
+# [] Super Twitch ONLY data window
+def create_popup1(
+    windowName, columns, processed_data, rawdata, file_path, **visual_only
+):
     global Main_bg
-    Main_bg = '#191825'
+    Main_bg = "#191825"
     global selected_items
     popup = tk.Tk()
     popup.overrideredirect(False)
@@ -41,7 +52,9 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     popup.minsize(1350, 500)
     style = ttk.Style(popup)
     style.theme_use("alt")
-    style.configure("Treeview", background="#191825", fieldbackground="#191825", foreground="white")
+    style.configure(
+        "Treeview", background="#191825", fieldbackground="#191825", foreground="white"
+    )
 
     # style.configure("TButton", background=[("pressed", "red"), ("active", Main_bg)], foreground='white')
 
@@ -50,26 +63,38 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     popup.configure(
         bg="#191825",
         highlightbackground="#296D8F",
-        highlightcolor='#0b0b13',
+        highlightcolor="#0b0b13",
         highlightthickness=5,
-        height=min(len(processed_data), 17)
+        height=min(len(processed_data), 17),
     )
-    frame1 = tk.Frame(popup, bg="#191825",) #borderwidth=3, highlightthickness=1, highlightbackground='yellow')
-    frame2 = tk.Frame(popup, bg="#191825", borderwidth=3) #, highlightthickness=1, highlightbackground='violet')
-    frame3 = tk.Frame(popup, bg=Main_bg,) #borderwidth=3, highlightthickness=1, highlightbackground='white')
-    frame4 = tk.Frame(popup, bg="#191825", borderwidth=3, highlightbackground='yellow', relief="raised")
+    frame1 = tk.Frame(
+        popup,
+        bg="#191825",
+    )  # borderwidth=3, highlightthickness=1, highlightbackground='yellow')
+    frame2 = tk.Frame(
+        popup, bg="#191825", borderwidth=3
+    )  # , highlightthickness=1, highlightbackground='violet')
+    frame3 = tk.Frame(
+        popup,
+        bg=Main_bg,
+    )  # borderwidth=3, highlightthickness=1, highlightbackground='white')
+    frame4 = tk.Frame(
+        popup,
+        bg="#191825",
+        borderwidth=3,
+        highlightbackground="yellow",
+        relief="raised",
+    )
     frame2_subframe = tk.Frame(frame2, relief="sunken")
-
 
     style1 = ttk.Style()
     style1.configure("new.TNotebook", background=Main_bg, foreground="#272525")
-    notebook = ttk.Notebook(frame4, style="new.TNotebook")#, width=400)
+    notebook = ttk.Notebook(frame4, style="new.TNotebook")  # , width=400)
     tab1 = tk.Frame(notebook, bg=Main_bg)
     tab2 = tk.Frame(notebook, bg=Main_bg)
 
     notebook.add(tab1, text="General", compound="center")
     notebook.add(tab2, text="Change Status", compound="center")
-
 
     explainer_lable = tk.Label(
         frame2,
@@ -82,56 +107,52 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         font=("Calibri", 10, "bold"),
         highlightcolor="white",
         justify="left",
-        relief='sunken',
+        relief="sunken",
         borderwidth=3,
         padx=5,
         pady=2,
         state="active",
         activebackground="silver",
     )
-# -----------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------
 
     tree = ttk.Treeview(
-        frame1,
-        columns=columns,
-        show='headings',
-        height=min(len(processed_data), 17)
+        frame1, columns=columns, show="headings", height=min(len(processed_data), 17)
     )
     # tree.grid(row=1, column=1, sticky='nsew')
 
-    vsb = ttk.Scrollbar(frame3, orient="vertical", command=tree.yview, style='')
+    vsb = ttk.Scrollbar(frame3, orient="vertical", command=tree.yview, style="")
     # vsb.grid(row=1, column=2, sticky='nsw')
     tree.configure(yscrollcommand=vsb.set)
 
     columns_tree = list(columns.keys())
-    tree['columns'] = columns_tree
+    tree["columns"] = columns_tree
     for col in columns_tree:
         tree.heading(col, text=col)
-        if col == 'Index':
+        if col == "Index":
             tree.column(col, width=20, stretch=tk.NO, anchor="w")
-        elif col == 'Dld Status':
-            tree.column(col, width=75, stretch=tk.YES, anchor='center')
-        elif col == 'Date':
-            tree.column(col, width=75, stretch=tk.YES, anchor='center')
-        elif col == 'Vod Length':
-            tree.column(col, width=75, stretch=tk.YES, anchor='center')
-        elif col == 'Current Status':
-            tree.column(col, width=80, stretch=tk.YES, anchor='center')
-        elif col == 'Storage type':
-            tree.column(col, width=75, stretch=tk.NO, anchor='center')
-        elif col == 'Vod Id':
-            tree.column(col, width=75, stretch=tk.YES, anchor='center')
-        elif col == 'Stream Category':
+        elif col == "Dld Status":
+            tree.column(col, width=75, stretch=tk.YES, anchor="center")
+        elif col == "Date":
+            tree.column(col, width=75, stretch=tk.YES, anchor="center")
+        elif col == "Vod Length":
+            tree.column(col, width=75, stretch=tk.YES, anchor="center")
+        elif col == "Current Status":
+            tree.column(col, width=80, stretch=tk.YES, anchor="center")
+        elif col == "Storage type":
+            tree.column(col, width=75, stretch=tk.NO, anchor="center")
+        elif col == "Vod Id":
+            tree.column(col, width=75, stretch=tk.YES, anchor="center")
+        elif col == "Stream Category":
             tree.column(col, minwidth=90, stretch=tk.YES)
-        elif col == 'Title':
+        elif col == "Title":
             tree.column(col, minwidth=200, width=500, stretch=tk.YES, anchor="w")
         else:
             tree.column(col, width=100, stretch=tk.YES)
 
     for item in processed_data:
-        tree.insert('', 'end', values=item)
-# -----------------------------------------------------------------------------------
-
+        tree.insert("", "end", values=item)
+    # -----------------------------------------------------------------------------------
 
     title_lable = tk.Label(
         frame4,
@@ -141,18 +162,17 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         # highlightcolor="red",
         justify="center",
         font=("Arial", 14),
-        relief='raised',
-        highlightbackground='#096597',
+        relief="raised",
+        highlightbackground="#096597",
         # highlightthickness=16,
         border=3,
-        state='disabled',
-        disabledforeground='#dedbd2',
-        activebackground='red',
+        state="disabled",
+        disabledforeground="#dedbd2",
+        activebackground="red",
         pady=5,
         padx=4,
     )
     # label2.grid(row=1, rowspan=3, column=3, padx=5, pady=5)
-
 
     # def get_selection(event):
     #     global selected_items
@@ -168,8 +188,8 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     def quit_with_selection():
         if selected_items == []:
             q = messagebox.askyesno(
-                title='QUITTING!!',
-                message='No Selection has Been Made,\nAre you Sure you want to proceed?'
+                title="QUITTING!!",
+                message="No Selection has Been Made,\nAre you Sure you want to proceed?",
             )
             if q:
                 popup.destroy()
@@ -183,31 +203,33 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         height=2,
         width=17,
         font=("Calabri", 10, "bold", "italic"),
-        highlightcolor='yellow',
-        background='#4895ef',
-        foreground='white',
-        activebackground='#00ff00',
-        activeforeground='black',
+        highlightcolor="yellow",
+        background="#4895ef",
+        foreground="white",
+        activebackground="#00ff00",
+        activeforeground="black",
         underline=5,
         relief="groove",
-        overrelief='ridge',
+        overrelief="ridge",
         pady=7,
-        cursor="star"
+        cursor="star",
         # style="TButton"
     )
-
 
     def delete_item():
         global selected_items
         for i in tree.selection():
-            selected_item = tree.item(i)['values']
+            selected_item = tree.item(i)["values"]
             if selected_item in selected_items:
                 selected_items.remove(selected_item)
         count_var.set(f"Selection List: {len(selected_items)}")
 
         selections_listbox.delete(0, tk.END)
         for items in selected_items:
-            selections_listbox.insert(tk.END, f"# {items[0]}    {days_ago_simple(items[2])} :Days ago    {items[-2]}    {items[-1]}")
+            selections_listbox.insert(
+                tk.END,
+                f"# {items[0]}    {days_ago_simple(items[2])} :Days ago    {items[-2]}    {items[-1]}",
+            )
 
         # print(selected_items)
 
@@ -218,15 +240,15 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         height=1,
         width=13,
         font=("calabri", 9, "bold", "italic"),
-        highlightcolor='yellow',
-        background='#5e1d1d',
-        foreground='white',
-        activebackground='#df0000',
-        activeforeground='white',
+        highlightcolor="yellow",
+        background="#5e1d1d",
+        foreground="white",
+        activebackground="#df0000",
+        activeforeground="white",
         underline=0,
         relief="groove",
-        overrelief='ridge',
-        pady=2
+        overrelief="ridge",
+        pady=2,
     )
 
     def clear_item():
@@ -241,22 +263,25 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         height=1,
         width=13,
         font=("calabri", 8, "bold", "italic"),
-        highlightcolor='yellow',
-        background='#29292c',
-        foreground='#ff7272',
-        activebackground='#df0000',
-        activeforeground='white',
+        highlightcolor="yellow",
+        background="#29292c",
+        foreground="#ff7272",
+        activebackground="#df0000",
+        activeforeground="white",
         underline=0,
         relief="groove",
-        overrelief='ridge',
+        overrelief="ridge",
         pady=1,
-        cursor="cross"
+        cursor="cross",
     )
     # new_win = Toplevel()
     # new_win.title('Set Item Downloaded')
 
     def set_item_downloaded(rawdata, file_path, selected_resolution):
-        question = messagebox.askyesno("Change Item Downloaded Status", f"Set Item/s to '{resolutions[selected_resolution.get()]}' Download status ?")
+        question = messagebox.askyesno(
+            "Change Item Downloaded Status",
+            f"Set Item/s to '{resolutions[selected_resolution.get()]}' Download status ?",
+        )
         if selected_items is []:
             if question is False:
                 print("User Closed Window")
@@ -266,13 +291,18 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
                 items_selected.append(i[0])
             for i in items_selected:
                 selected_value = resolutions[selected_resolution.get()]
-                rawdata[i]["downloaded"] = False if selected_value == 'False' else selected_value
+                rawdata[i]["downloaded"] = (
+                    False if selected_value == "False" else selected_value
+                )
 
             # Update the data for the Treeview
             data = [
-                [index] + [
-                    util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt'
-                    else util_functions.decode_seconds_to_hms(item[key]) if key == 'lengthSeconds'
+                [index]
+                + [
+                    util_functions.simple_convert_timestamp(item[key])
+                    if key == "publishedAt"
+                    else util_functions.decode_seconds_to_hms(item[key])
+                    if key == "lengthSeconds"
                     else item[key]
                     for key in list(value for value in columns.values())[1:]
                 ]
@@ -285,8 +315,8 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
             # Insert updated data into the Treeview
             for item in data:
-                tree.insert('', 'end', values=item)
-            with open(file_path, 'w') as f:
+                tree.insert("", "end", values=item)
+            with open(file_path, "w") as f:
                 json.dump(rawdata, f, indent=4)
             selected_items.clear()
 
@@ -297,19 +327,29 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         height=1,
         width=13,
         font=("Arial", 9, "bold"),
-        highlightcolor='yellow',
-        background='#4895ef',
-        foreground='white',
-        activebackground='#FECD1A',
-        activeforeground='black',
+        highlightcolor="yellow",
+        background="#4895ef",
+        foreground="white",
+        activebackground="#FECD1A",
+        activeforeground="black",
         underline=0,
         relief="groove",
-        overrelief='ridge',
+        overrelief="ridge",
         pady=2,
-        cursor="exchange"
+        cursor="exchange",
     )
 
-    selections_listbox = tk.Listbox(frame2_subframe, highlightbackground='#242c53', selectbackground='#191825', height=4, width=120, justify="left", bg='#191825', fg='white', activestyle="underline")
+    selections_listbox = tk.Listbox(
+        frame2_subframe,
+        highlightbackground="#242c53",
+        selectbackground="#191825",
+        height=4,
+        width=120,
+        justify="left",
+        bg="#191825",
+        fg="white",
+        activestyle="underline",
+    )
     selections_listbox.pack(fill="both")
 
     # tree.bind('<ButtonRelease-1>', delete_item)
@@ -331,7 +371,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         for i in tree.selection():
             # print(i)
             # print(tree.item(i)['values'])
-            selected_item = tree.item(i)['values']
+            selected_item = tree.item(i)["values"]
             if selected_item in selected_items:
                 selected_items.remove(selected_item)
                 selected_items.append(selected_item)
@@ -341,62 +381,72 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
         # print(selected_items, "\n")
         selections_listbox.delete(0, tk.END)
         for items in selected_items:
-            selections_listbox.insert(tk.END, f"# {items[0]}    {days_ago_simple(items[2])} :Days ago    {items[-2]}    {items[-1]}")
+            selections_listbox.insert(
+                tk.END,
+                f"# {items[0]}    {days_ago_simple(items[2])} :Days ago    {items[-2]}    {items[-1]}",
+            )
         count_var.set(f"Selection List: {len(selected_items)}")
 
-
-    tree.bind('<<TreeviewSelect>>', select_items)
-
+    tree.bind("<<TreeviewSelect>>", select_items)
 
     open_appdata_btn = tk.Button(
         tab1,
         text="Open Folder",
         underline=5,
-        justify='center',
+        justify="center",
         font=("Calabri", 8),
-        relief='raised',
-        overrelief='groove',
+        relief="raised",
+        overrelief="groove",
         command=lambda: os.startfile(json_dir),  # NOTE gets link from File arg.
         height=1,
         width=9,
-        highlightcolor='red',
-        background='#4361ee',
-        foreground='white',
-        activebackground='#003554',
-        activeforeground='white',
-        pady=3
+        highlightcolor="red",
+        background="#4361ee",
+        foreground="white",
+        activebackground="#003554",
+        activeforeground="white",
+        pady=3,
     )
-
 
     # Create a StringVar() variable
     count_var = tk.StringVar()
     count_var.set(f"Selection List: {len(selected_items)}")
-    list_name_label = tk.Label(frame2, textvariable=count_var, font=('Arial', 8, "bold"), bg='#1B192B', fg="White", padx=2, highlightbackground="#453303", highlightthickness=2)
+    list_name_label = tk.Label(
+        frame2,
+        textvariable=count_var,
+        font=("Arial", 8, "bold"),
+        bg="#1B192B",
+        fg="White",
+        padx=2,
+        highlightbackground="#453303",
+        highlightthickness=2,
+    )
     explainer_lable.pack(side="right", anchor="e", fill="y")
-    list_name_label.pack(anchor="nw", pady=1, fill="both",)
-
-
+    list_name_label.pack(
+        anchor="nw",
+        pady=1,
+        fill="both",
+    )
 
     def open_in_browser():
-        for vods in selected_items: #selected_items:
-            webbrowser.open(f'www.twitch.tv/videos/{vods[6]}')
+        for vods in selected_items:  # selected_items:
+            webbrowser.open(f"www.twitch.tv/videos/{vods[6]}")
 
     open_twitch_btn = tk.Button(
         tab1,
         text="Open Vod's in Browser",
-        font=('Arial', 7, "bold"),
+        font=("Arial", 7, "bold"),
         command=open_in_browser,
         bg="#4361ee",
         fg="#fdfdfd",
         underline=14,
         overrelief="ridge",
         activebackground="#003554",
-        activeforeground='white',
+        activeforeground="white",
         pady=2,
-        padx=5
+        padx=5,
     )
     open_twitch_btn.pack(side="top", padx=5, pady=3)
-
 
     def on_close():
         close_conf = messagebox.askyesno(title="CLOSE?", message="Close Window?")
@@ -408,14 +458,14 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
     # Change the behavior of the close button
     popup.protocol("WM_DELETE_WINDOW", on_close)
-# -----------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------
 
     frame2_subframe.pack(fill="both")
     # frame2_subframe.grid()
 
     frame1.grid(row=1, column=1, sticky="nsew")
-    tree.pack(side='left', fill='both', anchor='ne', expand=True)
-    vsb.pack(side="left", fill="y", anchor='nw', expand=True, padx=2)
+    tree.pack(side="left", fill="both", anchor="ne", expand=True)
+    vsb.pack(side="left", fill="y", anchor="nw", expand=True, padx=2)
 
     frame2.grid(row=2, column=1, sticky="nsew")
 
@@ -423,60 +473,58 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
     frame4.grid(row=1, column=3, sticky="nsew", rowspan=2)
 
-# -----------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------
     open_appdata_btn.pack(side="top", fill="both", padx=5, pady=2)
 
     title_lable.pack(side="top", fill="x", padx=5, pady=2)
-# -----------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------
 
     style = ttk.Style()
     style.configure("Line.TSeparator", background="#44296e")
-    sep = ttk.Separator(frame4, orient="horizontal", style='Line.TSeparator')
-    sep.pack(side='top', fill='x', padx=10, pady=10, expand=False)
-# -----------------------------------------------------------------------------------
+    sep = ttk.Separator(frame4, orient="horizontal", style="Line.TSeparator")
+    sep.pack(side="top", fill="x", padx=10, pady=10, expand=False)
+    # -----------------------------------------------------------------------------------
 
-    notebook.pack(side='top', fill="both", expand=True, anchor="nw")
+    notebook.pack(side="top", fill="both", expand=True, anchor="nw")
 
-
-# -----------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------
     style = ttk.Style()
     style.configure("Line.TSeparator", background="#44296e")
-    sep = ttk.Separator(frame4, orient="horizontal", style='Line.TSeparator')
-    sep.pack(side='top', fill='x', padx=10, pady=10, expand=False)
-# -----------------------------------------------------------------------------------
+    sep = ttk.Separator(frame4, orient="horizontal", style="Line.TSeparator")
+    sep.pack(side="top", fill="x", padx=10, pady=10, expand=False)
+    # -----------------------------------------------------------------------------------
 
     if not visual_only:
-        resolutions = ["1080p", "720p", "480p", "360p", "160p", 'False']
+        resolutions = ["1080p", "720p", "480p", "360p", "160p", "False"]
         x = IntVar()
         for index in range(len(resolutions)):
             radiobutton = Radiobutton(
                 tab2,
-                bg='#191825',
-                fg='#0576A7',
+                bg="#191825",
+                fg="#0576A7",
                 activebackground="#191825",
-                activeforeground='#00ff95',
-                highlightbackground='yellow',
+                activeforeground="#00ff95",
+                highlightbackground="yellow",
                 # selectcolor='aqua',
-                anchor='w',
-                text=resolutions[index], #adds text to radio buttons
-                variable=x, #groups radiobuttons together if they share the same variable
-                value=index, #assigns each radiobutton a different value
-                padx=1, #adds padding on x-axis
+                anchor="w",
+                text=resolutions[index],  # adds text to radio buttons
+                variable=x,  # groups radiobuttons together if they share the same variable
+                value=index,  # assigns each radiobutton a different value
+                padx=1,  # adds padding on x-axis
                 font=("Impact", 12),
-                compound='left', #adds image & text (left-side)
+                compound="left",  # adds image & text (left-side)
                 # style="switch",
             )
-            radiobutton.pack(fill="both", anchor='w')
+            radiobutton.pack(fill="both", anchor="w")
 
     set_downloaded_btn.pack(side="top", fill="x", padx=1, pady=5)
-# -----------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------
 
     make_selec_btn.pack(side="bottom", fill="x", padx=1, pady=2)
 
     delete_btn.pack(fill="x", side="bottom", padx=1, pady=2)
 
     clear_btn.pack(side="bottom", fill="x", padx=1, pady=2)
-
 
     popup.grid_columnconfigure(1, weight=1)
     popup.grid_rowconfigure(1, weight=1)
@@ -507,11 +555,24 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
     spinner1 = spinner.Spinner()
     spinner1.start()
-    columns = {'Index': 'index', 'Dld Status': 'downloaded', 'Date': 'publishedAt', 'Vod Length': 'lengthSeconds', 'Current Status': 'status', 'Storage type': 'broadcastType', 'Vod Id': 'id', 'Stream Category': 'gameName', 'Title': 'title'}
+    columns = {
+        "Index": "index",
+        "Dld Status": "downloaded",
+        "Date": "publishedAt",
+        "Vod Length": "lengthSeconds",
+        "Current Status": "status",
+        "Storage type": "broadcastType",
+        "Vod Id": "id",
+        "Stream Category": "gameName",
+        "Title": "title",
+    }
     data = [
-        [index] + [
-            util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt'
-            else util_functions.decode_seconds_to_hms(item[key]) if key == 'lengthSeconds'
+        [index]
+        + [
+            util_functions.simple_convert_timestamp(item[key])
+            if key == "publishedAt"
+            else util_functions.decode_seconds_to_hms(item[key])
+            if key == "lengthSeconds"
             else item[key]
             for key in list(value for value in columns.values())[1:]
         ]
@@ -519,7 +580,9 @@ def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
     ]
 
     if kwargs:
-        create_popup1(windName, columns, data, input_data, file_path, visual_only=kwargs['arg1'])
+        create_popup1(
+            windName, columns, data, input_data, file_path, visual_only=kwargs["arg1"]
+        )
     else:
         create_popup1(windName, columns, data, input_data, file_path)
 
@@ -532,21 +595,21 @@ def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
 
 def call_tk_file(file_path) -> tuple | None:
     windName = os.path.basename(file_path)
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         jsond = json.load(f)
     return process_data(jsond, windName, file_path)
 
 
 def call_tk_data(data):
-    windName = data[0].get('displayName')
-    kwargs = {'arg1': True}
-    t1 = threading.Thread(target=process_data, args=(data, windName, ''), kwargs=kwargs)
+    windName = data[0].get("displayName")
+    kwargs = {"arg1": True}
+    t1 = threading.Thread(target=process_data, args=(data, windName, ""), kwargs=kwargs)
     t1.start()
     return
 
 
 def call_as_solo():
-    appdata_dir = rf'{util_functions.get_appdata_dir()}\jsons'
+    appdata_dir = rf"{util_functions.get_appdata_dir()}\jsons"
     list_files = []
     for files in os.listdir(appdata_dir):
         list_files.append(files)
