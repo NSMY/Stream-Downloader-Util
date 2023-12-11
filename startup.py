@@ -1,8 +1,6 @@
 
 import os
-import sys
 import threading
-from os import path
 
 import auth_skip_ads_
 import funcs
@@ -10,6 +8,7 @@ import init_files
 from ffmpegExtract import ffmpegextract
 from new_mass_gql import check_new_streams, gql_main_call, tk_get_file_list
 from utility_dir import get_single_vod_
+from utils import video_data_cross_checker
 
 
 def main_start(impt_data=None):
@@ -58,6 +57,10 @@ def main_start(impt_data=None):
         tk_get_file_list.call_as_solo()
         main_start()
 
+    def crosscheck_vod_details():
+        video_data_cross_checker.main()
+        main_start()
+
     # Define your dictionary
     switch = {
         'Download': download,
@@ -68,11 +71,11 @@ def main_start(impt_data=None):
         'Create Streamer Vods File': making_vods_list,
         'Check for New Vods': check_streams,
         'List View': list_view,
+        'Cross-check Vods to Json Data': crosscheck_vod_details,
         'Exit': exit_program,
     }
 
     os.system("title Stream Downloader Util")
-
     t1 = threading.Thread(target=auth_skip_ads_.auth_file_check)
     t1.start()
     t2 = threading.Thread(target=init_files.init_links_file)
@@ -90,13 +93,14 @@ def main_start(impt_data=None):
         'Check for New Vods',
         'Create Streamer Vods File',
         'List View',
+        'Cross-check Vods to Json Data',
         'Exit'
     ]
     rprog = funcs.multi_choice_dialog(question, responses)
 
     # Get the function from the dictionary
     func = switch.get(rprog)  #ignore: E262
-    when_= 4-8
+    # when_= 4-8
     # Call the function if it's not None
     if func:
         func()
