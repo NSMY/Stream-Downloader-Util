@@ -13,15 +13,19 @@ prints 0 new vods anyway?.
 [x] [Done](startup.py#L52) be able to call shutdown also with file data, edit startup cmd
 [x] [solved made my own](spinner.py): have a waiting indication on (particular req calls) something not spinners as they seem to not work on old cmd
 [x] [Done But may break TK list](utility_dir\get_single_vod_.py#L46) make a way to back out of get vods if chosen wrong file. (probs add a exit string/if to the multi choice)
+[x] [Working](zextra_Funcs_/check_old_files_downloaded.py#L136)figure a way to determine if fully downloaded and set to downloaded in file  Name+ Total seconds ??
+[x] be able to manually set if downloaded maybe with TKPopup?????
+[x] [neeed to make the comparision](zextra_Funcs_\check_old_files_downloaded.py)
 
+
+[] set ffprobe paths to be from paths file
+[] set main download completions crosscheck
 [] make chapters in vods? using code > [Code](zextra_Funcs_/getChaptersCall.py) < will require a large rewrite, games will be
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 [] make able to get from file and dld from a time cmd and have it calc the right size minus'ing time-- think i have code somewhere 
 
-TODO [Working](zextra_Funcs_/check_old_files_downloaded.py#L136)figure a way to determine if fully downloaded and set to downloaded in file  Name+ Total seconds ??
 [] [Working](zextra_Funcs_/check_old_files_downloaded.py#L136): make it so u can check if downloaded incase a new json file is made/ overwritten
 
-[] be able to manually set if downloaded maybe with TKPopup?????
 
 THINK in the check new stream -- what to do for deleted /hidden vods on channels? 
 
@@ -32,7 +36,6 @@ more robust dependency searching and downloading (if deleted between settinggs C
 THINK make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 
 TRACK have it error when refreshing json vods file and non streamer name
 
-LEFTHERE [neeed to make the comparision](zextra_Funcs_\check_old_files_downloaded.py)
 
 THINK do i ad multi File processing? mp4 wav etc
 
