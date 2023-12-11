@@ -194,8 +194,6 @@ class Vod:
             vods.append(cls(edge["node"]))
         return [vars(vod) for vod in vods]
 
-from yaspin import yaspin
-
 
 # [] Kwargs ??? **kwargs.
 def First_making_cmds(streamer_user_name=None):
