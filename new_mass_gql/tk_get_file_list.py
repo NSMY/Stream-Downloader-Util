@@ -67,8 +67,8 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     tab1 = tk.Frame(notebook, bg=Main_bg)
     tab2 = tk.Frame(notebook, bg=Main_bg)
 
-    notebook.add(tab1, text="Page 1", compound="center")
-    notebook.add(tab2, text="Page 2", compound="center")
+    notebook.add(tab1, text="General", compound="center")
+    notebook.add(tab2, text="Change Status", compound="center")
 
 
     explainer_lable = tk.Label(
@@ -103,9 +103,11 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     # vsb.grid(row=1, column=2, sticky='nsw')
     tree.configure(yscrollcommand=vsb.set)
 
-    for col in columns:
+    columns_tree = list(columns.keys())
+    tree['columns'] = columns_tree
+    for col in columns_tree:
         tree.heading(col, text=col)
-        if col == 'index':
+        if col == 'Index':
             tree.column(col, width=20, stretch=tk.NO, anchor="w")
         elif col == 'Dld Status':
             tree.column(col, width=75, stretch=tk.YES, anchor='center')
@@ -259,18 +261,23 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
             if question is False:
                 print("User Closed Window")
         elif question is True:
-            # print("User clicked Yes")
             items_selected = []
             for i in selected_items:
                 items_selected.append(i[0])
-            # print(items_selected, "\n")
             for i in items_selected:
                 selected_value = resolutions[selected_resolution.get()]
                 rawdata[i]["downloaded"] = False if selected_value == 'False' else selected_value
-                # print(json.dumps(rawdata[i], indent=4))
 
             # Update the data for the Treeview
-            data = [[index] + [util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt' else item[key] for key in columns[1:]] for index, item in enumerate(rawdata)]
+            data = [
+                [index] + [
+                    util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt'
+                    else util_functions.decode_seconds_to_hms(item[key]) if key == 'lengthSeconds'
+                    else item[key]
+                    for key in list(value for value in columns.values())[1:]
+                ]
+                for index, item in enumerate(rawdata)
+            ]
 
             # Clear all existing items in the Treeview
             for item in tree.get_children():
@@ -372,7 +379,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 
     def open_in_browser():
         for vods in selected_items: #selected_items:
-            webbrowser.open(f'www.twitch.tv/videos/{vods[2]}')
+            webbrowser.open(f'www.twitch.tv/videos/{vods[6]}')
 
     open_twitch_btn = tk.Button(
         tab1,
@@ -391,10 +398,7 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
     open_twitch_btn.pack(side="top", padx=5, pady=3)
 
 
-
     def on_close():
-        # Put your cleanup code here
-        print("Window is closing")
         close_conf = messagebox.askyesno(title="CLOSE?", message="Close Window?")
         if close_conf:
             selected_items.clear()
@@ -503,22 +507,21 @@ def create_popup1(windowName, columns, processed_data, rawdata, file_path, **vis
 def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
     spinner1 = spinner.Spinner()
     spinner1.start()
-    columns = ['index', 'downloaded', 'publishedAt', 'lengthSeconds', 'status', 'broadcastType', 'id', 'gameName', 'title']
-    column_re_namesd = ['index', 'Dld Status', 'Date', 'Vod Length', 'Current Status', 'Storage type', 'Vod Id', 'Stream Category', 'Title']
-    data = [[index] + [
-        util_functions.simple_convert_timestamp(item[key])
-        if key == 'publishedAt'
-        else util_functions.decode_seconds_to_hms(item[key])
-        if key == 'lengthSeconds'
-        else item[key]
-        for key in columns[1:]
-    ]
+    columns = {'Index': 'index', 'Dld Status': 'downloaded', 'Date': 'publishedAt', 'Vod Length': 'lengthSeconds', 'Current Status': 'status', 'Storage type': 'broadcastType', 'Vod Id': 'id', 'Stream Category': 'gameName', 'Title': 'title'}
+    data = [
+        [index] + [
+            util_functions.simple_convert_timestamp(item[key]) if key == 'publishedAt'
+            else util_functions.decode_seconds_to_hms(item[key]) if key == 'lengthSeconds'
+            else item[key]
+            for key in list(value for value in columns.values())[1:]
+        ]
         for index, item in enumerate(input_data)
     ]
+
     if kwargs:
-        create_popup1(windName, column_re_namesd, data, input_data, file_path, visual_only=kwargs['arg1'])
+        create_popup1(windName, columns, data, input_data, file_path, visual_only=kwargs['arg1'])
     else:
-        create_popup1(windName, column_re_namesd, data, input_data, file_path)
+        create_popup1(windName, columns, data, input_data, file_path)
 
     listIndexs = [(index[0], input_data[index[0]]) for index in selected_items]
     spinner1.stop()
