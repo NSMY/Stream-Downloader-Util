@@ -7,7 +7,7 @@ import threading
 import winsound
 from datetime import datetime
 from queue import Queue
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlsplit
 
 from pyperclip import copy, paste
 
@@ -21,6 +21,9 @@ from utility_dir import util_functions
 
 
 def main_script(download_with_Shutdown=None, fromfile=None):
+    ''' download_with_shutdown enables == Pc shutdown after completion
+        fromfile == Json data dict.
+    '''
     if fromfile:
         if (
             fromfile[1]["vod_info"].get("status") == "RECORDING"
@@ -30,12 +33,14 @@ def main_script(download_with_Shutdown=None, fromfile=None):
             == "No"
         ):
             from startup import main_start
+
             main_start()
 
         fromfile = (
             fromfile[1]["vod_info"]["url"],
             fromfile[1]["index"],
             fromfile[1]["vod_info"],
+            # File Naming Convention formed here
             f"{fromfile[1]['vod_info']['displayName']} - "
             f"{util_functions.simple_convert_timestamp(fromfile[1]['vod_info']['publishedAt'])} "
             f"{fromfile[1]['vod_info']['title']}_"
@@ -43,6 +48,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         )
 
     sd_type = None
+
     if download_with_Shutdown:
         sd_type = funcs.multi_choice_dialog(
             "Manual shutdown Time or Shutdown after Completion", ["Auto", "Manual"]
@@ -54,21 +60,65 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     url = paste() if fromfile is None else fromfile[0]
 
     url_bits = funcs.parse_url_twitch(url)
+
     url_ = url_bits[0]
 
-    # TODO download at specified time needs work.
-    # if not url_bits[1].query.startswith('t='):
-    #     timecode = input('Start Download at Spesific Time ? 00h00m00s. enter 6 numbers separated by Space. EG 01 25 35 :').split(' ')
-    #     url_ = rf'{url_}?t=h{timecode[0]}m{timecode[1]}s{timecode[2]}'
-    #     print("🐍 File: Stream-Downloader-Util/Main.py | Line: 57 | main_script ~ url_",url_)
+    def start_at_specified_time(url) -> tuple:
+        """-> Returns tup(url, timecode)"""
+        timecode = input(
+            "Start Download at Spesific Time ? 00h00m00s. "
+            "enter 6 numbers separated by Space. EG 01-25-35 :"
+        ).split("-")
+        url = rf"{url}?t=h{timecode[0]}m{timecode[1]}s{timecode[2]}"
+        return url, timecode
 
-    # URL CleanUp and isVod check for m3u8 Call.
-    is_url_path_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
-    url_path = url_bits[1].path.split("/", -1)[-1]
+    def calc_remanig_time(timecode: int, from_file_seconds_data: int) -> int:
+        full_seconds = from_file_seconds_data
+        return full_seconds - timecode
 
-    def get_urlm3u8_filesize(url_, queue):
-        size_of_vod = m3.m3u8_call_init(video_id=url_)
+    def convert_url_query_timecode(url_timecode_query):
+        # def encode_hms_to_seconds(time_str, split_on=':'):
+        """input must be hh:mm:ss format separated by :"""
+        hrs, min, sec = (
+            url_timecode_query.replace("t=", "")
+            .replace("h", "-")
+            .replace("m", "-")
+            .replace("s", "")
+            .split("-", maxsplit=3)
+        )
+        return int(hrs) * 3600 + int(min) * 60 + int(sec)
+
+    def get_urlm3u8_filesize(url_, queue, minus_time):
+        url_path = urlsplit(url_).path.rsplit("/", 1)[1]
+        if not minus_time:
+            size_of_vod = m3.m3u8_call_init(
+                video_id=url_path, tot_seconds=remaining_time
+            )
+            return queue.put(size_of_vod)
+        size_of_vod = m3.m3u8_call_init(
+            video_id=url_path, tot_seconds=remaining_time, minus_time=minus_time
+        )
         return queue.put(size_of_vod)
+
+    remaining_time = None
+
+    minus_time = 0
+    if (
+        fromfile
+        and funcs.multi_choice_dialog("Start at Specified time?", ["No", "Yes"])
+        == "Yes"
+    ):
+        print(f'Vod length: {util_functions.decode_seconds_to_hms(fromfile[-2]["lengthSeconds"])}')
+        url_, timecode = start_at_specified_time(url_)
+        timecodej = "-".join(timecode)
+        timecodei = util_functions.encode_hms_to_seconds(timecodej, split_on="-")
+        remaining_time = calc_remanig_time(timecodei, fromfile[2]["lengthSeconds"])
+    else:
+        if url_bits[1].query.startswith("t="):
+            minus_time = convert_url_query_timecode(urlsplit(url_).query)
+
+    # IsVod check for m3u8 Call.
+    is_url_path_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
 
     urlchk = funcs.is_url(url_)
     # Threading start for url check.
@@ -77,7 +127,9 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     # Checking Settings.json is available and recently checked.
     try:
-        check_settings = funcs.loadSettings(keys=["LastSave", "streamlinkPath"])
+        check_settings = funcs.loadSettings(
+            keys=["LastSave", "streamlinkPath", "ffprobepath"]
+        )
     except FileNotFoundError as e:
         print(e)
         init_files.initSettings()
@@ -85,14 +137,20 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         main_script()
 
     is_a_fresh_save = [funcs.is_less_than_30days(check_settings[0])]  # type: ignore possible unbound
+
     is_a_fresh_save.extend(check_settings[1:2])  # type: ignore possible unbound
+
     if not all(is_a_fresh_save):
         funcs.streamlink_factory_init(["Main", "main_script"])
         os.system("cls")
         main_script()
+
     slinkDir = os.path.dirname(check_settings[1])  # type: ignore possible unbound
 
+    ffprobe_dir = os.path.dirname(check_settings[2])  # type: ignore possible unbound
+
     message = "Clipboard is NOT a URL, Copy URL Again......"
+
     while not urlchk:
         print(f"ERROR: ( {url_}) Is NOT a Url.\n")
         choices = ["Done", "Exit", "Manual Input URL"]
@@ -142,8 +200,11 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     # Checks if a Twitch URL.
     twitch_netloc = ["www.twitch.tv", "usher.ttvnw.net"]
+
     result = urlparse(url_)[1]
+
     is_it_a_twitch_url = False
+
     if result in twitch_netloc:
         is_it_a_twitch_url = True
 
@@ -152,10 +213,11 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     result = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
     result.start()
 
-
     if is_url_path_vod:
         q2 = Queue()
-        m3u8 = threading.Thread(target=get_urlm3u8_filesize, args=(url_path, q2))
+        m3u8 = threading.Thread(
+            target=get_urlm3u8_filesize, args=(url_, q2, minus_time)
+        )
         m3u8.start()
 
         # end m3u8 check.
@@ -168,7 +230,9 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     # Naming the Terminal.
     terminal_Naming = os.path.basename(download_file_path)
+
     os.system(f"title {terminal_Naming}")
+
     spinner2 = spn.Spinner()
     spinner2.start()
 
@@ -178,6 +242,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     result = q.get()
 
     my_choices = list(reversed(result))
+
     chosen_resolution = funcs.multi_choice_dialog("What Size to Download?", my_choices)
 
     # if not twitch netloc uses default, if twitch asks advanced Options.
@@ -211,6 +276,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         m3u8.join()
         spinner1.stop()
         m3u8_data = q2.get()
+
+        remaining_time
         try:
             if chosen_resolution == "best":
                 gb_of_vod = list(m3u8_data.values())[0][0]
@@ -223,8 +290,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                     f"Quality Chosen: {chosen_resolution}", f"{gb_of_vod} GB\n"
                 )
             )
-        except UnboundLocalError and KeyError:
-            print("Quality Chosen: ", chosen_resolution, "\n")
+        except (UnboundLocalError, KeyError) as e:
+            print(e, "\nQuality Chosen: ", chosen_resolution, "\n")
     else:
         print("Quality Chosen: ", chosen_resolution, "\n")
 
@@ -342,4 +409,5 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
 if __name__ == "__main__":
     from startup import main_start
+
     main_start()
