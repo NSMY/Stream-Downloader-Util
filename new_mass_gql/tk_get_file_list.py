@@ -100,7 +100,8 @@ def create_popup1(
         frame2,
         text=(
             "Selection/s made by clicking on a Vod/s with Mouse (Multi Hold Shift)\n"
-            "Use 'Make Selection-Close' (Right) Button to make selection."
+            "Use 'Make Selection-Close' (Right) Button to make selection,"
+            "\nSelection will be the first item in the list"
         ),
         bg="#191825",
         fg="white",
