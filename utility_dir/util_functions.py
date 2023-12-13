@@ -35,9 +35,9 @@ def decode_seconds_to_hms(total_seconds):
     seconds = total_seconds % 60
     return f"{hours}:{minutes}:{seconds}"
 
-def encode_hms_to_seconds(time_str):
+def encode_hms_to_seconds(time_str, split_on=':'):
     """input must be hh:mm:ss format separated by :"""
-    hours, minutes, seconds = map(int, time_str.split(":"))
+    hours, minutes, seconds = map(int, time_str.split(split_on))
     return hours * 3600 + minutes * 60 + seconds
 
 
