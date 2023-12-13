@@ -18,7 +18,7 @@ def estimate_video_size(bandwidth_bps, total_secs):
     return total_bits / 8 / 1024 / 1024 / 1024
 
 
-def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None) -> dict:
+def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None, minus_time=0) -> dict:
     """
     Grabs the URI's for accessing each of the video chunks.
 
@@ -62,7 +62,7 @@ def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None) -> 
         bandwidth = stream_info.bandwidth
         name = mea.name.lower()
         size = "{:.2f}".format(
-            estimate_video_size(bandwidth_bps=bandwidth, total_secs=seconds_)
+            estimate_video_size(bandwidth_bps=bandwidth, total_secs=seconds_ - minus_time)
         )
         dictt[name] = [size, pl.uri]
         # print("{:<5} {:<10}".format(resolution, f'{size} GB'))
@@ -76,11 +76,20 @@ def get_totalsecs_from_playlist(line, lineno, data, state):
         data["#EXT-X-TWITCH-TOTAL-SECS"] = custom_tag[1].strip()
 
 
-def m3u8_call_init(video_id):
+def m3u8_call_init(video_id, tot_seconds=None, minus_time=0) -> dict:
+    """_summary_
+
+    Args:
+        video_id (Str): id path of twitch url
+        tot_seconds (int, optional): total_seconds of vod if less than maximum. Defaults to None and gets from m3u8 data.
+
+    Returns:
+        dict: vod_sizes{[sizeGB, URI]}
+    """
     netlock = "https://usher.ttvnw.net"
     url = f"{netlock}/vod/{video_id}.m3u8"
     access_token = gql.get_access_token(video_id)
 
-    resolutions_uris = get_playlist_uris(video_id, access_token)
+    resolutions_uris = get_playlist_uris(video_id, access_token, tot_seconds, minus_time=minus_time)
     # print("🐍 File: new_mass_gql/my_Test_m3u8.py | Line: 91 | m3u8_call_init ~ resolutions_uris",resolutions_uris)
     return resolutions_uris
