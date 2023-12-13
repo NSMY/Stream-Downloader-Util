@@ -19,6 +19,7 @@ from tqdm import tqdm
 
 from default_path_factory import DefaultPathFactory
 from Main import main_script
+from startup import main_start
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
 
@@ -143,7 +144,7 @@ def openFile():
             openFile()
         elif check == "no":
             os.system("cls" if os.name == "nt" else "clear")
-            main_script()
+            main_start()
         sys.exit()
     return file
 
@@ -179,7 +180,7 @@ def saveFile(kwargs=''):
             saveFile()
         elif check == "no":
             os.system("cls" if os.name == "nt" else "clear")
-            main_script()
+            main_start()
         sys.exit()
     return (file)
 
