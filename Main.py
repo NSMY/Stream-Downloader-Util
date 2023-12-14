@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import signal
@@ -24,6 +25,21 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     ''' download_with_shutdown enables == Pc shutdown after completion
         fromfile == Json data dict.
     '''
+    # BUG some bug that either returns url with no separators in the resolution check
+    # or the size of vod check returns 0.00gb, Not consistent. seem to be able to get it with deadlys dayz vods.
+    import logging
+    if not os.path.exists("debugging"):
+        os.mkdir("debugging")
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+    root_file_handler = logging.FileHandler(f'debugging/{datetime.now().strftime('%Y-%m-%d')}_{os.path.basename(__file__)}.log', delay=True)
+    root_file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(levelname)s:%(name)s %(message)s')
+    root_file_handler.setFormatter(formatter)
+    root_logger.addHandler(root_file_handler)
+
+    logging.info(f'\n{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}\n'"File: Stream-Downloader-Util/Main.py | Line: 58 | main_script ~ fromfile %s", fromfile)
+
     if fromfile:
         if (
             fromfile[1]["vod_info"].get("status") == "RECORDING"
@@ -58,10 +74,13 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     # Retrieves Last item in Clipboard(ctrl v).
     url = paste() if fromfile is None else fromfile[0]
+    print("🐍 File: Stream-Downloader-Util/Main.py | Line: 61 | main_script ~ url",url)
 
     url_bits = funcs.parse_url_twitch(url)
 
     url_ = url_bits[0]
+    print("🐍 File: Stream-Downloader-Util/Main.py | Line: 66 | main_script ~ url_",url_)
+    print("🐍 File: Stream-Downloader-Util/Main.py | Line: 67 | main_script ~ fromfile",fromfile)
 
     def start_at_specified_time(url) -> tuple:
         """-> Returns tup(url, timecode)"""
@@ -108,7 +127,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         and funcs.multi_choice_dialog("Start at Specified time?", ["No", "Yes"])
         == "Yes"
     ):
-        print(f'Vod length: {util_functions.decode_seconds_to_hms(fromfile[-2]["lengthSeconds"])}')
+        print(f'Vod length: {util_functions.decode_seconds_to_hms(fromfile[2]["lengthSeconds"])}')
         url_, timecode = start_at_specified_time(url_)
         timecodej = "-".join(timecode)
         timecodei = util_functions.encode_hms_to_seconds(timecodej, split_on="-")
@@ -152,6 +171,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     message = "Clipboard is NOT a URL, Copy URL Again......"
 
     while not urlchk:
+        # Use the correct logger to log your message
+
         print(f"ERROR: ( {url_}) Is NOT a Url.\n")
         choices = ["Done", "Exit", "Manual Input URL"]
         rs2 = funcs.multi_choice_dialog(message, choices)
@@ -173,16 +194,19 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # [] Untested fix to sub only Vods Res Check.
     # As not subbed to any sub only vod streamers.
     def get_vid_resolutions(slinkDir, url_, queue, auth_String=""):
+        print("🐍 File: Stream-Downloader-Util/Main.py | Line: 185 | get_vid_resolutions ~ url_",url_)
         try:
             rw_stream = subprocess.Popen(
                 rf'streamlink "{url_}" {auth_String}',
-                shell=True,
+                shell=False,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 universal_newlines=True,
                 cwd=slinkDir,
             )
             stdout, stderr = rw_stream.communicate()
+            print("🐍 File: Stream-Downloader-Util/Main.py | Line: 187 | get_vid_resolutions ~ rw_stream",rw_stream)
+            print("🐍 File: Stream-Downloader-Util/Main.py | Line: 187 | get_vid_resolutions ~ stdout",stdout)
 
             if stderr:
                 print(
@@ -192,8 +216,9 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 get_vid_resolutions(slinkDir, url_, queue, auth)  # type: ignore
             else:
                 rw_stream.wait()
-                out_pt, _ = rw_stream.communicate()
-                result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
+                result = re.sub(r"[^\w\s]", "", stdout).split()[10:]
+                print("🐍 File: Stream-Downloader-Util/Main.py | Line: 187 | get_vid_resolutions ~ rw_stream",rw_stream)
+                print("🐍 File: Stream-Downloader-Util/Main.py | Line: 187 | get_vid_resolutions ~ stdout",stdout)
                 queue.put(result)
         except Exception as e:
             print(e, "OSE Error:")
@@ -238,9 +263,10 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     # Return of get_vid_resolutions threading.
     result.join()
-    spinner2.stop()
     result = q.get()
+    spinner2.stop()
 
+    print("🐍 File: Stream-Downloader-Util/Main.py | Line: 250 | get_vid_resolutions ~ my_choices",result)
     my_choices = list(reversed(result))
 
     chosen_resolution = funcs.multi_choice_dialog("What Size to Download?", my_choices)
@@ -274,26 +300,24 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         spinner1 = spn.Spinner()
         spinner1.start()
         m3u8.join()
-        spinner1.stop()
         m3u8_data = q2.get()
+        spinner1.stop()
 
-        remaining_time
         try:
-            if chosen_resolution == "best":
+            if chosen_resolution == "best" or "source":
                 gb_of_vod = list(m3u8_data.values())[0][0]
+                print("🐍 File: Stream-Downloader-Util/Main.py | Line: 288 | get_vid_resolutions ~ gb_of_vod", gb_of_vod)
             elif chosen_resolution == "worst":
                 gb_of_vod = list(m3u8_data.values())[-1][0]
+                print("🐍 File: Stream-Downloader-Util/Main.py | Line: 291 | get_vid_resolutions ~ gb_of_vod", gb_of_vod)
             else:
                 gb_of_vod = m3u8_data[chosen_resolution][0]
-            print(
-                "{:<5}\n{:>31}".format(
-                    f"Quality Chosen: {chosen_resolution}", f"{gb_of_vod} GB\n"
-                )
-            )
+                print("🐍 File: Stream-Downloader-Util/Main.py | Line: 294 | get_vid_resolutions ~ gb_of_vod", gb_of_vod)
+            print(f"\nQuality Chosen: {chosen_resolution},\t({gb_of_vod} GB)\n")
         except (UnboundLocalError, KeyError) as e:
             print(e, "\nQuality Chosen: ", chosen_resolution, "\n")
     else:
-        print("Quality Chosen: ", chosen_resolution, "\n")
+        print("\nQuality Chosen: ", chosen_resolution, "\n")
 
     # Main Download Process
     process = subprocess.Popen(
@@ -359,20 +383,22 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         if sd_type == "Auto":
             save_path = os.path.dirname(download_file_path)
             with open(f"{save_path}/downloadCompleteTime.txt", "a") as f:
-                f.write(
-                    datetime.now().strftime(
-                        f"{terminal_Naming}\nCompleted at:---- %H:%M:%S ----\n"
-                    )
-                )
+                f.write(datetime.now().strftime(
+                        f"\nCompleted: {terminal_Naming}\nCompleted at: -- %H:%M:%S --\n"
+                        ))
+
             cpvs.mux(download_file_path)
             os.system("shutdown -s -t 200")
+            os.system("cls")
+            print(
+                "If you want to Cancel the Shutdown CMD, "
+                "Open the Terminal and type: shutdown -a\nExecute"
+            )
     else:
         print(
-            "\nCompletion Time:",
             datetime.now().strftime(
-                f"{terminal_Naming}\nCompleted at:---- %H:%M:%S ----\n"
-            ),
-        )
+                f"\nCompleted: {terminal_Naming}\nCompleted at: -- %H:%M:%S --\n"
+            ))
         # Plays Sound at this point.
         winsound.PlaySound(
             sound="C:\\Windows\\Media\\Windows Proximity Notification.wav",
@@ -390,9 +416,10 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         print(download_file_path)
         if convert == "yes":
             cpvs.mux(download_file_path)
+            os.system('cls')
             print("\nDone!!")
-        else:
-            funcs.open_directory_Force_front(download_file_path)
+        # else:
+            # funcs.open_directory_Force_front(download_file_path)
 
         # print(
         #     "\nRe Run Program? if Yes you need to copy the next URL"
@@ -401,7 +428,6 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         # exit = funcs.multi_choice_dialog("Run Again or Exit?", ["Run Again", "EXIT"])
         # if exit == "Run Again":
         from startup import main_start
-
         main_start()
         # else:
         #     sys.exit()
