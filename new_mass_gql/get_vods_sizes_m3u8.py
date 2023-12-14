@@ -52,6 +52,7 @@ def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None, min
             base_uri, custom_tags_parser=get_totalsecs_from_playlist
         )
         string_seconds = variant_m3u8.data["#EXT-X-TWITCH-TOTAL-SECS"]
+        print("🐍 File: new_mass_gql/get_vods_sizes_m3u8.py | Line: 55 | get_playlist_uris ~ string_seconds",string_seconds)
         seconds_ = int(float(string_seconds))
     else:
         seconds_ = lengthSeconds
@@ -61,9 +62,15 @@ def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None, min
         stream_info = pl.stream_info
         bandwidth = stream_info.bandwidth
         name = mea.name.lower()
-        size = "{:.2f}".format(
-            estimate_video_size(bandwidth_bps=bandwidth, total_secs=seconds_ - minus_time)
-        )
+        # size = "{:.2f}".format(
+        #     estimate_video_size(
+        #         bandwidth_bps=bandwidth,
+        #         total_secs=seconds_ - minus_time
+        #     )
+        # )
+        size = f"{estimate_video_size(bandwidth_bps=bandwidth, total_secs=seconds_ - minus_time):.2f}"
+
+        print("🐍 File: new_mass_gql/get_vods_sizes_m3u8.py | Line: 71 | get_playlist_uris ~ size",size)
         dictt[name] = [size, pl.uri]
         # print("{:<5} {:<10}".format(resolution, f'{size} GB'))
     # print(dictt)
@@ -93,3 +100,4 @@ def m3u8_call_init(video_id, tot_seconds=None, minus_time=0) -> dict:
     resolutions_uris = get_playlist_uris(video_id, access_token, tot_seconds, minus_time=minus_time)
     # print("🐍 File: new_mass_gql/my_Test_m3u8.py | Line: 91 | m3u8_call_init ~ resolutions_uris",resolutions_uris)
     return resolutions_uris
+
