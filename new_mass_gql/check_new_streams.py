@@ -3,8 +3,6 @@
 import json
 import os
 import threading
-from ast import arg
-from time import sleep
 
 import spinner as spn
 from utility_dir import get_single_vod_ as gsv
@@ -136,21 +134,29 @@ def update_json_data(cnv_rtrn):
     return newData
     # print(gsv.Run_get_vod(streamer_name))
 
+
 def start_new_vods():
     # [] input the best way??
     # print(type(gsv.get_file_list_from_dir(rf"{util.get_appdata_dir()}\jsons")))
     # streamer_name = input('Streamer Name or "saved" to get a list of previous:').lower()
     # if streamer_name == "saved":
     streamer_name = util.multi_choice_dialog(
-        # "Who to Check?:", gsv.get_file_list_from_dir("jsons\\")
-        "Who?", gsv.get_file_list_from_dir(rf"{util.get_appdata_dir()}\jsons") + ['[New Streamer to Add]']
+        "Who?",
+        gsv.get_file_list_from_dir(rf"{util.get_appdata_dir()}\jsons")
+        + ['--New Streamer to Add--']
+        + ['**CANCEL**']
     )
-    if not streamer_name == "[New Streamer to Add]":
+    print("🐍 File: new_mass_gql/check_new_streams.py | Line: 149 | start_new_vods ~ streamer_name",streamer_name)
+
+    if streamer_name == '**CANCEL**':
+        os.system('cls')
+        import startup
+        startup.main_start()
+    elif not streamer_name == "--New Streamer to Add--":
         cnv_rtrn = check_for_new_vods(
             rf"{util.get_appdata_dir()}\jsons\{streamer_name}.json",
             streamer_user_name=streamer_name
         )
-        # print("cvn_rtrn", cnv_rtrn)
         if cnv_rtrn[-1] == 0:
             update_info = threading.Thread(target=update_json_data, args=(cnv_rtrn, ))
             update_info.start()
