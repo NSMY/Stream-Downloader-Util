@@ -553,7 +553,8 @@ def create_popup1(
     popup.mainloop()
 
 
-def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
+def process_data(input_data, windName, file_path, **kwargs) -> tuple:
+    selected_items.clear()
     spinner1 = spinner.Spinner()
     spinner1.start()
     columns = {
@@ -581,15 +582,27 @@ def process_data(input_data, windName, file_path, **kwargs) -> tuple | None:
     ]
 
     if kwargs:
+        spinner1.stop()
         create_popup1(
             windName, columns, data, input_data, file_path, visual_only=kwargs["arg1"]
         )
     else:
         create_popup1(windName, columns, data, input_data, file_path)
 
-    listIndexs = [(index[0], input_data[index[0]]) for index in selected_items]
-    spinner1.stop()
-    return listIndexs[0] if listIndexs else None
+    try:
+        listIndexs = [(index[0], input_data[index[0]]) for index in selected_items]
+        print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 593 | process_data ~ listIndexs",listIndexs)
+        print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 593 | process_data ~ listIndexs",listIndexs[0])
+        spinner1.stop()
+    # return listIndexs[0] if listIndexs else None
+        return listIndexs[0]
+    except IndexError:
+        spinner1.stop()
+        os.system('cls')
+        import startup
+        startup.main_start()
+
+
     # FIX if empty close will be an empty [] and errors as it has no indexes[0]| error handling on the call but still not ideally what i want.
     # WATCH set this to 0 index as haven't implemented multi downloading
 
