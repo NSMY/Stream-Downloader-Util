@@ -29,8 +29,8 @@ def mux(file_path_inpt=paste(), ran_as_main: bool = False):
     file_path = funcs.file_path_get(file_path_inpt)
     if not (any(file_path.endswith(media_type)
                 for media_type in funcs.video_file_types) or file_path == '.'):
-        print('\nNot a Valid File type to Remux, Try again.')
         os.system("cls")
+        print('\nNot a Valid File type to Remux, Try again.')
         mux()
     if file_path == '.':
         os.system("cls")

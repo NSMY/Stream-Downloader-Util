@@ -21,10 +21,7 @@ import m3u8
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-# # [] have to  make a if file is dld voa nested iffs if len if size if title?? if date?
-# # [] then have to check if the input is ?t=04h55m35s then offset timecode with total 
-# # [] to get true len/size
-# # [] maybe need pass total seconds from get vodsize call in order to get non file vods
+
 # # [] also might need to do the pipout stdOut and look for stream ended / error etc
 # # however it may block streamlink y/n questions??.
 import subprocess

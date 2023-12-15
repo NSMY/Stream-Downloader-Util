@@ -48,8 +48,11 @@ def main_start(impt_data=None):
         # from new_mass_gql import tk_get_file_list
         # print(aad[0])
         # tk_get_file_list.call_tk_vod_view(f'c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/{aad[0]}.json') # FIX sloppy af.
-        if funcs.multi_choice_dialog('Download Type', ['Normal', 'Auto Shutdown']) == "Normal":
+        if (shutdown := funcs.multi_choice_dialog('Download Type', ['Normal', 'Auto Shutdown', '**Cancel**']) == "Normal"):
             main_script(fromfile=aad)
+        elif shutdown == '**Cancel**':
+            os.system('cls')
+            main_start()
         else:
             main_script(download_with_Shutdown=True, fromfile=aad)
 
@@ -83,6 +86,7 @@ def main_start(impt_data=None):
     t2.start()
 
     init_files.version_check()
+    init_files.logger_setup()
 
     question = ('Start Commands')
     responses = [
@@ -107,6 +111,8 @@ def main_start(impt_data=None):
         func()
     else:
         print("Invalid option")
+
+
 
 
 if __name__ == '__main__':

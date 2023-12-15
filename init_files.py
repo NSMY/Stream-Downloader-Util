@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import shutil
 from datetime import datetime, timedelta
@@ -6,6 +7,26 @@ from datetime import datetime, timedelta
 import funcs
 
 version_number = 3.2
+
+
+def logger_setup():
+    appdata_path = os.getenv("LOCALAPPDATA")
+
+    settings_file = os.path.join(str(
+        appdata_path),
+        "Stream-Downloader-Util"
+    )
+    if not os.path.exists('debugging'): #FIXME Set to save in Appdata
+        os.mkdir('debugging')
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+    root_file_handler = logging.FileHandler(f'debugging/{datetime.now().strftime('%Y-%m-%d')}.log', delay=True)
+    root_file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(levelname)s:%(asctime)s %(name)s %(message)s')
+    root_file_handler.setFormatter(formatter)
+    root_logger.addHandler(root_file_handler)
+    root_logger.propagate = False
+
 
 def initSettings():
     appdata_path = os.getenv("LOCALAPPDATA")

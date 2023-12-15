@@ -3,6 +3,11 @@
 # from urllib.parse import urlparse
 # from pyperclip import copy, paste
 
+import logging
+import os
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+
 # import gql_main_call as gql
 import m3u8
 import requests
@@ -14,11 +19,18 @@ from . import gql_main_call as gql
 def estimate_video_size(bandwidth_bps, total_secs):
     # Calculate the total size in bits
     total_bits = bandwidth_bps * total_secs
-
     return total_bits / 8 / 1024 / 1024 / 1024
 
 
-def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None, minus_time=0) -> dict:
+def get_playlist_uris(
+    *,
+    video_id: str,
+    access_token: dict,
+    lengthSeconds=None,
+    minus_time=0,
+    attempt=0
+) -> dict:
+
     """
     Grabs the URI's for accessing each of the video chunks.
 
@@ -27,23 +39,18 @@ def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None, min
     """
     url = f"http://usher.ttvnw.net/vod/{video_id}"
 
-    # Requests is calling and -> a string but m3u8.
-    # just needs the URL and doesn't use the -> data from the req call.
-    # Meaningless Call.
-    resp = requests.get(
-        url,
-        timeout=5,
-        params={
-            "nauth": access_token["value"],
-            "nauthsig": access_token["signature"],
-            "allow_source": "true",
-            "player": "twitchweb",
-        },
-    )
-    data = resp.url
-    # resp.raise_for_status()
-    # data = resp.content.decode("utf-8") # decodes if needs the -> data.
-    playlist = m3u8.load(data)
+    params = {
+        "nauth": access_token["value"],
+        "nauthsig": access_token["signature"],
+        "allow_source": "true",
+        "player": "twitchweb",
+    }
+
+    data = f'{url}?{urlencode(params)}'
+    try:
+        playlist = m3u8.load(data)
+    except HTTPError:
+        return {'': 'Likely Sub Only Vod'}
 
     if not lengthSeconds:
         get_variant_url = str(playlist.playlists[0])
@@ -52,7 +59,6 @@ def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None, min
             base_uri, custom_tags_parser=get_totalsecs_from_playlist
         )
         string_seconds = variant_m3u8.data["#EXT-X-TWITCH-TOTAL-SECS"]
-        print("🐍 File: new_mass_gql/get_vods_sizes_m3u8.py | Line: 55 | get_playlist_uris ~ string_seconds",string_seconds)
         seconds_ = int(float(string_seconds))
     else:
         seconds_ = lengthSeconds
@@ -61,6 +67,22 @@ def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None, min
     for mea, pl in zip(playlist.media, playlist.playlists):
         stream_info = pl.stream_info
         bandwidth = stream_info.bandwidth
+        if attempt > 5:
+            print("\nMax attempts reached, request failed, Bandwidth == 0")
+            return {"Failed retrieving Bandwidth ": "N/A"}
+        elif bandwidth == 0: # Maybe a Temp Twitch Bug Maybe Outdated Streamlink(6.0.1), sometimes Bandwidth Fails to populate retrying fixes
+            logging.info(f'{os.path.basename(__file__)} data ' '%s', data)
+            logging.info(f'{os.path.basename(__file__)} get_variant_url ' '%s', stream_info)
+            logging.info(f'{os.path.basename(__file__)} bandwidth ' '%s', bandwidth)
+            print(f"Bandwidth == 0, Attempt {attempt} failed, retrying...")
+            attempt += 1
+            return get_playlist_uris(
+                attempt=attempt,
+                video_id=video_id,
+                access_token=access_token,
+                lengthSeconds=lengthSeconds,
+                minus_time=minus_time
+            )
         name = mea.name.lower()
         # size = "{:.2f}".format(
         #     estimate_video_size(
@@ -70,7 +92,6 @@ def get_playlist_uris(video_id: str, access_token: dict, lengthSeconds=None, min
         # )
         size = f"{estimate_video_size(bandwidth_bps=bandwidth, total_secs=seconds_ - minus_time):.2f}"
 
-        print("🐍 File: new_mass_gql/get_vods_sizes_m3u8.py | Line: 71 | get_playlist_uris ~ size",size)
         dictt[name] = [size, pl.uri]
         # print("{:<5} {:<10}".format(resolution, f'{size} GB'))
     # print(dictt)
@@ -97,7 +118,6 @@ def m3u8_call_init(video_id, tot_seconds=None, minus_time=0) -> dict:
     url = f"{netlock}/vod/{video_id}.m3u8"
     access_token = gql.get_access_token(video_id)
 
-    resolutions_uris = get_playlist_uris(video_id, access_token, tot_seconds, minus_time=minus_time)
-    # print("🐍 File: new_mass_gql/my_Test_m3u8.py | Line: 91 | m3u8_call_init ~ resolutions_uris",resolutions_uris)
-    return resolutions_uris
+    return get_playlist_uris(video_id=video_id, access_token=access_token, lengthSeconds=tot_seconds, minus_time=minus_time)
+
 

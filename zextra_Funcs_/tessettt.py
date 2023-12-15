@@ -60,30 +60,77 @@ from numpy import append, size
 #     print(f'{out_pt.split('.')[0]}  {files}')
 
 # result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
+def get_reso_():
+    loops = 0
+    while loops < 5:
+        loops += 1
+        try:
+            cmdd = r"C:/Program Files/Streamlink/ffmpeg/"
+            process = subprocess.Popen(r'streamlink "https://www.twitch.tv/videos/2002087915"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, cwd=cmdd)
+            # process = subprocess.Popen(r'streamlink "https://www.twitch.tv/videos/1957556164"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, cwd=cmdd)
+            # process = subprocess.Popen(r'streamlink "https://www.youtube.com/watch?v=6PuXPxhf-Js"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, cwd=cmdd)
+            # process = subprocess.Popen(r'streamlink "https://youtu.be/cvq7Jy-TFAU?list=PLbAqlIAMdRgtQkPnpqCoqZv1hi9xWnsgZ"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, cwd=cmdd)
+    # stdout, stderr = process.communicate()
 
 
-# cmdd = r"C:/Program Files/Streamlink/ffmpeg/"
-# process = subprocess.Popen(r'streamlink https://www.twitch.tv/videos/1981304674 worst --hls-segment-threads 5 -o "C:\Users\970EVO-Gamer\Desktop\junkme.mp4"', stdout=subprocess.PIPE, universal_newlines=True,  cwd=cmdd)
-# # stdout, stderr = process.communicate()
-# line = ''
-# while True:
-#     char = process.stdout.read(1)
-#     if char == '\n' or char == '\r':
-#         print(line)
-#         line = ''
-#     else:
-#         line += char
-#     if '[cli][info] Stream ended' in line:
-#         print("success")
-#     if process.poll() is not None:
-#         break
-'''
-# stdout, stderr = process.communicate()
-for line in iter(process.stdout.readline, ''):
-    print(line.rstrip())
-    if '[download]' in line.rstrip():
-        print('Downloading file')
-'''
+
+
+
+    # try:
+    #     line = ''
+    #     while True:
+    #         char = process.stdout.read(1)
+    #         if char in ['\n', '\r']:
+    #             print(line)
+    #             if 'error' in line:
+    #                 print('Mine', line)
+    #             line = ''
+    #         else:
+    #             line += char
+    #         if '[cli][info] Stream ended' in line:
+    #             print("Stream has Ended")
+    #         if process.poll() is not None:
+    #             break
+    #     gg,gf = process.communicate()
+    #     print(process,gg,gf)
+    #     process.wait()
+    # except Exception as e:
+    #     err = str(e)
+    #     raise PluginError(err) from None
+    # stderr = ''
+    # try:  
+            process.wait()
+            for line in iter(process.stdout.readline, ''):
+                print(line.rstrip())
+                if 'error: No play' in line.rstrip():
+                    print('Error downloading file', line)
+                    raise ValueError
+                elif 'error: This plugin' in line.rstrip():
+                    print('DMCA', line)
+                    raise SyntaxError
+                    # main_script()
+                elif "Available streams:" in line:
+                    result = re.sub(r"[^\w\s]", "", line).split()[2:]
+                    print("🐍 File: zextra_Funcs_/tessettt.py | Line: 90 | undefined ~ result",result)
+                    return result
+                    # return queue.put(results)
+                # elif '[download]' in line.rstrip():
+                #     print('Downloading file')
+            process.communicate()
+            print("\nLikely Sub Only Vods Enabled")
+            # print(process.stderr.read())
+            raise OSError
+        except SyntaxError:
+            # print('OSError')
+            return
+        except OSError:
+            print("put sub only code rhere")
+        except ValueError:
+            pass
+            # print("ValueError")
+    # except TypeError:
+    #     print('Error downloading')
+get_reso_()
 
 '''
 # dd ='[cli][info] Closing currently open stream...'
@@ -97,11 +144,6 @@ for line in iter(process.stdout.readline, ''):
 # # (url := url.split('/', -1))
 #     print(url)
 
-# # tk gui
-# sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-# from new_mass_gql.tk_get_file_list import call_tk_vod_view
-
-# print(call_tk_vod_view('C:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/shenryyr.json'))
 '''
 
 

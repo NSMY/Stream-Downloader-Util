@@ -6,21 +6,19 @@
 # for files in os.listdir(dir):
 #     print(files)
 
-import os
-from datetime import datetime
+import subprocess
 
-terminal_Naming = 'balha hahadasdkl'
-
-
-# save_path = os.path.dirname(download_file_path)
-with open(f"C:/Users/970EVO-Gamer/Desktop/downloadCompleteTime.txt", "a") as f:
-    f.write(
-        datetime.now().strftime(
-            f"\nCompleted: {terminal_Naming}\nCompleted at: -- %H:%M:%S --\n"
-        )
-    )
-print(
-    datetime.now().strftime(
-        f"\nCompleted: {terminal_Naming}\nCompleted at: -- %H:%M:%S --\n"
-    )
+rw_stream = subprocess.Popen(
+    rf'streamlink "https://youtu.be/cvq7Jy-TFAU?list=PLbAqlIAMdRgtQkPnpqCoqZv1hi9xWnsgZ" ',
+    shell=False,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    universal_newlines=True,
+    cwd='c:/Program Files/Streamlink/ffmpeg/',
 )
+stdout, stderr = rw_stream.communicate()
+print("rw_stream", rw_stream)
+print("stderr: ", stderr)
+print("stdout: ", stdout)
+print(f"The command failed with return code {rw_stream.returncode}")
+print(f"stderr: {stderr.strip()}")
