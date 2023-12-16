@@ -152,7 +152,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
             minus_time = convert_url_query_timecode(urlsplit(url_).query)
 
     # IsVod check for m3u8 Call.
-    is_url_path_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
+    is_url_path_twitch_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
 
     urlchk = funcs.is_url(url_)
     # Threading start for url check.
@@ -246,7 +246,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     result1 = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
     result1.start()
 
-    if is_url_path_vod:
+    if is_url_path_twitch_vod:
         q2 = Queue()
         m3u8 = threading.Thread(
             target=get_urlm3u8_filesize, args=(url_, q2, minus_time)
@@ -308,7 +308,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     print("\nCTRL + C to CANCEL Download early if necessary")
 
-    if is_url_path_vod:
+    if is_url_path_twitch_vod:
         spinner1 = spn.Spinner()
         spinner1.start()
         m3u8.join()
@@ -318,13 +318,10 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         try:
             if chosen_resolution == "best" or "source":
                 gb_of_vod = list(m3u8_data.values())[0][0]
-                print("🐍 File: Stream-Downloader-Util/Main.py | Line: 288 | get_vid_resolutions ~ gb_of_vod", gb_of_vod)
             elif chosen_resolution == "worst":
                 gb_of_vod = list(m3u8_data.values())[-1][0]
-                print("🐍 File: Stream-Downloader-Util/Main.py | Line: 291 | get_vid_resolutions ~ gb_of_vod", gb_of_vod)
             else:
                 gb_of_vod = m3u8_data[chosen_resolution][0]
-                print("🐍 File: Stream-Downloader-Util/Main.py | Line: 294 | get_vid_resolutions ~ gb_of_vod", gb_of_vod)
             print(f"\nQuality Chosen: {chosen_resolution},\t({gb_of_vod} GB)\n")
         except (UnboundLocalError, KeyError) as e:
             print(e, "\nQuality Chosen: ", chosen_resolution, "\n")
