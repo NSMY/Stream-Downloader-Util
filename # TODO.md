@@ -32,13 +32,14 @@ prints 0 new vods anyway?.
 
 [x] [done](zextra_Funcs_\check_old_files_downloaded.py)
 
+[x] set ffprobe paths to be from paths file
+
+[TODO] Readme not redering prop in ghub, Do Main 👇👇, and re Cat all files to utils for onefile scrips and helpers for funcs etc
+[TODO] set main download completions crosscheck
+
 [TODO] make chapters in vods? using code > [Code](zextra_Funcs_/getChaptersCall.py) < will require a large rewrite, games will be
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 
-[TODO] set main download completions crosscheck
-
-
-[] set ffprobe paths to be from paths file
 
 []  maybe rework tkinter to be packs instead of grids somehow as is laggy
 
