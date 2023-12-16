@@ -609,3 +609,15 @@ def parse_url_twitch(url):
         return urlunparse(new_url_parts), urlparsed
     else:
         return url, urlparsed
+
+
+def flush_cmd_input():
+    """Clears the input buffer."""
+    if os.name == 'nt':  # For Windows
+        import msvcrt
+        while msvcrt.kbhit():
+            msvcrt.getch()
+    # else:  # For Unix/Linux/MacOS
+    #     import fcntl
+    #     import termios
+    #     termios.tcflush(sys.stdin, termios.TCIOFLUSH)
