@@ -36,7 +36,7 @@ class Spinner:
         self.delay = delay
         self.message = message
         self.stop_running = threading.Event()
-        self.spin_thread = threading.Thread(target=self.init_spin)
+        self.spin_thread = threading.Thread(target=self.init_spin, daemon=True)
 
     def spinning_cursor(self):
         while not self.stop_running.is_set():
