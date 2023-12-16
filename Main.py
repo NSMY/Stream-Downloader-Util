@@ -8,7 +8,6 @@ import threading
 import winsound
 from datetime import datetime
 from queue import Queue
-from tracemalloc import stop
 from urllib.parse import urlparse, urlsplit
 
 from pyperclip import copy, paste
@@ -27,7 +26,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         fromfile == Json data dict.
     '''
     # BUG some bug that either returns url with no separators in the resolution check
-    # or the size of vod check returns 0.00gb, Not consistent. seem to be able to get it with deadlys dayz vods.
+    # or the size of vod check returns 0.00gb, Not consistent. seem to be able to get it with Deadlys Dayz vods.
 
     # Checking Settings.json is available and recently checked.
     try:
@@ -52,7 +51,6 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     slinkDir = os.path.dirname(check_settings[1])  # type: ignore possible unbound
 
     ffprobe_dir = os.path.dirname(check_settings[2])  # type: ignore possible unbound
-
 
     if fromfile:
         if (
@@ -79,6 +77,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     sd_type = None
 
+    funcs.flush_cmd_input()
     if download_with_Shutdown:
         sd_type = funcs.multi_choice_dialog(
             "Manual shutdown Time or Shutdown after Completion", ["Auto", "Manual", "**Cancel**"]
@@ -100,18 +99,17 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     def start_at_specified_time(url) -> tuple:
         """-> Returns tup(url, timecode)"""
         timecode = input(
-            "Start Download at Spesific Time ? 00h00m00s. "
+            "Start Download at Specific Time ? 00h00m00s. "
             "enter 6 numbers separated by Space. EG 01-25-35 :"
         ).split("-")
         url = rf"{url}?t={timecode[0]}h{timecode[1]}m{timecode[2]}s"
         return url, timecode
 
-    def calc_remanig_time(timecode: int, from_file_seconds_data: int) -> int:
+    def calc_remaining_time(timecode: int, from_file_seconds_data: int) -> int:
         full_seconds = from_file_seconds_data
         return full_seconds - timecode
 
     def convert_url_query_timecode(url_timecode_query):
-        """input must be hh:mm:ss format separated by :"""
         hrs, min, sec = (
             url_timecode_query.replace("t=", "")
             .replace("h", "-")
@@ -125,11 +123,14 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         url_path = urlsplit(url_).path.rsplit("/", 1)[1]
         if not minus_time:
             size_of_vod = m3.m3u8_call_init(
-                video_id=url_path, tot_seconds=remaining_time
+                video_id=url_path,
+                tot_seconds=remaining_time
             )
             return queue.put(size_of_vod)
         size_of_vod = m3.m3u8_call_init(
-            video_id=url_path, tot_seconds=remaining_time, minus_time=minus_time
+            video_id=url_path,
+            tot_seconds=remaining_time,
+            minus_time=minus_time
         )
         return queue.put(size_of_vod)
 
@@ -137,6 +138,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     minus_time = 0
 
+    funcs.flush_cmd_input()
     if (
         fromfile
         and funcs.multi_choice_dialog("Start at Specified time?", ["No", "Yes"])
@@ -146,19 +148,19 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         url_, timecode = start_at_specified_time(url_)
         timecodej = "-".join(timecode)
         timecodei = util_functions.encode_hms_to_seconds(timecodej, split_on="-")
-        remaining_time = calc_remanig_time(timecodei, fromfile[2]["lengthSeconds"])
+        remaining_time = calc_remaining_time(timecodei, fromfile[2]["lengthSeconds"])
     else:
         if url_bits[1].query.startswith("t="):
             minus_time = convert_url_query_timecode(urlsplit(url_).query)
 
-    # IsVod check for m3u8 Call.
     is_url_path_twitch_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
 
-    urlchk = funcs.is_url(url_)
-    # Threading start for url check.
-    t1 = threading.Thread(target=funcs.is_url, args=(url_,))
-    t1.start()
+    # TRACK why and i threading this?
+    is_url_thread = threading.Thread(target=funcs.is_url, args=(url_,))
+    is_url_thread.start()
 
+    # FIX want this to be better upto date with my curr knowledge
+    urlchk = False
     message = "Clipboard is NOT a URL, Copy URL Again......"
     while not urlchk:
         print(f"ERROR: ( {url_}) Is NOT a Url.\n")
@@ -179,7 +181,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         elif rs2 == "Exit":
             sys.exit()
 
-    # [] Untested fix to sub only Vods Res Check.
+    # TRACK Untested fix to sub only Vods Res Check.
     # As not subbed to any sub only vod streamers.
     def get_vid_resolutions(slinkDir, url_, queue, auth_String=""):
         # This Ugly POS is because theres a current twitch bandwidth get Bug &
@@ -188,12 +190,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         while loops < 5:
             loops += 1
             try:
-                # cmdd = r"C:/Program Files/Streamlink/ffmpeg/"
-                # process = subprocess.Popen(r'streamlink "https://www.twitch.tv/videos/2002087915"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, cwd=cmdd)
-                # process = subprocess.Popen(r'streamlink "https://www.twitch.tv/videos/1957556164"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, cwd=cmdd)
-                # process = subprocess.Popen(r'streamlink "https://www.youtube.com/watch?v=6PuXPxhf-Js"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, cwd=cmdd)
-                # process = subprocess.Popen(r'streamlink "https://youtu.be/cvq7Jy-TFAU?list=PLbAqlIAMdRgtQkPnpqCoqZv1hi9xWnsgZ"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, cwd=cmdd)
-                rw_stream = subprocess.Popen(
+                stream_reso = subprocess.Popen(
                     rf'streamlink "{url_}" {auth_String}',
                     shell=False,
                     stdout=subprocess.PIPE,
@@ -203,8 +200,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 )
                 # # stdout, stderr = rw_stream.communicate()
 
-                rw_stream.wait()
-                for line in iter(rw_stream.stdout.readline, ''):
+                stream_reso.wait()
+                for line in iter(stream_reso.stdout.readline, ''):
                     # print(line.rstrip())
                     if 'error: No play' in line.rstrip():
                         logging.info("File: Stream-Downloader-Util/Main.py | Line: 208 | get_vid_resolutions ~ line rw_stream %s", line.rstrip())
@@ -216,7 +213,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                     elif "Available streams:" in line:
                         result = re.sub(r"[^\w\s]", "", line).split()[2:]
                         return queue.put(result)
-                rw_stream.communicate()
+                stream_reso.communicate()
                 raise OSError
             except SyntaxError:
                 return queue.put('Error')
@@ -234,17 +231,17 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # Checks if a Twitch URL.
     twitch_netloc = ["www.twitch.tv", "usher.ttvnw.net"]
 
-    result = urlparse(url_)[1]
+    url_netlock = urlparse(url_)[1]
 
     is_it_a_twitch_url = False
 
-    if result in twitch_netloc:
+    if url_netlock in twitch_netloc:
         is_it_a_twitch_url = True
 
     # Start of Getting get_vid_resolutions threading.
     q = Queue()
-    result1 = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
-    result1.start()
+    get_res_opts = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
+    get_res_opts.start()
 
     if is_url_path_twitch_vod:
         q2 = Queue()
@@ -270,17 +267,20 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     spinner2.start()
 
     # Return of get_vid_resolutions threading.
-    result1.join()
+    get_res_opts.join()
     spinner2.stop()
-    result1 = q.get()
+    get_res_opts = q.get()
 
-    if result1 == 'Error':
+    # TRACK Shouldn't be needed, as should be handled in 
+    # the get_vid_resolutions Func
+    if get_res_opts == 'Error':
         print('Errored Too many attempts')
         from startup import main_start
         main_start()
 
-    my_choices = list(reversed(result1))
+    my_choices = list(reversed(get_res_opts))
 
+    funcs.flush_cmd_input()
     chosen_resolution = funcs.multi_choice_dialog("What Size to Download?", my_choices)
 
     # if not twitch netloc uses default, if twitch asks advanced Options.
@@ -297,7 +297,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
             "",
             ["Standard", "Advanced"],
         )
-        if twitch_options_choice == "Advanced":
+        if twitch_options_choice == "Advanced": # [] Add a input in the .skipads to be able to input any sLink Opts??
             skip_ads_rtrn = auth_skip_ads_.skip_ads()
             download_string = (
                 rf'streamlink {skip_ads_rtrn} "{url_}" {chosen_resolution}'
@@ -421,6 +421,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         )
 
         # sends the file(name) to be mux'd via mux_vid.py
+        funcs.flush_cmd_input()
         convert = funcs.multi_choice_dialog("Convert?", ["yes", "no"])
         print(download_file_path)
         if convert == "yes":
