@@ -62,7 +62,6 @@ def main_start(impt_data=None):
 
     def crosscheck_vod_details():
         video_data_cross_checker.main()
-        os.system('cls')
         main_start()
 
     # Define your dictionary
