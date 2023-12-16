@@ -5,20 +5,27 @@
 
 # for files in os.listdir(dir):
 #     print(files)
+import os
+import sys
+import time
 
-import subprocess
 
-rw_stream = subprocess.Popen(
-    rf'streamlink "https://youtu.be/cvq7Jy-TFAU?list=PLbAqlIAMdRgtQkPnpqCoqZv1hi9xWnsgZ" ',
-    shell=False,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    universal_newlines=True,
-    cwd='c:/Program Files/Streamlink/ffmpeg/',
-)
-stdout, stderr = rw_stream.communicate()
-print("rw_stream", rw_stream)
-print("stderr: ", stderr)
-print("stdout: ", stdout)
-print(f"The command failed with return code {rw_stream.returncode}")
-print(f"stderr: {stderr.strip()}")
+def flush_input():
+    """Clears the input buffer."""
+    if os.name == 'nt':  # For Windows
+        import msvcrt
+        while msvcrt.kbhit():
+            msvcrt.getch()
+    # else:  # For Unix/Linux/MacOS
+    #     import fcntl
+    #     import termios
+    #     termios.tcflush(sys.stdin, termios.TCIOFLUSH)
+
+
+input("what u want")
+time.sleep(4)
+
+flush_input()
+
+
+input("last input")
