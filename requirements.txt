@@ -9,4 +9,3 @@ pyperclip==1.8.2
 Requests==2.31.0
 Send2Trash==1.8.2
 tqdm==4.66.1
-pipreqs==0.4.13 
