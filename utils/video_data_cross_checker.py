@@ -7,14 +7,15 @@ import threading
 from queue import Queue
 from tkinter import filedialog
 
-# import funcs
 import funcs
+import init_files
 import spinner
 from utility_dir.util_functions import get_appdata_dir
 
 # to make the file work as a stand alone
 # sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+# import funcs
 
 def find_files(directory):
     ok_extentions = ["mp4", "mvk", "mov", "flv"]
@@ -27,7 +28,7 @@ def find_files(directory):
     return files
 
 
-def get_video_data(vid_list: list):
+def get_video_data(vid_list: list, ffprobe_path):
     """Returns a list(tuple) (video_path, vid_length, vid_fps, vid_height, vid_size)"""
     '''
         import subprocess
@@ -60,9 +61,9 @@ def get_video_data(vid_list: list):
         q2 = Queue()
         q3 = Queue()
         vid_size = os.path.getsize(video)
-        vid_length = threading.Thread(target=get_video_file_length, args=(video, q1))
-        vid_fps = threading.Thread(target=get_video_framerate, args=(video, q2))
-        vid_height = threading.Thread(target=get_video_height, args=(video, q3))
+        vid_length = threading.Thread(target=get_video_file_length, args=(video, q1, ffprobe_path))
+        vid_fps = threading.Thread(target=get_video_framerate, args=(video, q2, ffprobe_path))
+        vid_height = threading.Thread(target=get_video_height, args=(video, q3, ffprobe_path))
         vid_height.start()
         vid_length.start()
         vid_fps.start()
@@ -77,21 +78,21 @@ def get_video_data(vid_list: list):
     return video_info
 
 
-def get_video_file_length(file_path, queue):
+def get_video_file_length(file_path, queue, ffprobe_path):
     get_len_of_vod_file = subprocess.Popen(
         rf'ffprobe -i "{file_path}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
         shell=False,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         universal_newlines=True,
-        cwd='c:/ffmpeg/'  # FIX replace me.
+        cwd=ffprobe_path
     )
     stdout, stderr = get_len_of_vod_file.communicate()
     get_len_of_vod_file.wait()
     queue.put(int(stdout.split('.')[0]))
 
 
-def get_video_framerate(filepath, queue):
+def get_video_framerate(filepath, queue, ffprobe_path):
     stdout = ''
     try:
         process = subprocess.Popen(
@@ -99,7 +100,7 @@ def get_video_framerate(filepath, queue):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
-            cwd='c:/ffmpeg/'  # FIX replace me.
+            cwd=ffprobe_path
         )
         stdout, stderr = process.communicate()
         process.wait()
@@ -114,13 +115,13 @@ def get_video_framerate(filepath, queue):
         queue.put(stdout.split('/')[0])
 
 
-def get_video_height(filepath, queue):
+def get_video_height(filepath, queue, ffprobe_path):
     process = subprocess.Popen(
         f'ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=s=x:p=0 "{filepath}"',
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         universal_newlines=True,
-        cwd='c:/ffmpeg/'  # FIX replace me.
+        cwd=ffprobe_path
     )
     stdout, stderr = process.communicate()
     process.wait()
@@ -208,12 +209,13 @@ def vod_user_names(appdir_files, compare_data):
 
 
 def change_download_status(total_names_from_dld_dir, appdir, compare_data):
+    edited = []
     for i in total_names_from_dld_dir:
         with open(f'{appdir}/{i}.json', 'r') as jf:
             innerdata = json.load(jf)
         for index, jdata in enumerate(innerdata):
             for vodfile in compare_data:
-                if compare_data[vodfile]['username'].lower() == i:
+                if compare_data[vodfile]['username'].lower() == i.lower():
                     # Compare 'username' with 'id'
                     if (
                         compare_data[vodfile]['username'] == jdata['displayName']
@@ -221,26 +223,65 @@ def change_download_status(total_names_from_dld_dir, appdir, compare_data):
                         and compare_data[vodfile].get('title') == jdata['title']
                         and jdata['downloaded'] is False
                     ):
+                        edited.append((
+                            innerdata[index]['displayName'],
+                            innerdata[index]['url'],
+                            compare_data[vodfile]['height_fps'])
+                        )
                         innerdata[index]['downloaded'] = compare_data[vodfile]['height_fps']
         with open(f'{appdir}/{i}.json', 'w') as wf:
             json.dump(innerdata, wf, indent=4)
+    return edited
 
 
 def main():
-    spinner1 = spinner.Spinner(message='Processing Video Information...')
+    from startup import main_start
+    try:
+        check_settings = funcs.loadSettings(
+            keys=["LastSave", "ffprobepath"]
+        )
+    except FileNotFoundError as e:
+        init_files.initSettings()
+        os.system("cls")
+        print(e)
+        main_start()
+
+    is_a_fresh_save = [funcs.is_less_than_30days(check_settings[0])]  # type: ignore possible unbound
+
+    is_a_fresh_save.extend(check_settings[1:2])  # type: ignore possible unbound
+
+    if not all(is_a_fresh_save):
+        funcs.ffprobe_factory_init(["main", "video_data_cross_checker"])
+        os.system("cls")
+        main()
+
+    ffprobe_dir = os.path.dirname(check_settings[1])
+
+    os.system('cls')
+
     lfid = list_files_in_directory(appdir)
 
+    spinner1 = spinner.Spinner(message='Choose Parent directory to search through..')
     spinner1.start()
 
     walk_tree = filedialog.askdirectory()
-    vods_info = get_video_data((find_files(walk_tree)))
+    spinner1.stop()
+    os.system("cls")
+
+    spinner2 = spinner.Spinner(message='Processing Video Information...')
+    spinner2.start()
+    vods_info = get_video_data((find_files(walk_tree)), ffprobe_dir)
     compare_data = (vod_titles_parse(vods_info))
 
     vun = vod_user_names(lfid, compare_data)
 
-    change_download_status(vun, appdir, compare_data)
+    if edited_list := change_download_status(vun, appdir, compare_data):
+        os.system('cls')
+        for i in edited_list:
+            print(i)
+        print('\nItems Changed.\n')
 
-    spinner1.stop()
+    spinner2.stop()
 
 
 if __name__ == '__main__':
