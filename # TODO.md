@@ -37,6 +37,8 @@ prints 0 new vods anyway?.
 [TODO] Readme not redering prop in ghub, Do Main 👇👇, and re Cat all files to utils for onefile scrips and helpers for funcs etc
 [TODO] set main download completions crosscheck
 
+[] IDEA have a tkinter Warning popup before downloading depends???
+
 [TODO] make chapters in vods? using code > [Code](zextra_Funcs_/getChaptersCall.py) < will require a large rewrite, games will be
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 
