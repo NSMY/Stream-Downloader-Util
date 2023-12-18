@@ -95,7 +95,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     url_bits = funcs.parse_url_twitch(url)
 
     url_ = url_bits[0]
-
+    print("🐍 File: Stream-Downloader-Util/Main.py | Line: 98 | main_script ~ url_",url_)
+    print(fromfile)
     def start_at_specified_time(url) -> tuple:
         """-> Returns tup(url, timecode)"""
         timecode = input(
@@ -156,14 +157,14 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     is_url_path_twitch_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
 
     # TRACK why and i threading this?
-    is_url_thread = threading.Thread(target=funcs.is_url, args=(url_,))
-    is_url_thread.start()
-
-    # FIX want this to be better upto date with my curr knowledge
+    # is_url_thread = threading.Thread(target=funcs.is_url, args=(url_,))
+    # is_url_thread.start()
     urlchk = False
+    (urlchk := funcs.is_url(url_))
+    # FIX want this to be better upto date with my curr knowledge
     message = "Clipboard is NOT a URL, Copy URL Again......"
     while not urlchk:
-        print(f"ERROR: ( {url_}) Is NOT a Url.\n")
+        print(f"ERROR: ({url_}) Is NOT a Url.\n")
         choices = ["Done", "Exit", "Manual Input URL"]
         rs2 = funcs.multi_choice_dialog(message, choices)
         if rs2 == "Done":
