@@ -7,7 +7,7 @@ import tkinter as tk
 import winsound
 import zipfile
 from datetime import datetime, timedelta
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 from urllib.parse import urlparse, urlunparse
 
 import inquirer
@@ -470,26 +470,28 @@ def ffprobepath_download_an_unzip():
 
     dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
                                  f"{last_segment}")
+    if messagebox.askokcancel('Warning', 'Continue to download\nfrom Official Sources?', icon="warning"):
+        dlmssg = (
+            "\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
+            "link (45mb - 110mb Extracted) "
+            " LINK >>> https://ffbinaries.com/downloads <<<"
+            f"---------------\n ----------------to {dloadFilePath} "
+            "and will auto extract to C:\\ffmpeg\\ ------------------\n"
+        )
+        save_Dir = "C:\\ffmpeg\\"
+        spefFile = "ffprobe.exe"
+        zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
 
-    dlmssg = (
-        "\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
-        "link (45mb - 110mb Extracted) "
-        " LINK >>> https://ffbinaries.com/downloads <<<"
-        f"---------------\n ----------------to {dloadFilePath} "
-        "and will auto extract to C:\\ffmpeg\\ ------------------\n"
-    )
-    save_Dir = "C:\\ffmpeg\\"
-    spefFile = "ffprobe.exe"
-    zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
+        dld = download_url(url, dloadFilePath, dlmssg)
+        zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", spefFile, mssg=zipmssg)
+        if dld and zp == True:
+            Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
+            saveSettings("ffprobepath", Fprobe_Path)
+            return Fprobe_Path
 
-    dld = download_url(url, dloadFilePath, dlmssg)
-    zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", spefFile, mssg=zipmssg)
-    if dld and zp == True:
-        Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
-        saveSettings("ffprobepath", Fprobe_Path)
-        return Fprobe_Path
-
-    return f"{save_Dir}ffmpeg.exe"
+        return f"{save_Dir}ffmpeg.exe"
+    else:
+        return print('Canceled, unable to Run as Dependency missing')
 
 
 def ffmpegpath_download_an_unzip():
@@ -498,28 +500,34 @@ def ffmpegpath_download_an_unzip():
     urlmpg = get_download_links(["FFMPEG_Link"])
     last_segment = urlmpg.split('/')[-1]
 
-    dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
-                                    f"{last_segment}")
-
-    dlmssg = (
-        "\n---------------Downloading ffmpeg from OFFICIAL FFMPEG "
-        "link (45mb - 110mb Extracted) LINK >>> "
-        "https://ffbinaries.com/downloads <<<---------------\n "
-        f"----------------to {dloadFilePath} "
-        "and will auto extract to C:\\ffmpeg\\ ------------------\n"
+    dloadFilePath = os.path.join(
+        os.path.expanduser("~\\Desktop"),
+        f"{last_segment}"
     )
-    save_Dir = "C:\\ffmpeg\\"
-    spefFile = "ffmpeg.exe"
-    zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
+    if messagebox.askokcancel(
+        'Warning', 'Continue to download\nfrom Official Sources?', icon="warning"
+    ):
+        dlmssg = (
+            "\n---------------Downloading ffmpeg from OFFICIAL FFMPEG "
+            "link (45mb - 110mb Extracted) LINK >>> "
+            "https://ffbinaries.com/downloads <<<---------------\n "
+            f"----------------to {dloadFilePath} "
+            "and will auto extract to C:\\ffmpeg\\ ------------------\n"
+        )
+        save_Dir = "C:\\ffmpeg\\"
+        spefFile = "ffmpeg.exe"
+        zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
 
-    dld = download_url(urlmpg, dloadFilePath, dlmssg)
-    zp = unzip_file_from_path(dloadFilePath, save_Dir, spefFile, zipmssg)
-    if dld and zp == True:
-        ffm_Path = ("C:\\ffmpeg\\ffmpeg.exe")  # only needs the dir to cmd into
-        saveSettings("ffmpegpath", ffm_Path)
-        return ffm_Path
+        dld = download_url(urlmpg, dloadFilePath, dlmssg)
+        zp = unzip_file_from_path(dloadFilePath, save_Dir, spefFile, zipmssg)
+        if dld and zp == True:
+            ffm_Path = ("C:\\ffmpeg\\ffmpeg.exe")  # only needs the dir to cmd into
+            saveSettings("ffmpegpath", ffm_Path)
+            return ffm_Path
 
-    return f"{save_Dir}ffmpeg.exe"
+        return f"{save_Dir}ffmpeg.exe"
+    else:
+        return print('Canceled, unable to Run as Dependency missing')
 
 
 def ffmpeg_factory_init(callback_info: list[str]):
