@@ -16,15 +16,15 @@ def get_file_list_from_dir(vods_dir) -> list:
 
 
 def select_json(list_of_streamer_jsons):
-    string_list_of_streamer_jsons = ', '.join(list_of_streamer_jsons) + 'Cancel'
-    list_of_streamer_jsons.append('Cancel')
+    string_list_of_streamer_jsons = ', '.join(list_of_streamer_jsons) + '**Cancel**'
+    list_of_streamer_jsons.append('**Cancel**')
     choice = util.multi_choice_dialog(
         'List of saved Jsons',
         choice_s=list_of_streamer_jsons,
         return_options="dict",
         keys_name='streamer'
     )
-    if choice.get("streamer") == 'Cancel': # WATCH Implemented only for multichoise, if tkinter maybe take OUT.
+    if choice.get("streamer") == '**Cancel**': # WATCH Implemented only for multichoise, if tkinter maybe take OUT.
         import startup
         os.system("cls")
         startup.main_start()
