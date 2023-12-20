@@ -99,21 +99,14 @@ def add_new_entries_json(
 
 def print_new_vods_from_dictClass(vod_index, vods_dict):
     if vod_index != 0:
-        # sends it to Tkinter instead of print outs.
         from new_mass_gql import tk_get_file_list
-        tk_get_file_list.call_tk_data(vods_dict[:vod_index]) # WATCH Works But has the selection version of tk popup, class it or make new version??.
+        tk_get_file_list.call_tk_data(vods_dict[:vod_index])
 
-        # for index, vod in enumerate(vods_dict):
-        #     print(
-        #         f'{util.simple_convert_timestamp(vod['publishedAt'])}, '
-        #         f'{vod['gameName']}, '
-        #         f'{vod['title']}, '
-        #         f'{util.decode_seconds_to_hms(vod['lengthSeconds'])} '
-        #         f'\n{vod['url']}'
-        #     )
-        #     if index == vod_index - 1:
-        #         break
-    print(f'\n{(vod_index)}: New Vods\n')
+    print(f'\n\n{(vod_index)}: New Vods\n')
+    return
+    # FIX if streamers dont keep vods will
+    # return 0 vods new but will update file if a vods temporarily still available
+    # unti`l hidden.
 
 
 # def start_new_vods(json_file_path, streamer_user_name):
