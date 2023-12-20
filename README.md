@@ -10,7 +10,7 @@ README.md
 * Extraction of Audio & Video Channel/s from File to separate files, if 1 Multi channels or 2 Desire Audio-Video Separated (useful for OBS Multi-Channel Captures)
 
 ---
-## $$ DOWNLOAD $$
+## DOWNLOAD
 
 **STREAMLINK Dependent**
 
@@ -28,8 +28,10 @@ Optional [terminate] Download early without Crashing the CLI
 Downloads File Via [Streamlink][streamlink-website]
 
 Asks if [Mux-ing] is Desired (Combines Chunks files for smooth playback with FFMPEG).
---
-## $$ MUX-ING $$
+
+
+---
+## MUX-ING
 
 **FFMPEG Dependent**
 
@@ -38,8 +40,10 @@ This is available after Download And Separate From the main downloading option, 
 Re Mux's (Copies) the File specified in the Clipboard (File path) or [fileddialog][fileddialog2] (Browser popup Finder) 
 
 Sends the old file to the Recycle bin and saves a new file into a separate new Folder inside the CWD, then opens the folder.
---
-## $$ EXTRACTION $$
+
+
+---
+## EXTRACTION
 
 **FFPROBE Dependent**
 
@@ -56,7 +60,7 @@ Video can be selected to also Separated form Audio
 
 > ***if the file has not been muxed (or standard file) may result in misread of Audio channels***
 ---
-## $$ DEPENDENCIES $$
+## DEPENDENCIES
 
 - [Streamlink][streamlink-website]
     - [FFmpeg][ffmpeg] A Version comes with Streamlink
