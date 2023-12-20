@@ -143,39 +143,42 @@ def vod_titles_parse(vods_info):
 """
     vods_details = {}
     for info in vods_info:
-        path = os.path.basename(info[0])
-        if match := re.match(
-            r'(?P<username>.*?) - (?P<date>\d{4}-\d{2}-\d{2}) (?P<title>.*?)_(?P<gamename>.*?)\.(?P<filetype>\w+)$',
-            path,
-        ):
-            vods_details[f'{info[0]}'] = {
-                "length": info[1],
-                "size": info[-1],
-                "height_fps": f'{info[3].strip()}p{info[2]}',
-                "username": match.group('username'),
-                "date": match.group('date'),
-                "title": match.group('title'),
-                "gamename": match.group('gamename'),
-                "filetype": match.group('filetype')
-            }
-        else:
-            filetype = path.rsplit('.', 1)[-1]
-            basename = path.rsplit('.', 1)
-            username = basename[0].split('-', 1)[0].strip().lower()
-            date = basename[0].split(' ', 3)[-2]
-            title0 = basename[0].rsplit('_', 1)[0]
-            titlename = title0.split(' ', 3)[-1].strip()
-            gamename = basename[0].rsplit('_', 1)[-1].strip()
-            vods_details[f'{info[0]}'] = {
-                "length": info[1],
-                "size": info[-1],
-                "height_fps": f'{info[3].strip()}p{info[2].strip()}',
-                "username": username,
-                "date": date,
-                "titlename": titlename,
-                "gamename": gamename,
-                "filetype": filetype
-            }
+        try:
+            path = os.path.basename(info[0])
+            if match := re.match(
+                r'(?P<username>.*?) - (?P<date>\d{4}-\d{2}-\d{2}) (?P<title>.*?)_(?P<gamename>.*?)\.(?P<filetype>\w+)$',
+                path,
+            ):
+                vods_details[f'{info[0]}'] = {
+                    "length": info[1],
+                    "size": info[-1],
+                    "height_fps": f'{info[3].strip()}p{info[2]}',
+                    "username": match.group('username'),
+                    "date": match.group('date'),
+                    "title": match.group('title'),
+                    "gamename": match.group('gamename'),
+                    "filetype": match.group('filetype')
+                }
+            else:
+                filetype = path.rsplit('.', 1)[-1]
+                basename = path.rsplit('.', 1)
+                username = basename[0].split('-', 1)[0].strip().lower()
+                date = basename[0].split(' ', 3)[-2]
+                title0 = basename[0].rsplit('_', 1)[0]
+                titlename = title0.split(' ', 3)[-1].strip()
+                gamename = basename[0].rsplit('_', 1)[-1].strip()
+                vods_details[f'{info[0]}'] = {
+                    "length": info[1],
+                    "size": info[-1],
+                    "height_fps": f'{info[3].strip()}p{info[2].strip()}',
+                    "username": username,
+                    "date": date,
+                    "titlename": titlename,
+                    "gamename": gamename,
+                    "filetype": filetype
+                }
+        except IndexError:
+            continue
     return vods_details
 
 
@@ -261,6 +264,9 @@ def main():
     spinner1.start()
 
     walk_tree = filedialog.askdirectory()
+    if walk_tree == '':
+        spinner1.stop()
+        return (main() if funcs.multi_choice_dialog('Quit or Choose again?', ['Redo', 'Quit']) == 'Redo' else main_start())
     spinner1.stop()
     os.system("cls")
 
@@ -272,12 +278,15 @@ def main():
     vun = vod_user_names(lfid, compare_data)
 
     if edited_list := change_download_status(vun, appdir, compare_data):
+        spinner2.stop()
         os.system('cls')
         for i in edited_list:
             print(i)
         print('\nItems Changed.\n')
+    else:
+        spinner2.stop()
+        print("\nNo Changes\n")
 
-    spinner2.stop()
 
 
 if __name__ == '__main__':
