@@ -101,7 +101,7 @@ def create_popup1(
         text=(
             "Selection/s made by clicking on a Vod/s with Mouse (Multi Hold Shift)\n"
             "Use 'Make Selection-Close' (Right) Button to make selection,"
-            "\nSelection will be the first item in the list"
+            "\nSelection will be the LAST item in the list (If Multi)"
         ),
         bg="#191825",
         fg="white",
@@ -589,13 +589,15 @@ def process_data(input_data, windName, file_path, **kwargs) -> tuple:
     else:
         create_popup1(windName, columns, data, input_data, file_path)
 
+    if kwargs:
+        return
     try:
         listIndexs = [(index[0], input_data[index[0]]) for index in selected_items]
         print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 593 | process_data ~ listIndexs",listIndexs)
         print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 593 | process_data ~ listIndexs",listIndexs[0])
         spinner1.stop()
     # return listIndexs[0] if listIndexs else None
-        return listIndexs[0]
+        return listIndexs[-1]
     except IndexError:
         spinner1.stop()
         os.system('cls')
@@ -617,7 +619,7 @@ def call_tk_file(file_path) -> tuple | None:
 def call_tk_data(data):
     windName = data[0].get("displayName")
     kwargs = {"arg1": True}
-    t1 = threading.Thread(target=process_data, args=(data, windName, ""), kwargs=kwargs)
+    t1 = threading.Thread(target=process_data, args=(data, windName, ""), kwargs=kwargs, daemon=True)
     t1.start()
     return
 
@@ -627,8 +629,12 @@ def call_as_solo():
     list_files = []
     for files in os.listdir(appdata_dir):
         list_files.append(files)
-    chosen_dir = rf'{appdata_dir}\{funcs.multi_choice_dialog('Open:', list_files)}'
-    return call_tk_file(chosen_dir)
+    chosen_dir = rf'{appdata_dir}\{funcs.multi_choice_dialog('Open:', list_files + ["**Cancel**"])}'
+    if chosen_dir.endswith('**Cancel**'):
+        from startup import main_start
+        main_start()
+    else:
+        return call_tk_file(chosen_dir)
 
 
 # file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\algobro.json"
