@@ -43,6 +43,7 @@ def auth_twitch_string():
         auth_Token = load_auth_file(['auth_token'])[0]
         return f'"--twitch-api-header=Authorization=OAuth {auth_Token}"'
 
+    # https://streamlink.github.io/latest/cli/plugins/twitch.html#authentication
     else:
         help = ('\nIn order to get the personal OAuth token\nfrom Twitch'
         ' website which identifies'
