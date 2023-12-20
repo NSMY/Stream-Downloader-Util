@@ -161,6 +161,7 @@ class Vod:
     """
 
     def __init__(self, node):
+        # self.streamer_id = streamers_name
         self.creatorId = node["creator"]["id"]
         self.login = node["creator"]["login"]
         self.displayName = node["creator"]["displayName"]
@@ -223,7 +224,7 @@ def First_making_cmds(streamer_user_name=None):
     # file_path = f"jsons/{streamer_user_name}.json"
     file_path = rf"{util.get_appdata_dir()}\jsons\{streamer_user_name}.json"
 
-    vods_dict = Vod.create_vods_from_edges(resp["data"]["user"]["videos"]["edges"])
+    vods_dict = Vod.create_vods_from_edges(resp["data"]["user"]["videos"]["edges"], streamer_user_name)
 
     file_path_dir = os.path.dirname(file_path)
     if not os.path.exists(file_path_dir):
