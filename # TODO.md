@@ -36,20 +36,20 @@ prints 0 new vods anyway?.
 
 [x] IDEA have a tkinter Warning popup before downloading depends???
 
-[TODO] Readme not redering prop in ghub, Do Main 👇👇, and re Cat all files to utils for onefile scrips and helpers for funcs etc
-[TODO] set main download completions crosscheck
+[x] Readme not redering prop in ghub, 
+[x] set main download completions crosscheck
+
+[x] make able to get from file and dld from a time cmd and have it calc the right size minus'ing time-- think i have code somewhere 
+
+[x] [Working](zextra_Funcs_/check_old_files_downloaded.py#L136): make it so u can check if downloaded incase a new json file is made/ overwritten
+
+[] re Cat all files to utils for onefile scrips and helpers for funcs etc
 
 [TODO] make chapters in vods? using code > [Code](zextra_Funcs_/getChaptersCall.py) < will require a large rewrite, games will be
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 
 
 []  maybe rework tkinter to be packs instead of grids somehow as is laggy
-
-
-
-[] make able to get from file and dld from a time cmd and have it calc the right size minus'ing time-- think i have code somewhere 
-
-[] [Working](zextra_Funcs_/check_old_files_downloaded.py#L136): make it so u can check if downloaded incase a new json file is made/ overwritten
 
 
 THINK in the check new stream -- what to do for deleted /hidden vods on channels? 
