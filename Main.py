@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import re
@@ -42,7 +43,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     is_a_fresh_save.extend(check_settings[1:2])  # type: ignore possible unbound
 
     if not all(is_a_fresh_save):
-        funcs.streamlink_factory_init(["Main", "main_script"]) # TODO may need to inc ffprobe init call
+        funcs.streamlink_factory_init(["Main", "main_script"])
+        funcs.ffprobe_factory_init(["Main", "main_script"])
         os.system("cls")
         main_script()
 
@@ -89,6 +91,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     # Retrieves Last item in Clipboard(ctrl v).
     url = paste() if fromfile is None else fromfile[0]
+    # TODO maybe have it get the title of url if == twitch??.
 
     url_bits = funcs.parse_url_twitch(url)
 
@@ -180,8 +183,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         elif rs2 == "Exit":
             sys.exit()
 
-    # TRACK Untested fix to sub only Vods Res Check.
-    # As not subbed to any sub only vod streamers.
+    # Sub Only tested works but no est size of vod as Likely gql auth is
+    # [] general oauth not personal key maybe can hackaround (sub only prints out (L GB)).
     def get_vid_resolutions(slinkDir, url_, queue, auth_String=""):
         # FIX later This Ugly POS is because theres a current twitch m3u8 bandwidth get Bug -> 0.
         # & in the Streamlink Code it double errors with Sub Only/w no access.
@@ -301,6 +304,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 rf'streamlink {skip_ads_rtrn} "{url_}" {chosen_resolution}'
                 f' --stream-segment-threads 5 -o "{download_file_path}"'
             )
+            print("🐍 File: Stream-Downloader-Util/Main.py | Line: 306 | get_vid_resolutions ~ download_string",download_string)
         elif twitch_options_choice == "Standard":
             download_string = default_download_string
 
@@ -327,6 +331,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         print("\nQuality Chosen: ", chosen_resolution, "\n")
 
     # Main Download Process
+    # BUG Twitch is Bugging out and returns no streams available but retry works
+    # prob same m3u8 bandwidth -> 0 bug 21-12-2023.
     process = subprocess.Popen(
         download_string, shell=True, universal_newlines=True, cwd=slinkDir
     )
@@ -350,7 +356,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # Reset the signal handler for SIGINT to its default behavior (kill terminal)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-
+    # FIX errors is Canceled 
     def compare_with_tolerance(size1, size2, tolerance=10) -> bool:
         """
         This function compares two file sizes with a certain tolerance.
@@ -358,7 +364,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         return abs(size1 - size2) <= tolerance
 
 
-    if is_url_path_twitch_vod:
+    # FIX errors is Canceled find way to not enter if Canceled 
+    if is_url_path_twitch_vod and os.path.isfile(download_file_path):
         get_len_of_vod_file = subprocess.Popen(
             rf'ffprobe -i "{download_file_path}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
             shell=False,
@@ -371,31 +378,17 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         get_len_of_vod_file.wait()
         len_secs = int(stdout.split('.')[0])
         if compare_with_tolerance(remaining_time, len_secs, 20):
-            fromfile[2]['downloaded'] = chosen_resolution
-    #     len_of_vod = int(stdout.split('.')[0]) #    len_of_vod = int(stdout.split('.')[0]) ValueError: invalid literal for int() with base 10: '' ## cant get len_of_vod bcoz not muxed
-    #     # print("🐍 File: zextra_Funcs_/Testcode.py | Line: 126 | undefined ~ len_of_vod",len_of_vod)
+            # FIX Lazy temp solution to get json name (could error from mods name being this)
+            chosen_json_path = f"{util_functions.get_appdata_dir()}/jsons/{fromfile[2]['login']}.json"
 
-    #     if (ulr_query := urlparse(url).query).startswith('t='):
-    #         url_split = re.split('[=hms]', ulr_query)
-    #         secs_to_subt_from_file = util_functions.encode_hms_to_seconds(':'.join(url_split[1:-1]))
-    #         # if len_of_vod - secs_to_subt_from_file == 0:
-    #         if len_of_vod - secs_to_subt_from_file == 0:
-    #             # LOOK Temp code to make feat work as proof more complex here than necessary
-    #             # needs more comparing, this changes every time not if complete and or further comparisons
-    #             # working Great, need a Pointer to file/or date dld in file??.
-    #             util_functions.update_downloaded_to_resolution(
-    #                 urlparse(url_).path.split("/")[-1], chosen_resolution
-    #             )
-    #     elif len_of_vod - fromfile[2].get('lengthSeconds') == 0:
+            with open(chosen_json_path, 'r') as f:
+                filedata = json.load(f)
+            chosenindex = fromfile[1]
 
-    #         # LOOK Temp code to make feat work as proof more complex here than necessary
-    #         # needs more comparing, this changes every time not if complete and or further comparisons
-    #         # working Great, need a Pointer to file/or date dld in file??.
-    #         util_functions.update_downloaded_to_resolution(
-    #             urlparse(url_).path.split("/")[-1], chosen_resolution
-    #         )# BUG seemed not to trigger on 14-10 vod of kotton maybe dl size dont match close enough?.
+            filedata[chosenindex]['downloaded'] = chosen_resolution
 
-    # HERE have the dld conformation be size GB and/or seconds(len) of vid and be like 5 seconds adjustable
+            with open(chosen_json_path, 'w') as f:
+                json.dump(filedata, f, indent=4)
 
     if download_with_Shutdown:
         if sd_type == "Auto":
@@ -406,7 +399,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                         ))
 
             cpvs.mux(download_file_path)
-            os.system("shutdown -s -t 200")
+            os.system("shutdown -s -t 180")
             os.system("cls")
             print(
                 "If you want to Cancel the Shutdown CMD, "
