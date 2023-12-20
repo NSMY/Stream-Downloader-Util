@@ -25,6 +25,7 @@ def update_downloaded_to_resolution(target_id, new_value):
 
 
 def get_appdata_dir():
+    """Returns the STU appdata_path directory"""
     appdata_path = os.getenv("LOCALAPPDATA")
     return os.path.join(str(appdata_path), "Stream-Downloader-Util")
 
