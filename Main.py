@@ -25,8 +25,6 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     ''' download_with_shutdown enables == Pc shutdown after completion
         fromfile == Json data dict.
     '''
-    # BUG some bug that either returns url with no separators in the resolution check
-    # or the size of vod check returns 0.00gb, Not consistent. seem to be able to get it with Deadlys Dayz vods.
 
     # Checking Settings.json is available and recently checked.
     try:
@@ -44,7 +42,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     is_a_fresh_save.extend(check_settings[1:2])  # type: ignore possible unbound
 
     if not all(is_a_fresh_save):
-        funcs.streamlink_factory_init(["Main", "main_script"])
+        funcs.streamlink_factory_init(["Main", "main_script"]) # TODO may need to inc ffprobe init call
         os.system("cls")
         main_script()
 
@@ -185,8 +183,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # TRACK Untested fix to sub only Vods Res Check.
     # As not subbed to any sub only vod streamers.
     def get_vid_resolutions(slinkDir, url_, queue, auth_String=""):
-        # This Ugly POS is because theres a current twitch bandwidth get Bug &
-        # in the Streamlink Code it double errors with Sub Only/w no access.
+        # FIX later This Ugly POS is because theres a current twitch m3u8 bandwidth get Bug -> 0.
+        # & in the Streamlink Code it double errors with Sub Only/w no access.
         loops = 0
         while loops < 5:
             loops += 1
@@ -261,7 +259,6 @@ def main_script(download_with_Shutdown=None, fromfile=None):
 
     # Naming the Terminal.
     terminal_Naming = os.path.basename(download_file_path)
-
     os.system(f"title {terminal_Naming}")
 
     spinner2 = spn.Spinner()
@@ -272,7 +269,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     spinner2.stop()
     get_res_opts = q.get()
 
-    # TRACK Shouldn't be needed, as should be handled in 
+    # TRACK Shouldn't be needed, as should be handled in
     # the get_vid_resolutions Func
     if get_res_opts == 'Error':
         print('Errored Too many attempts')
@@ -347,23 +344,34 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     thread_popen.start()
     # Wait for the thread to finish
     thread_popen.join()
+
     # BUG if i cancel i got a synatx error ??
+
     # Reset the signal handler for SIGINT to its default behavior (kill terminal)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    # if is_url_path_vod:
 
-    #     # FIX will need to include ffprobe in main settings checks to use this.
-    #     get_len_of_vod_file = subprocess.Popen(
-    #         rf'ffprobe -i "{download_file_path}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
-    #         shell=False,
-    #         stdout=subprocess.PIPE,
-    #         stderr=subprocess.PIPE,
-    #         universal_newlines=True,
-    #         cwd='c:/ffmpeg/'  # FIX replace me.
-    #     )
-    #     stdout, stderr = get_len_of_vod_file.communicate()
-    #     get_len_of_vod_file.wait()
+    def compare_with_tolerance(size1, size2, tolerance=10) -> bool:
+        """
+        This function compares two file sizes with a certain tolerance.
+        """
+        return abs(size1 - size2) <= tolerance
+
+
+    if is_url_path_twitch_vod:
+        get_len_of_vod_file = subprocess.Popen(
+            rf'ffprobe -i "{download_file_path}" -v quiet -show_entries format=duration -of default=noprint_wrappers=1:nokey=1',
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            cwd=ffprobe_dir
+        )
+        stdout, stderr = get_len_of_vod_file.communicate()
+        get_len_of_vod_file.wait()
+        len_secs = int(stdout.split('.')[0])
+        if compare_with_tolerance(remaining_time, len_secs, 20):
+            fromfile[2]['downloaded'] = chosen_resolution
     #     len_of_vod = int(stdout.split('.')[0]) #    len_of_vod = int(stdout.split('.')[0]) ValueError: invalid literal for int() with base 10: '' ## cant get len_of_vod bcoz not muxed
     #     # print("🐍 File: zextra_Funcs_/Testcode.py | Line: 126 | undefined ~ len_of_vod",len_of_vod)
 

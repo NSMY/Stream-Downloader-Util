@@ -179,15 +179,11 @@ def vod_titles_parse(vods_info):
     return vods_details
 
 
-def compare_sizes(size1, size2, tolerance):
+def compare_with_tolerance(size1, size2, tolerance=10) -> bool:
     """
     This function compares two file sizes with a certain tolerance.
     """
     return abs(size1 - size2) <= tolerance
-
-
-def compare_with_tolerance(a, b, tolerance=10):
-    return abs(a - b) <= tolerance
 
 
 appdir = f'{get_appdata_dir()}/jsons'
@@ -219,7 +215,7 @@ def change_download_status(total_names_from_dld_dir, appdir, compare_data):
                     # Compare 'username' with 'id'
                     if (
                         compare_data[vodfile]['username'] == jdata['displayName']
-                        and compare_sizes(compare_data[vodfile]['length'], jdata['lengthSeconds'], 20)
+                        and compare_with_tolerance(compare_data[vodfile]['length'], jdata['lengthSeconds'], 20)
                         and compare_data[vodfile].get('title') == jdata['title']
                         and jdata['downloaded'] is False
                     ):
