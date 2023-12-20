@@ -1,4 +1,3 @@
-
 import os
 import threading
 
@@ -6,19 +5,21 @@ import auth_skip_ads_
 import funcs
 import init_files
 from ffmpegExtract import ffmpegextract
+from helpers import help as hlp
 from new_mass_gql import check_new_streams, gql_main_call, tk_get_file_list
 from utility_dir import get_single_vod_
 from utils import video_data_cross_checker
 
 
 def main_start(impt_data=None):
-
     def download():
         from Main import main_script
+
         main_script()
 
     def remux():
         from mux_vid import mux
+
         mux(ran_as_main=True)
 
     def extract():
@@ -26,6 +27,7 @@ def main_start(impt_data=None):
 
     def download_shutdown():
         from Main import main_script
+
         main_script(True)
 
     def exit_program():
@@ -40,18 +42,23 @@ def main_start(impt_data=None):
 
     def retrieve_saved_vod():
         if impt_data:
-            aad = get_single_vod_.Run_get_vod('')
-        aad = get_single_vod_.Run_get_vod('')
+            aad = get_single_vod_.Run_get_vod("")
+        aad = get_single_vod_.Run_get_vod("")
         # print(aad)
         from Main import main_script
 
         # from new_mass_gql import tk_get_file_list
         # print(aad[0])
         # tk_get_file_list.call_tk_vod_view(f'c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/{aad[0]}.json') # FIX sloppy af.
-        if (shutdown := funcs.multi_choice_dialog('Download Type', ['Normal', 'Auto Shutdown', '**Cancel**']) == "Normal"):
+        if (
+            shutdown := funcs.multi_choice_dialog(
+                "Download Type", ["Normal", "Auto Shutdown", "**Cancel**"]
+            )
+            == "Normal"
+        ):
             main_script(fromfile=aad)
-        elif shutdown == '**Cancel**':
-            os.system('cls')
+        elif shutdown == "**Cancel**":
+            os.system("cls")
             main_start()
         else:
             main_script(download_with_Shutdown=True, fromfile=aad)
@@ -64,18 +71,22 @@ def main_start(impt_data=None):
         video_data_cross_checker.main()
         main_start()
 
+    def helpstr():
+        hlp.main()
+
     # Define your dictionary
     switch = {
-        'Download': download,
-        'Remux': remux,
-        'Extract': extract,
-        'Download-Shutdown': download_shutdown,
-        'Get Vod from File': retrieve_saved_vod,
-        'Create Streamer Vods File': making_vods_list,
-        'Check for New Vods': check_streams,
-        'List View': list_view,
-        'Cross-check Vods to Json Data': crosscheck_vod_details,
-        'Exit': exit_program,
+        "Standard Download": download,
+        "Re-Mux": remux,
+        "Extract Audio/Video": extract,
+        "Download W/ Shutdown": download_shutdown,
+        "Vod from File": retrieve_saved_vod,
+        "Update Vods File": check_streams,
+        "List View of File": list_view,
+        "Create New Vods File": making_vods_list,
+        "Cross-check Vods to Json Data": crosscheck_vod_details,
+        "Help": helpstr,
+        "Exit": exit_program,
     }
 
     os.system("title Stream Downloader Util")
@@ -87,23 +98,24 @@ def main_start(impt_data=None):
     init_files.version_check()
     init_files.logger_setup()
 
-    question = ('Start Commands')
+    question = "Start Commands"
     responses = [
-        'Download',
-        'Remux',
-        'Extract',
-        'Download-Shutdown',
-        'Get Vod from File',
-        'Check for New Vods',
-        'Create Streamer Vods File',
-        'List View',
-        'Cross-check Vods to Json Data',
-        'Exit'
+        "Standard Download",
+        "Re-Mux",
+        "Extract Audio/Video",
+        "Download W/ Shutdown",
+        "Vod from File",
+        "Update Vods File",
+        "List View of File",
+        "Create New Vods File",
+        "Cross-check Vods to Json Data",
+        "Help",
+        "Exit",
     ]
     rprog = funcs.multi_choice_dialog(question, responses)
 
     # Get the function from the dictionary
-    func = switch.get(rprog)  #ignore: E262
+    func = switch.get(rprog)  # ignore: E262
     # when_= 4-8
     # Call the function if it's not None
     if func:
@@ -112,7 +124,5 @@ def main_start(impt_data=None):
         print("Invalid option")
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main_start()
