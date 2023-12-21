@@ -49,6 +49,8 @@ prints 0 new vods anyway?.
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 
 
+
+
 []  maybe rework tkinter to be packs instead of grids somehow as is laggy
 
 
