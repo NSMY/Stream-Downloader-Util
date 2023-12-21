@@ -30,7 +30,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     # Checking Settings.json is available and recently checked.
     try:
         check_settings = funcs.loadSettings(
-            keys=["LastSave", "streamlinkPath", "ffprobepath"]
+            keys=["LastSave", "streamlinkPath", "ffprobepath"] # BUG thia dont get but it did ffprobe frozen npath??
         )
     except FileNotFoundError as e:
         print(e)
@@ -49,7 +49,6 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         main_script()
 
     slinkDir = os.path.dirname(check_settings[1])  # type: ignore possible unbound
-
     ffprobe_dir = os.path.dirname(check_settings[2])  # type: ignore possible unbound
 
     if fromfile:
