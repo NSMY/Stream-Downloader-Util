@@ -593,8 +593,6 @@ def process_data(input_data, windName, file_path, **kwargs) -> tuple:
         return
     try:
         listIndexs = [(index[0], input_data[index[0]]) for index in selected_items]
-        print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 593 | process_data ~ listIndexs",listIndexs)
-        print("🐍 File: new_mass_gql/tk_get_file_list.py | Line: 593 | process_data ~ listIndexs",listIndexs[0])
         spinner1.stop()
     # return listIndexs[0] if listIndexs else None
         return listIndexs[-1]

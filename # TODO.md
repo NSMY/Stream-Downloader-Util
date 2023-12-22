@@ -43,21 +43,19 @@ prints 0 new vods anyway?.
 
 [x] [Working](zextra_Funcs_/check_old_files_downloaded.py#L136): make it so u can check if downloaded incase a new json file is made/ overwritten
 
-[] re Cat all files to utils for onefile scrips and helpers for funcs etc
+[x] re Cat all files to utils for onefile scrips and helpers for funcs etc
 
 [TODO] make chapters in vods? using code > [Code](zextra_Funcs_/getChaptersCall.py) < will require a large rewrite, games will be
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 
+[] make the setup init settings better, maybe into 1 call like if key in settings then call the whole settings thins
+more robust dependency searching and downloading (if deleted between settinggs Checks)
 
-
-
-[]  maybe rework tkinter to be packs instead of grids somehow as is laggy
+THINK maybe rework tkinter to be packs instead of grids somehow as is laggy
 
 
 THINK in the check new stream -- what to do for deleted /hidden vods on channels? 
 
-[] make the setup init settings better, maybe into 1 call like if key in settings then call the whole settings thins
-more robust dependency searching and downloading (if deleted between settinggs Checks)
 
 [TODO] make a combine segments (vids) ffmpeg via lists meth
 THINK make check file be able to execute as standalone?? (need to make file dest dynamic apon single call) 
