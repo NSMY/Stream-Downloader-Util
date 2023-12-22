@@ -1,24 +1,24 @@
 import os
 import threading
 
-import auth_skip_ads_
-import funcs
-import init_files
-from ffmpegExtract import ffmpegextract
+import init_dir.init_files as init_files
+from helpers import auth_skip_ads_, check_new_streams
+from helpers import funcs as funcs
+from helpers import gql_main_call
 from helpers import help as hlp
-from new_mass_gql import check_new_streams, gql_main_call, tk_get_file_list
-from utility_dir import get_single_vod_
-from utils import video_data_cross_checker
+from helpers import tk_get_file_list
+from my_utils import get_single_vod_, video_data_cross_checker
+from my_utils.ffmpegExtract import ffmpegextract
 
 
 def main_start(impt_data=None):
     def download():
-        from Main import main_script
+        from Main import main_dld_start
 
-        main_script()
+        main_dld_start()
 
     def remux():
-        from mux_vid import mux
+        from my_utils.mux_vid import mux
 
         mux(ran_as_main=True)
 
@@ -26,9 +26,9 @@ def main_start(impt_data=None):
         ffmpegextract()
 
     def download_shutdown():
-        from Main import main_script
+        from Main import main_dld_start
 
-        main_script(True)
+        main_dld_start(True)
 
     def exit_program():
         exit()
@@ -45,7 +45,7 @@ def main_start(impt_data=None):
             aad = get_single_vod_.Run_get_vod("")
         aad = get_single_vod_.Run_get_vod("")
         # print(aad)
-        from Main import main_script
+        from Main import main_dld_start
 
         # from new_mass_gql import tk_get_file_list
         # print(aad[0])
@@ -56,12 +56,12 @@ def main_start(impt_data=None):
             )
             == "Normal"
         ):
-            main_script(fromfile=aad)
+            main_dld_start(fromfile=aad)
         elif shutdown == "**Cancel**":
             os.system("cls")
             main_start()
         else:
-            main_script(download_with_Shutdown=True, fromfile=aad)
+            main_dld_start(download_with_Shutdown=True, fromfile=aad)
 
     def list_view():
         tk_get_file_list.call_as_solo()

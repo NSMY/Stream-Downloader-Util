@@ -4,9 +4,9 @@ import os
 import shutil
 from datetime import datetime, timedelta
 
-import funcs
+from helpers import funcs as funcs
 
-version_number = 3.2
+version_number = 4.0
 
 
 def logger_setup():
@@ -85,12 +85,14 @@ def version_check():
 
     try:
         if funcs.loadSettings(["SDLI_Version"]) != [version_number]:
+            for files in os.listdir(settings_dir):
+                if not os.path.isdir(files):
+                    funcs.send_to_trash((f'{settings_dir}\\{files}'))
+                    # shutil.rmtree(files)
             print('Settings Files Deleted, Outdated Version')
-            shutil.rmtree(settings_dir)
-            # funcs.send_to_trash(settings_dir)
             from startup import main_start
             main_start()
     except PermissionError as f:
-        # print("Permission error")
+        print(f)
         from startup import main_start
         main_start()

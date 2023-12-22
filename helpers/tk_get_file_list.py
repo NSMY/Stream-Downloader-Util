@@ -8,9 +8,9 @@ import webbrowser
 from datetime import datetime
 from tkinter import IntVar, Radiobutton, messagebox, ttk
 
-import funcs
-import spinner
-from utility_dir import util_functions
+import helpers.funcs as funcs
+import my_utils.spinner as spinner
+from helpers import util_functions
 
 # # from ..utility_dir import util_functions
 
@@ -625,17 +625,21 @@ def call_tk_data(data):
 
 
 def call_as_solo():
-    appdata_dir = rf"{util_functions.get_appdata_dir()}\jsons"
-    list_files = []
-    for files in os.listdir(appdata_dir):
-        list_files.append(files)
-    chosen_dir = rf'{appdata_dir}\{funcs.multi_choice_dialog('Open:', list_files + ["**Cancel**"])}'
-    if chosen_dir.endswith('**Cancel**'):
+    try:
+        appdata_dir = rf"{util_functions.get_appdata_dir()}\jsons"
+        list_files = []
+        for files in os.listdir(appdata_dir):
+            list_files.append(files)
+        chosen_dir = rf'{appdata_dir}\{funcs.multi_choice_dialog('Open:', list_files + ["**Cancel**"])}'
+        if chosen_dir.endswith('**Cancel**'):
+            from startup import main_start
+            main_start()
+        else:
+            return call_tk_file(chosen_dir)
+    except FileNotFoundError as e:
+        print(e, 'No folder Found, Try: Create New Vods File')
         from startup import main_start
         main_start()
-    else:
-        return call_tk_file(chosen_dir)
-
 
 # file = "C:\\Users\\970EVO-Gamer\\AppData\\Local\\Stream-Downloader-Util\\jsons\\algobro.json"
 # with open(file, 'r') as f:

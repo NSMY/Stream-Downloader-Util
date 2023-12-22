@@ -2,7 +2,7 @@
 
 import json
 
-from utility_dir.util_functions import get_index_last_vod
+from helpers.util_functions import get_index_last_vod
 
 
 def compare_dicts_excluding(dict1, dict2, exclude_keys):
@@ -43,7 +43,7 @@ def get_conflicting_indexes(file_list1_data: list, list2_data, start_point_index
     """
     if isinstance(list2_data, dict):
         # Normalize Data.
-        from new_mass_gql import gql_main_call as main_call
+        from helpers import gql_main_call as main_call
         list2_data = main_call.Vod.create_vods_from_edges(list2_data["data"]["user"]["videos"]["edges"])
     strt = []
     for index, (list1, list2) in enumerate(zip(file_list1_data, list2_data[start_point_index:])):

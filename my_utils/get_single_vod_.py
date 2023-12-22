@@ -4,10 +4,9 @@ import json
 import os
 import pprint
 
+from helpers import util_functions as util
 # import util_functions as util  # Only to test code inside this module
-from new_mass_gql.tk_get_file_list import call_tk_file
-
-from . import util_functions as util
+from helpers.tk_get_file_list import call_tk_file
 
 
 def get_file_list_from_dir(vods_dir) -> list:

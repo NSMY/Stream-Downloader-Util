@@ -5,8 +5,8 @@ import winsound
 from pyperclip import copy, paste
 from send2trash import send2trash
 
-import funcs
-import init_files
+import helpers.funcs as funcs
+from init_dir import init_files
 
 # TODO webm?
 
@@ -93,4 +93,4 @@ def mux(file_path_inpt=paste(), ran_as_main: bool = False):
 
 
 if __name__ == '__main__':
-    mux()
+    mux(file_path_inpt=paste(), ran_as_main=True)

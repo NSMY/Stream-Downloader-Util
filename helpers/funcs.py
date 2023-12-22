@@ -17,8 +17,7 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
-from default_path_factory import DefaultPathFactory
-from Main import main_script
+from init_dir.default_path_factory import DefaultPathFactory
 from startup import main_start
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
@@ -138,14 +137,13 @@ def openFile():
     file = os.path.normpath(filep)
     if not filep:  # closes Program if No Save path is Entered
         check = multi_choice_dialog("Canceled Open File: Try again?",
-                                    ["yes", "no", "exit"])
+                                    ["yes", "no"])
         if check == "yes":
             os.system("cls" if os.name == "nt" else "clear")
             openFile()
         elif check == "no":
             os.system("cls" if os.name == "nt" else "clear")
             main_start()
-        sys.exit()
     return file
 
 
@@ -278,10 +276,10 @@ def unzip_file_from_path(
     return True
 
 
-def send_to_trash(filename):
-    send2trash(filename)
-    if not os.path.isfile(filename):
-        print(f"sent {filename} to recycler")
+def send_to_trash(input_name):
+    send2trash(input_name)
+    if not os.path.isfile(input_name) or os.path.isdir(input_name):
+        print(f"sent {input_name} to recycler")
         winsound.PlaySound(
             sound="C:\\Windows\\Media\\Recycle.wav",
             flags=winsound.SND_FILENAME
@@ -532,7 +530,7 @@ def ffmpegpath_download_an_unzip():
 
 def ffmpeg_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
-    ["Main", "main_script"]'''
+    ["Main", "main_dld_start"]'''
 
     default_ffPath = ("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe")
     saveTo1 = "ffmpegpath"
@@ -549,7 +547,7 @@ def ffmpeg_factory_init(callback_info: list[str]):
 
 def ffprobe_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
-    ["Main", "main_script"]'''
+    ["Main", "main_dld_start"]'''
 
     default_ffprobePath = ("C:\\ffmpeg\\ffprbe.exe")
     saveTo = "ffprobepath"
@@ -566,7 +564,7 @@ def ffprobe_factory_init(callback_info: list[str]):
 
 def streamlink_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
-    ["Main", "main_script"]'''
+    ["Main", "main_dld_start"]'''
 
     default_slinkPath = ("C:\\Program Files\\Streamlink\\bin\\streamlink.exe")
     saveTo = "streamlinkPath"

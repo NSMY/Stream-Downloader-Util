@@ -3,9 +3,9 @@ import subprocess
 
 from numpy import append
 
-import funcs
-import init_files
-from extraction_factory import VideoBlueprint
+import helpers.funcs as funcs
+from helpers.extraction_factory import VideoBlueprint
+from init_dir import init_files
 
 
 def ffmpegextract():

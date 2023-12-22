@@ -6,6 +6,7 @@ import signal
 import subprocess
 import sys
 import threading
+import time
 import winsound
 from datetime import datetime
 from queue import Queue
@@ -13,16 +14,15 @@ from urllib.parse import urlparse, urlsplit
 
 from pyperclip import copy, paste
 
-import auth_skip_ads_
-import funcs
-import init_files
-import mux_vid as cpvs
-import spinner as spn
-from new_mass_gql import get_vods_sizes_m3u8 as m3
-from utility_dir import util_functions
+from helpers import auth_skip_ads_, funcs
+from helpers import get_vods_sizes_m3u8 as m3
+from helpers import util_functions
+from init_dir import init_files
+from my_utils import mux_vid as cpvs
+from my_utils import spinner as spn
 
 
-def main_script(download_with_Shutdown=None, fromfile=None):
+def main_dld_start(download_with_Shutdown=None, fromfile=None):
     ''' download_with_shutdown enables == Pc shutdown after completion
         fromfile == Json data dict.
     '''
@@ -36,17 +36,17 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         print(e)
         init_files.initSettings()
         os.system("cls")
-        main_script()
+        main_dld_start()
 
     is_a_fresh_save = [funcs.is_less_than_30days(check_settings[0])]  # type: ignore possible unbound
 
     is_a_fresh_save.extend(check_settings[1:2])  # type: ignore possible unbound
 
     if not all(is_a_fresh_save):
-        funcs.streamlink_factory_init(["Main", "main_script"])
-        funcs.ffprobe_factory_init(["Main", "main_script"])
+        funcs.streamlink_factory_init(["Main", "main_dld_start"])
+        funcs.ffprobe_factory_init(["Main", "main_dld_start"])
         os.system("cls")
-        main_script()
+        main_dld_start()
 
     slinkDir = os.path.dirname(check_settings[1])  # type: ignore possible unbound
     ffprobe_dir = os.path.dirname(check_settings[2])  # type: ignore possible unbound
@@ -95,8 +95,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     url_bits = funcs.parse_url_twitch(url)
 
     url_ = url_bits[0]
-    print("🐍 File: Stream-Downloader-Util/Main.py | Line: 98 | main_script ~ url_",url_)
-    print(fromfile)
+
     def start_at_specified_time(url) -> tuple:
         """-> Returns tup(url, timecode)"""
         timecode = input(
@@ -169,7 +168,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
         rs2 = funcs.multi_choice_dialog(message, choices)
         if rs2 == "Done":
             os.system("cls" if os.name == "nt" else "clear")
-            main_script()
+            main_dld_start()
         elif rs2 == "Manual Input URL":
             url_ = input(
                 "Type or paste (Must Include http://www.) " "URL HERE: "
@@ -178,7 +177,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
             if urlchk == True:  # FIX == True or Is True?.
                 print(url_)
                 break
-            main_script()
+            main_dld_start()
         elif rs2 == "Exit":
             sys.exit()
 
@@ -303,11 +302,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 rf'streamlink {skip_ads_rtrn} "{url_}" {chosen_resolution}'
                 f' --stream-segment-threads 5 -o "{download_file_path}"'
             )
-            print("🐍 File: Stream-Downloader-Util/Main.py | Line: 306 | get_vid_resolutions ~ download_string",download_string)
         elif twitch_options_choice == "Standard":
             download_string = default_download_string
-
-    print("\nCTRL + C to CANCEL Download early if necessary")
 
     if is_url_path_twitch_vod:
         spinner1 = spn.Spinner()
@@ -335,6 +331,8 @@ def main_script(download_with_Shutdown=None, fromfile=None):
     process = subprocess.Popen(
         download_string, shell=True, universal_newlines=True, cwd=slinkDir
     )
+
+    print("\nCTRL + C to CANCEL Download early if necessary\n")
 
     # Define a signal handler for SIGINT using a lambda function
     # changing ctrl+c to kill the subprocess instead of the terminal.
@@ -404,6 +402,7 @@ def main_script(download_with_Shutdown=None, fromfile=None):
                 "If you want to Cancel the Shutdown CMD, "
                 "Open the Terminal and type: shutdown -a\nExecute"
             )
+            time.sleep(170)
     else:
         print(
             datetime.now().strftime(

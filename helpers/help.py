@@ -4,7 +4,7 @@ def main():
     import startup
     os.system('cls')
     print("{:<35} {:<10}".format('\nStandard Download: ', 'Downloads the URL thats stored in your Clipboard'))
-    print("{:<35} {:<10}".format('\nRe-Mux:', 'Mux\'es (if not discontinuous/Chunked just copies) Combines Chunked Streams into a continuous File.'))
+    print("{:<35} {:<10}".format('\nRe-Mux:', 'Mux\'es (if not discontinuous/Chunked just copies) Combines Chunked Streams into a continuous File into a new sub folder & recycles old File.'))
     print("{:<35} {:<10}".format('\nExtract Audio/Video:', 'Extracts the Audio/Video Streams of a File into their own Files, Preserves Original File.'))
     print("{:<35} {:<10}".format('\nDownload W/ Shutdown:', 'Downloads Chosen source and Calls Shutdown Command after completion'))
     print("{:<35} {:<10}".format('', '(Default 3min after Completion OR can be set to Custom Time in the future with [Manual] option).'))

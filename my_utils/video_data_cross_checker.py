@@ -7,10 +7,10 @@ import threading
 from queue import Queue
 from tkinter import filedialog
 
-import funcs
-import init_files
-import spinner
-from utility_dir.util_functions import get_appdata_dir
+import helpers.funcs as funcs
+import init_dir.init_files as init_files
+import my_utils.spinner as spinner
+from helpers.util_functions import get_appdata_dir
 
 # to make the file work as a stand alone
 # sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -290,4 +290,6 @@ def main():
 
 
 if __name__ == '__main__':
+    main()
+    main()
     main()

@@ -2,7 +2,7 @@ import importlib
 import os
 import webbrowser
 
-import funcs
+import helpers.funcs as funcs
 
 
 # No Need to be a Class but practice.

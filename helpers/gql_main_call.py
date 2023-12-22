@@ -6,13 +6,13 @@ import timeit
 import httpx
 from tqdm import tqdm
 
-import spinner as spn
-from utility_dir import util_functions as util
+import my_utils.spinner as spn
+from helpers import util_functions as util
 
 # import requests
 
 
-start_time = timeit.default_timer()
+# start_time = timeit.default_timer()
 
 
 gql_client: str = "kd1unb4b3q4t58fwlpcbzcbnm76a8fp"
@@ -224,7 +224,7 @@ def First_making_cmds(streamer_user_name=None):
     # file_path = f"jsons/{streamer_user_name}.json"
     file_path = rf"{util.get_appdata_dir()}\jsons\{streamer_user_name}.json"
 
-    vods_dict = Vod.create_vods_from_edges(resp["data"]["user"]["videos"]["edges"], streamer_user_name)
+    vods_dict = Vod.create_vods_from_edges(resp["data"]["user"]["videos"]["edges"])
 
     file_path_dir = os.path.dirname(file_path)
     if not os.path.exists(file_path_dir):

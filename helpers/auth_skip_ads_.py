@@ -6,7 +6,7 @@ from json import dump
 
 from pyperclip import copy, paste
 
-import funcs
+import helpers.funcs as funcs
 
 
 def skip_ads():
