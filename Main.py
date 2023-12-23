@@ -311,9 +311,9 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         m3u8.join()
         m3u8_data = q2.get()
         spinner1.stop()
-
+        # [] make this happen before choosing???? show GBs to inform decision????.
         try:
-            if chosen_resolution == "best" or "source":
+            if chosen_resolution == "best" or chosen_resolution == "source":
                 gb_of_vod = list(m3u8_data.values())[0][0]
             elif chosen_resolution == "worst":
                 gb_of_vod = list(m3u8_data.values())[-1][0]
