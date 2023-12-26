@@ -5,7 +5,7 @@ import winsound
 from pyperclip import copy, paste
 from send2trash import send2trash
 
-import helpers.funcs as funcs
+from helpers import funcs as funcs
 from init_dir import init_files
 
 # TODO webm?
@@ -16,14 +16,14 @@ def mux(file_path_inpt=paste(), ran_as_main: bool = False):
         check_settings = funcs.loadSettings(['LastSave', 'ffmpegpath'])
     except FileNotFoundError as e:
         init_files.initSettings()
-        mux()
+        return mux(file_path_inpt, ran_as_main)
 
     fresh_save = [funcs.is_less_than_30days(check_settings[0])]
     fresh_save.extend(check_settings[1:2])
     if not all(fresh_save):
         funcs.ffmpeg_factory_init(["mux_vid", "mux"])
         os.system("cls")
-        mux()
+        return mux(file_path_inpt, ran_as_main)
     ffpg = os.path.dirname(check_settings[1])
 
     file_path = funcs.file_path_get(file_path_inpt)
