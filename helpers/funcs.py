@@ -468,6 +468,7 @@ def ffprobepath_download_an_unzip():
 
     dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
                                  f"{last_segment}")
+    print('Attempting to download FFPROBE')
     if messagebox.askokcancel('Warning', 'Continue to download\nfrom Official Sources?', icon="warning"):
         dlmssg = (
             "\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
@@ -502,6 +503,7 @@ def ffmpegpath_download_an_unzip():
         os.path.expanduser("~\\Desktop"),
         f"{last_segment}"
     )
+    print('Attempting to download FFMPEG')
     if messagebox.askokcancel(
         'Warning', 'Continue to download\nfrom Official Sources?', icon="warning"
     ):
