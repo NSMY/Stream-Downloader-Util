@@ -14,9 +14,8 @@ from urllib.parse import urlparse, urlsplit
 
 from pyperclip import copy, paste
 
-from helpers import auth_skip_ads_, funcs
+from helpers import auth_skip_ads_, funcs, util_functions
 from helpers import get_vods_sizes_m3u8 as m3
-from helpers import util_functions
 from init_dir import init_files
 from my_utils import mux_vid as cpvs
 from my_utils import spinner as spn
@@ -35,8 +34,8 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     except FileNotFoundError as e:
         print(e)
         init_files.initSettings()
-        os.system("cls")
-        main_dld_start()
+        # os.system("cls")
+        return main_dld_start(download_with_Shutdown, fromfile)
 
     is_a_fresh_save = [funcs.is_less_than_30days(check_settings[0])]  # type: ignore possible unbound
 
@@ -360,7 +359,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         """
         return abs(size1 - size2) <= tolerance
 
-
+    # BUG something is crashing once fin dld???
     # FIX errors is Canceled find way to not enter if Canceled 
     if is_url_path_twitch_vod and os.path.isfile(download_file_path):
         get_len_of_vod_file = subprocess.Popen(
