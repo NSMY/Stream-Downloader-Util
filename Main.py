@@ -29,7 +29,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     # Checking Settings.json is available and recently checked.
     try:
         check_settings = funcs.loadSettings(
-            keys=["LastSave", "streamlinkPath", "ffprobepath"] # BUG thia dont get but it did ffprobe frozen npath??
+            keys=["LastSave", "streamlinkPath", "ffprobepath"]
         )
     except FileNotFoundError as e:
         print(e)
@@ -45,7 +45,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         funcs.streamlink_factory_init(["Main", "main_dld_start"])
         funcs.ffprobe_factory_init(["Main", "main_dld_start"])
         os.system("cls")
-        main_dld_start()
+        return main_dld_start(download_with_Shutdown, fromfile)
 
     slinkDir = os.path.dirname(check_settings[1])  # type: ignore possible unbound
     ffprobe_dir = os.path.dirname(check_settings[2])  # type: ignore possible unbound
@@ -148,15 +148,14 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         timecodej = "-".join(timecode)
         timecodei = util_functions.encode_hms_to_seconds(timecodej, split_on="-")
         remaining_time = calc_remaining_time(timecodei, fromfile[2]["lengthSeconds"])
-    else:
-        if url_bits[1].query.startswith("t="):
-            minus_time = convert_url_query_timecode(urlsplit(url_).query)
+    elif url_bits[1].query.startswith("t="):
+        minus_time = convert_url_query_timecode(urlsplit(url_).query)
+    elif fromfile:
+        remaining_time = fromfile[2]["lengthSeconds"]
 
     is_url_path_twitch_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
 
-    # TRACK why and i threading this?
-    # is_url_thread = threading.Thread(target=funcs.is_url, args=(url_,))
-    # is_url_thread.start()
+
     urlchk = False
     (urlchk := funcs.is_url(url_))
     # FIX want this to be better upto date with my curr knowledge
@@ -325,7 +324,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         print("\nQuality Chosen: ", chosen_resolution, "\n")
 
     # Main Download Process
-    # BUG Twitch is Bugging out and returns no streams available but retry works
+    # TRACK Twitch BUG is Bugging out and returns no streams available but retry works
     # prob same m3u8 bandwidth -> 0 bug 21-12-2023.
     process = subprocess.Popen(
         download_string, shell=True, universal_newlines=True, cwd=slinkDir
@@ -347,7 +346,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     # Wait for the thread to finish
     thread_popen.join()
 
-    # BUG if i cancel i got a synatx error ??
+    # TRACK if i cancel i got a synatx error ??
 
     # Reset the signal handler for SIGINT to its default behavior (kill terminal)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -358,8 +357,8 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         This function compares two file sizes with a certain tolerance.
         """
         return abs(size1 - size2) <= tolerance
-
-    # BUG something is crashing once fin dld???
+    # BUG there NO Remaining time if its fromfile MUST FIX BUG-MAYBE a FIX at :L154 https://vscode.dev/github/NSMY/Stream-Downloader-Util/blob/Future-Dev-Features/Main.py#L360.
+    # BUG something is crashing once fin dld??? still dont know what it is.
     # FIX errors is Canceled find way to not enter if Canceled 
     if is_url_path_twitch_vod and os.path.isfile(download_file_path):
         get_len_of_vod_file = subprocess.Popen(
@@ -374,7 +373,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         get_len_of_vod_file.wait()
         len_secs = int(stdout.split('.')[0])
         if compare_with_tolerance(remaining_time, len_secs, 20):
-            # FIX Lazy temp solution to get json name (could error from mods name being this)
+            # FIX Lazy temp solution to get json name (could error from tw/mods name being named in json form highlight etc(rare))
             chosen_json_path = f"{util_functions.get_appdata_dir()}/jsons/{fromfile[2]['login']}.json"
 
             with open(chosen_json_path, 'r') as f:

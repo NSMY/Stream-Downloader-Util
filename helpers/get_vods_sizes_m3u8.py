@@ -16,7 +16,7 @@ from . import gql_main_call as gql
 
 
 # get est file size.
-def estimate_video_size(bandwidth_bps, total_secs):
+def estimate_video_size(bandwidth_bps, total_secs) -> dict:
     # Calculate the total size in bits
     total_bits = bandwidth_bps * total_secs
     return total_bits / 8 / 1024 / 1024 / 1024
@@ -67,14 +67,14 @@ def get_playlist_uris(
     for mea, pl in zip(playlist.media, playlist.playlists):
         stream_info = pl.stream_info
         bandwidth = stream_info.bandwidth
-        if attempt > 5:
+        if attempt > 7:
             print("\nMax attempts reached, request failed, Bandwidth == 0")
             return {"Failed retrieving Bandwidth ": "N/A"}
-        elif bandwidth == 0: # Maybe a Temp Twitch Bug Maybe Outdated Streamlink(6.0.1), sometimes Bandwidth Fails to populate retrying fixes
-            logging.info(f'{os.path.basename(__file__)} data ' '%s', data)
-            logging.info(f'{os.path.basename(__file__)} get_variant_url ' '%s', stream_info)
-            logging.info(f'{os.path.basename(__file__)} bandwidth ' '%s', bandwidth)
-            print(f"Bandwidth == 0, Attempt {attempt} failed, retrying...")
+        elif bandwidth == 0: # Maybe a Temp Twitch Bug sometimes m3u8 Bandwidth Fails to populate retrying fixes
+            logging.info(f'{os.path.basename(__file__)} | data | ' '%s', data)
+            logging.info(f'{os.path.basename(__file__)} | get_variant_url | ' '%s', stream_info)
+            logging.info(f'{os.path.basename(__file__)} | bandwidth | ' '%s', bandwidth)
+            print(f"M3u8 Bandwidth == 0 Error, Attempt {attempt} failed, retrying...")
             attempt += 1
             return get_playlist_uris(
                 attempt=attempt,
@@ -84,14 +84,7 @@ def get_playlist_uris(
                 minus_time=minus_time
             )
         name = mea.name.lower()
-        # size = "{:.2f}".format(
-        #     estimate_video_size(
-        #         bandwidth_bps=bandwidth,
-        #         total_secs=seconds_ - minus_time
-        #     )
-        # )
         size = f"{estimate_video_size(bandwidth_bps=bandwidth, total_secs=seconds_ - minus_time):.2f}"
-
         dictt[name] = [size, pl.uri]
         # print("{:<5} {:<10}".format(resolution, f'{size} GB'))
     # print(dictt)

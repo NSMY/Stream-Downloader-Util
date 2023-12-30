@@ -122,8 +122,6 @@ def get_index_last_vod(content, gql_resp):
             id_dict = {"id": id_value}
             id_list.append(id_dict)
     targid = content[0]["id"]
-    # [] add return to after the base call not here makes this dependant on Get_index
-    # make return just be the raw data return id_list, targid.
     return get_index_of_target_id(input_content=id_list, target_id=targid)
 
 

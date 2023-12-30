@@ -39,7 +39,7 @@ style_theme_names = (
 selected_items = []
 
 
-# [] Super Twitch ONLY data window
+# TRACK Super Twitch ONLY data window
 def create_popup1(
     windowName, columns, processed_data, rawdata, file_path, **visual_only
 ):
@@ -47,6 +47,7 @@ def create_popup1(
     Main_bg = "#191825"
     global selected_items
     popup = tk.Tk()
+    popup.wm_attributes('-topmost', 1)
     popup.overrideredirect(False)
     popup.title(windowName)
     popup.minsize(1350, 500)
@@ -101,7 +102,7 @@ def create_popup1(
         text=(
             "Selection/s made by clicking on a Vod/s with Mouse (Multi Hold Shift)\n"
             "Use 'Make Selection-Close' (Right) Button to make selection,"
-            "\nSelection will be the LAST item in the list (If Multi)"
+            "\nSelection will be the LAST (most recently selected) item in the list (If Multi)"
         ),
         bg="#191825",
         fg="white",
@@ -435,7 +436,7 @@ def create_popup1(
 
     open_twitch_btn = tk.Button(
         tab1,
-        text="Open Vod's in Browser",
+        text="Open Vod/s in Browser",
         font=("Arial", 7, "bold"),
         command=open_in_browser,
         bg="#4361ee",
@@ -495,28 +496,27 @@ def create_popup1(
     sep.pack(side="top", fill="x", padx=10, pady=10, expand=False)
     # -----------------------------------------------------------------------------------
 
-    if not visual_only:
-        resolutions = ["1080p", "720p", "480p", "360p", "160p", "False"]
-        x = IntVar()
-        for index in range(len(resolutions)):
-            radiobutton = Radiobutton(
-                tab2,
-                bg="#191825",
-                fg="#0576A7",
-                activebackground="#191825",
-                activeforeground="#00ff95",
-                highlightbackground="yellow",
-                # selectcolor='aqua',
-                anchor="w",
-                text=resolutions[index],  # adds text to radio buttons
-                variable=x,  # groups radiobuttons together if they share the same variable
-                value=index,  # assigns each radiobutton a different value
-                padx=1,  # adds padding on x-axis
-                font=("Impact", 12),
-                compound="left",  # adds image & text (left-side)
-                # style="switch",
-            )
-            radiobutton.pack(fill="both", anchor="w")
+    resolutions = ["1080p", "720p", "480p", "360p", "160p", "False"]
+    x = IntVar()
+    for index in range(len(resolutions)):
+        radiobutton = Radiobutton(
+            tab2,
+            bg="#191825",
+            fg="#0576A7",
+            activebackground="#191825",
+            activeforeground="#00ff95",
+            highlightbackground="yellow",
+            # selectcolor='aqua',
+            anchor="w",
+            text=resolutions[index],  # adds text to radio buttons
+            variable=x,  # groups radiobuttons together if they share the same variable
+            value=index,  # assigns each radiobutton a different value
+            padx=1,  # adds padding on x-axis
+            font=("Impact", 12),
+            compound="left",  # adds image & text (left-side)
+            # style="switch",
+        )
+        radiobutton.pack(fill="both", anchor="w")
 
     set_downloaded_btn.pack(side="top", fill="x", padx=1, pady=5)
     # -----------------------------------------------------------------------------------
@@ -537,7 +537,7 @@ def create_popup1(
 
     if visual_only:
         make_selec_btn.config(text="Exit", command=popup.destroy, cursor="")
-        set_downloaded_btn.pack_forget()
+        # set_downloaded_btn.pack_forget()
         explainer_lable.pack_forget()
         title_lable.config(text=f'New Vods for : {windowName.split('.')[0].title()}')
         # tree.config(selectmode="none")
@@ -555,7 +555,7 @@ def create_popup1(
 
 def process_data(input_data, windName, file_path, **kwargs) -> tuple:
     selected_items.clear()
-    spinner1 = spinner.Spinner()
+    spinner1 = spinner.Spinner(message="Popup Created....")
     spinner1.start()
     columns = {
         "Index": "index",
@@ -601,8 +601,6 @@ def process_data(input_data, windName, file_path, **kwargs) -> tuple:
         os.system('cls')
         import startup
         startup.main_start()
-
-
     # FIX if empty close will be an empty [] and errors as it has no indexes[0]| error handling on the call but still not ideally what i want.
     # WATCH set this to 0 index as haven't implemented multi downloading
 
@@ -613,11 +611,14 @@ def call_tk_file(file_path) -> tuple | None:
         jsond = json.load(f)
     return process_data(jsond, windName, file_path)
 
-
-def call_tk_data(data):
-    windName = data[0].get("displayName")
+# BUGlist view and new vods needs looking at one can change status's one just needs to show new items.
+def call_tk_data(data, dir='New Vods'):
+    if dir == 'New Vods':
+        windName = dir
+    else:
+        windName = os.path.basename(dir).replace('.json','')
     kwargs = {"arg1": True}
-    t1 = threading.Thread(target=process_data, args=(data, windName, ""), kwargs=kwargs, daemon=True)
+    t1 = threading.Thread(target=process_data, args=(data, windName, dir), kwargs=kwargs, daemon=True)
     t1.start()
     return
 
@@ -633,7 +634,9 @@ def call_as_solo():
             from startup import main_start
             main_start()
         else:
-            return call_tk_file(chosen_dir)
+            with open(chosen_dir, 'r') as f:
+                chosendata = json.load(f)
+            return call_tk_data(chosendata, chosen_dir)
     except FileNotFoundError as e:
         print(e, 'No folder Found, Try: Create New Vods File')
         from startup import main_start

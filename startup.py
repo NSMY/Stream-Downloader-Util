@@ -42,26 +42,21 @@ def main_start(impt_data=None):
 
     def retrieve_saved_vod():
         if impt_data:
-            aad = get_single_vod_.Run_get_vod("")
-        aad = get_single_vod_.Run_get_vod("")
-        # print(aad)
+            rgv_rtrn_data = get_single_vod_.Run_get_vod("")
+        rgv_rtrn_data = get_single_vod_.Run_get_vod("")
+
+        print(f'\n\nChosen: {rgv_rtrn_data[0]['streamer']}, {rgv_rtrn_data[1]['vod_info']['title']}\n')
+
         from Main import main_dld_start
 
-        # from new_mass_gql import tk_get_file_list
-        # print(aad[0])
-        # tk_get_file_list.call_tk_vod_view(f'c:/Users/970EVO-Gamer/AppData/Local/Stream-Downloader-Util/jsons/{aad[0]}.json') # FIX sloppy af.
-        if (
-            shutdown := funcs.multi_choice_dialog(
-                "Download Type", ["Normal", "Auto Shutdown", "**Cancel**"]
-            )
-            == "Normal"
-        ):
-            main_dld_start(fromfile=aad)
+        shutdown = funcs.multi_choice_dialog("Download Type", ["Normal", "Auto Shutdown", "**Cancel**"])
+        if shutdown == "Normal":
+            main_dld_start(fromfile=rgv_rtrn_data)
         elif shutdown == "**Cancel**":
             os.system("cls")
-            main_start()
+            return main_start()
         else:
-            main_dld_start(download_with_Shutdown=True, fromfile=aad)
+            main_dld_start(download_with_Shutdown=True, fromfile=rgv_rtrn_data)
 
     def list_view():
         tk_get_file_list.call_as_solo()

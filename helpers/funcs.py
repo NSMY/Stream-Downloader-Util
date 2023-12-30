@@ -18,6 +18,7 @@ from send2trash import send2trash
 from tqdm import tqdm
 
 from init_dir.default_path_factory import DefaultPathFactory
+from my_utils import spinner
 from startup import main_start
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
@@ -483,12 +484,12 @@ def ffprobepath_download_an_unzip():
 
         dld = download_url(url, dloadFilePath, dlmssg)
         zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", spefFile, mssg=zipmssg)
-        if dld and zp == True:
+        if dld and zp is True:
             Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
             saveSettings("ffprobepath", Fprobe_Path)
             return Fprobe_Path
 
-        return f"{save_Dir}ffmpeg.exe"
+        return f"{save_Dir}ffprobe.exe"
     else:
         return print('Canceled, unable to Run as Dependency missing')
 
@@ -533,7 +534,8 @@ def ffmpegpath_download_an_unzip():
 def ffmpeg_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
     ["Main", "main_dld_start"]'''
-
+    spinner5 = spinner.Spinner(message="Initialize Settings")
+    spinner5.start()
     default_ffPath = ("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe")
     saveTo1 = "ffmpegpath"
     exename = "ffmpeg.exe"
@@ -544,13 +546,15 @@ def ffmpeg_factory_init(callback_info: list[str]):
         extension_name_Lookup=exename,
         parent_func_Callback=callback_info
     )
+    spinner5.stop()
     return init_factory.set_default_path()
 
 
 def ffprobe_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
     ["Main", "main_dld_start"]'''
-
+    spinner4 = spinner.Spinner(message="Initialize Settings")
+    spinner4.start()
     default_ffprobePath = ("C:\\ffmpeg\\ffprbe.exe")
     saveTo = "ffprobepath"
     exename = "ffprobe.exe"
@@ -561,6 +565,7 @@ def ffprobe_factory_init(callback_info: list[str]):
         extension_name_Lookup=exename,
         parent_func_Callback=callback_info
     )
+    spinner4.stop()
     return init_factory.set_default_path()
 
 

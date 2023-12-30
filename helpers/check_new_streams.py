@@ -4,10 +4,9 @@ import json
 import os
 import threading
 
+from helpers import util_functions as util
 from my_utils import get_single_vod_ as gsv
 from my_utils import spinner as spn
-
-from helpers import util_functions as util
 
 from . import gql_main_call
 from . import swap_old_data as sod
@@ -101,7 +100,7 @@ def add_new_entries_json(
 def print_new_vods_from_dictClass(vod_index, vods_dict):
     if vod_index != 0:
         from helpers import tk_get_file_list
-        tk_get_file_list.call_tk_data(vods_dict[:vod_index])
+        tk_get_file_list.call_tk_data(vods_dict[:vod_index], '')
 
     print(f'\n\n{(vod_index)}: New Vods\n')
     return

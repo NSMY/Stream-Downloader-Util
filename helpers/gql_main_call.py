@@ -196,7 +196,6 @@ class Vod:
         return [vars(vod) for vod in vods]
 
 
-# [] Kwargs ??? **kwargs.
 def First_making_cmds(streamer_user_name=None):
     if not streamer_user_name:
         streamer_user_name = input("Enter Streamer User Name: ").lower()
