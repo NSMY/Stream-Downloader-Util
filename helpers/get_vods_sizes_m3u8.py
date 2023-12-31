@@ -112,5 +112,3 @@ def m3u8_call_init(video_id, tot_seconds=None, minus_time=0) -> dict:
     access_token = gql.get_access_token(video_id)
 
     return get_playlist_uris(video_id=video_id, access_token=access_token, lengthSeconds=tot_seconds, minus_time=minus_time)
-
-
