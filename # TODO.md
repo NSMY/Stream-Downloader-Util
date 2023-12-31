@@ -51,6 +51,8 @@ in a list object and everywhere called will have to unpack, then also do u give 
 [] make the setup init settings better, maybe into 1 call like if key in settings then call the whole settings thins
 more robust dependency searching and downloading (if deleted between settinggs Checks)
 
+[] fix tk pannel width with no title name
+
 THINK maybe rework tkinter to be packs instead of grids somehow as is laggy
 
 
