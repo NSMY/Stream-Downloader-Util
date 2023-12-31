@@ -20,7 +20,7 @@ def logger_setup():
         os.mkdir('debugging')
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
-    root_file_handler = logging.FileHandler(f'debugging/{datetime.now().strftime('%Y-%m-%d')}.log', delay=True)
+    root_file_handler = logging.FileHandler(f'{settings_file}/debugging/{datetime.now().strftime('%Y-%m-%d')}.log', delay=True)
     root_file_handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(levelname)s:%(asctime)s %(name)s %(message)s')
     root_file_handler.setFormatter(formatter)
