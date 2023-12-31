@@ -139,7 +139,6 @@ def start_new_vods():
         + ['--New Streamer to Add--']
         + ['**CANCEL**']
     )
-    print("🐍 File: new_mass_gql/check_new_streams.py | Line: 149 | start_new_vods ~ streamer_name",streamer_name)
 
     if streamer_name == '**CANCEL**':
         os.system('cls')
