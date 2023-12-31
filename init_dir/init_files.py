@@ -16,8 +16,8 @@ def logger_setup():
         appdata_path),
         "Stream-Downloader-Util"
     )
-    if not os.path.exists('debugging'): #FIXME Set to save in Appdata
-        os.mkdir('debugging')
+    if not os.path.exists(f'{settings_file}/debugging'): #FIXME Set to save in Appdata
+        os.mkdir(f'{settings_file}/debugging')
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
     root_file_handler = logging.FileHandler(f'{settings_file}/debugging/{datetime.now().strftime('%Y-%m-%d')}.log', delay=True)
