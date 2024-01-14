@@ -1,33 +1,50 @@
 README.md
 
-#  **Stream Downloader Util is a CLI that provides easier Streamlink-Twitch usage.**
+<p align="left">
+  <img src="./media/SDU.ico" alt="Starter Image" width="100"/>
+</p>
 
-## [Streamlink][streamlink-website] [FFMPEG][ffmpeg] & [FFPROBE][ffmpeg] Dependent** Automated Downloader
+#  **Stream Downloader Util is a Compiled CLI that provides easier Streamlink (Twitch) usage.**
+
+## [Streamlink][streamlink-website] [FFMPEG][ffmpeg] & [FFPROBE][ffmpeg] **DEPENDENT** Downloader
 
 **Main Features**
-* Easier Streamlink Download use without need of remembering Streamlink flags
-* Muxing of video files with ffmpeg
-* Extraction of Audio & Video Channel/s from File to separate files, if 1 Multi channels or 2 Desire Audio-Video Separated (useful for OBS Multi-Channel Captures)
+* Easier Streamlink Download use without need of remembering Streamlink flags/args
+* [Muxing](https://forum.videohelp.com/threads/29900-what-is-muxing-and-demuxing) of video files with ffmpeg
+* Extraction of Audio & Video Channel/s ([DeMuxing](https://forum.videohelp.com/threads/29900-what-is-muxing-and-demuxing)) from File to separate files
+    * Multi channel Files
+    * Desire Audio-Video Separated (useful for OBS Multi-Channel Captures)
+
 
 ---
+![New UI](./media/New_UI_14-01-24.png)
+
+
 ## DOWNLOAD
 
 **STREAMLINK Dependent**
 
-This python script fetches your [clipboard(URL)] checks if [dependencies] are available, if not will download them or provide [links]. 
+* This python script downloads Media URLs via [Streamlink][streamlink-website]
+    * fetches your [clipboard(URL)] OR from user created list (Twitch Streamers Vods)
+    * checks if [dependencies] are available & Present, if not, it will ask to download them or provide [links]. 
 
-It will then retrieve [available] resolutions to download, provides the [fileddialog] (Browser popup) to set save Location/Name.
+![Vod UI 14-1-24](./media/Vod_UI_14-1-24.png)
 
-Asks what size desired to download with inquirer (Scrollable Arrow keys List).
+* It will then retrieve [available] resolutions to download, provides the [fileddialog] (Browser popup) to set save Location/Name.
 
-Newly added Twitch-skip-ads Streamlink Flag and Twitch Auth-Token optional.
-<sub> Skips [ads] on vods if enabled, if subscribed skips ads from live recordings Via a [Auth] Token <sub/>
+* Asks what size desired to download with inquirer (Scrollable Arrow keys List).
 
-Optional [terminate] Download early without Crashing the CLI 
+* Streamlink Flag Twitch-skip-ads and Twitch Auth-Token are avaiable.
+    * <sub/> Skips [ads] on vods if enabled (trims out the ad time).<sub/>
+    * <sub/> if subscribed can record add free Via a [Auth] Token, also enables access to Sub-Only mode Vods.<sub/>
 
-Downloads File Via [Streamlink][streamlink-website]
+* (Twitch Vods) Gets Estimated File size of Vod after Resolution Choosen.
 
-Asks if [Mux-ing] is Desired (Combines Chunks files for smooth playback with FFMPEG).
+* Optional [terminate] Download early without Crashing the CLI 
+
+* Downloads File Via [Streamlink][streamlink-website]
+
+* Asks if [Mux-ing] is Desired (Combines Chunks files for smooth playback with FFMPEG).
 
 
 ---
@@ -35,11 +52,11 @@ Asks if [Mux-ing] is Desired (Combines Chunks files for smooth playback with FFM
 
 **FFMPEG Dependent**
 
-This is available after Download And Separate From the main downloading option, can be used as a standalone 
+* This is available after Download And Separate From the main downloading option, can be used as a standalone 
 
-Re Mux's (Copies) the File specified in the Clipboard (File path) or [fileddialog][fileddialog2] (Browser popup Finder) 
+* Re Mux's (Copies) the File specified in the Clipboard (File path) or [fileddialog][fileddialog2] (Browser popup Finder) 
 
-Sends the old file to the Recycle bin and saves a new file into a separate new Folder inside the CWD, then opens the folder.
+* Sends the old file to the Recycle bin and saves a new file into a separate new Folder inside the CWD, then opens the folder.
 
 
 ---
@@ -59,10 +76,20 @@ Video can be selected to also Separated form Audio
 > VP9/Opus (YouTube Video) is available but will stay in VP9/Opus Codec when extracted, otherwise Re-encoding would be required.
 
 > ***if the file has not been muxed (or standard file) may result in misread of Audio channels***
+
+---
+## Twitch Vod Lists
+
+* Saves a json list of X Vods (in your appdata) to help keep track Downloaded status and to cut out a trip to the Browser.
+  * Intended to help for archiving of vods (to say YT etc) but without needing to do all/large chunks of vods at once/mass.
+* If fully downloaded from the File List the script will change status of "Downloaded" within file to the chosen Resolution
+    * Will also count as fully downloaded if you set a specific time to start download form (2hrs into a vod thats 6hrs long the file will be 4hrs, But counts as Fully downloaded) can be changed manually in the Vod UI)
+* ***Youtube Uploading NOT YET IMPLEMENTED*** <sub/>would like to implement<sub/>
+
 ---
 ## DEPENDENCIES
 
-- [Streamlink][streamlink-website]
+- [Streamlink][streamlink-website] Streamlink must be installed or (portable) within the C: Drive, to work properly
     - [FFmpeg][ffmpeg] A Version comes with Streamlink
 - [FFprobe][ffmpeg]
 
