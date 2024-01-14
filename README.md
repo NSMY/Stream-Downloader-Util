@@ -82,9 +82,18 @@ Video can be selected to also Separated form Audio
 
 * Saves a json list of X Vods (in your appdata) to help keep track Downloaded status and to cut out a trip to the Browser.
   * Intended to help for archiving of vods (to say YT etc) but without needing to do all/large chunks of vods at once/mass.
-* If fully downloaded from the File List the script will change status of "Downloaded" within file to the chosen Resolution
-    * Will also count as fully downloaded if you set a specific time to start download form (2hrs into a vod thats 6hrs long the file will be 4hrs, But counts as Fully downloaded) can be changed manually in the Vod UI)
+* If fully downloaded (the total Len == specified start - total time OR the original Vod Length) from the File List option the script will change status of "Downloaded" within file to the chosen Resolution.
+    * Will count as fully downloaded if you set a specific time to start download form (2hrs into a vod thats 6hrs long the file will be 4hrs, But counts as Fully downloaded) can be changed manually in the Vod UI)
+    * If Chosen X Vod from Browser using URL and want to update file Status, can be done manually in the Vod List Opt
+       OR Via the 'Cross-Check Vods to Json Data' Opt (File Name Format dependant as Follows:
+       StreamerUserName - YYYY-MM-DD StreamVodTitle_Stream Category.mp4/mov/mkv)
+
 * ***Youtube Uploading NOT YET IMPLEMENTED*** <sub/>would like to implement<sub/>
+
+
+### Cross-Check Vods to Json Data
+* Checks Media Files from chosen Dir/path if any Files  match any Vods in any Json Streamer File
+ (File Name Format dependant as Follows: StreamerUserName - YYYY-MM-DD StreamVodTitle_Stream Category.mp4/mov/mkv)
 
 ---
 ## DEPENDENCIES
