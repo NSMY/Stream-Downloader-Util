@@ -4,7 +4,7 @@ README.md
   <img src="./media/SDU.ico" alt="Starter Image" width="100"/>
 </p>
 
-#  **Stream Downloader Util is a Compiled CLI that provides easier Streamlink (Twitch) usage.**
+#  **Stream Downloader Util is a Compiled CLI (Onefile) that provides easier Streamlink (Twitch) usage.**
 
 ## [Streamlink][streamlink-website] [FFMPEG][ffmpeg] & [FFPROBE][ffmpeg] **DEPENDENT** Downloader
 
