@@ -48,6 +48,10 @@ prints 0 new vods anyway?.
 [TODO] make chapters in vods? using code > [Code](zextra_Funcs_/getChaptersCall.py) < will require a large rewrite, games will be
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
 
+[] make a custom field input for slink args???
+
+[] Incorp YTDL??
+
 [] make the setup init settings better, maybe into 1 call like if key in settings then call the whole settings thins
 more robust dependency searching and downloading (if deleted between settinggs Checks)
 
