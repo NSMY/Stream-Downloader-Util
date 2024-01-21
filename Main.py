@@ -14,8 +14,9 @@ from urllib.parse import urlparse, urlsplit
 
 from pyperclip import copy, paste
 
-from helpers import auth_skip_ads_, funcs, util_functions
+from helpers import auth_skip_ads_, funcs
 from helpers import get_vods_sizes_m3u8 as m3
+from helpers import util_functions
 from init_dir import init_files
 from my_utils import mux_vid as cpvs
 from my_utils import spinner as spn
@@ -181,6 +182,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
 
     # Sub Only tested works but no est size of vod as Likely gql auth is
     # [] general oauth not personal key maybe can hackaround (sub only prints out (L GB)).
+    # BUG Doesn't print that its a Sub only Vod thats making fail Repeat.
     def get_vid_resolutions(slinkDir, url_, queue, auth_String=""):
         # FIX later This Ugly POS is because theres a current twitch m3u8 bandwidth get Bug -> 0.
         # & in the Streamlink Code it double errors with Sub Only/w no access.
