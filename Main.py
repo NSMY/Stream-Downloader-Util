@@ -374,18 +374,21 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         stdout, stderr = get_len_of_vod_file.communicate()
         get_len_of_vod_file.wait()
         len_secs = int(stdout.split('.')[0])
-        if compare_with_tolerance(remaining_time, len_secs, 20):
-            # FIX Lazy temp solution to get json name (could error from tw/mods name being named in json form highlight etc(rare))
-            chosen_json_path = f"{util_functions.get_appdata_dir()}/jsons/{fromfile[2]['login']}.json"
+        try:
+            if compare_with_tolerance(remaining_time, len_secs, 20):
+                # FIX Lazy temp solution to get json name (could error from tw/mods name being named in json form highlight etc(rare))
+                chosen_json_path = f"{util_functions.get_appdata_dir()}/jsons/{fromfile[2]['login']}.json"
 
-            with open(chosen_json_path, 'r') as f:
-                filedata = json.load(f)
-            chosenindex = fromfile[1]
+                with open(chosen_json_path, 'r') as f:
+                    filedata = json.load(f)
+                chosenindex = fromfile[1]
 
-            filedata[chosenindex]['downloaded'] = chosen_resolution
+                filedata[chosenindex]['downloaded'] = chosen_resolution
 
-            with open(chosen_json_path, 'w') as f:
-                json.dump(filedata, f, indent=4)
+                with open(chosen_json_path, 'w') as f:
+                    json.dump(filedata, f, indent=4)
+        except TypeError as e:
+            print('\nNo Json Comparison Available; \n', e)
 
     if download_with_Shutdown:
         if sd_type == "Auto":
