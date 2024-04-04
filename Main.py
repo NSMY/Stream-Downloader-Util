@@ -183,6 +183,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     # Sub Only tested works but no est size of vod as Likely gql auth is
     # [] general oauth not personal key maybe can hackaround (sub only prints out (L GB)).
     # BUG Doesn't print that its a Sub only Vod thats making fail Repeat.
+    # BUG enters twitch auth if other than twitch url, find a way to still check but skpping twitch part
     def get_vid_resolutions(slinkDir, url_, queue, auth_String=""):
         # FIX later This Ugly POS is because theres a current twitch m3u8 bandwidth get Bug -> 0.
         # & in the Streamlink Code it double errors with Sub Only/w no access.
@@ -228,6 +229,27 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         return queue.put('Error')
         # result1.join()
 
+    # Lazy opt to dup Func, Fix Later?.
+    def reg_get_res(slinkDir, url_, queue):
+        stream_reso = subprocess.Popen(
+            rf'streamlink "{url_}"',
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            cwd=slinkDir,
+        )
+        stdout, stderr = stream_reso.communicate()
+
+
+        stream_reso.wait()
+        out_pt, _ = stream_reso.communicate()
+        result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
+        if result[7] == "Forbidden":
+            return queue.put(result[7])
+
+        queue.put(result)
+
     # Checks if a Twitch URL.
     twitch_netloc = ["www.twitch.tv", "usher.ttvnw.net"]
 
@@ -238,11 +260,19 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     if url_netlock in twitch_netloc:
         is_it_a_twitch_url = True
 
-    # Start of Getting get_vid_resolutions threading.
-    q = Queue()
-    get_res_opts = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
-    get_res_opts.start()
+    print("🐍 File: Stream_Downloader_Util/Main.py | Line: 264 | reg_get_res ~ is_it_a_twitch_url |", is_it_a_twitch_url)
 
+    if is_it_a_twitch_url:
+        # Start of Getting get_vid_resolutions threading.
+        q = Queue()
+        get_res_opts = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
+        get_res_opts.start()
+    else:
+        q = Queue()
+        get_res_opts = threading.Thread(target=reg_get_res, args=(slinkDir, url_, q))
+        get_res_opts.start()
+
+    print("HERE............")
     if is_url_path_twitch_vod:
         q2 = Queue()
         m3u8 = threading.Thread(
@@ -272,8 +302,9 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
 
     # TRACK Shouldn't be needed, as should be handled in
     # the get_vid_resolutions Func
-    if get_res_opts == 'Error':
-        print('Errored Too many attempts')
+    if get_res_opts == 'Error' or get_res_opts == 'Forbidden':
+        os.system("cls")
+        print('Error Retrieving Resolutions: Too many Retry attempts made(m3u8 Error)\nOR Forbidden URL, Try Again.\n')
         from startup import main_start
         main_start()
 
