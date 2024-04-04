@@ -260,8 +260,6 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     if url_netlock in twitch_netloc:
         is_it_a_twitch_url = True
 
-    print("🐍 File: Stream_Downloader_Util/Main.py | Line: 264 | reg_get_res ~ is_it_a_twitch_url |", is_it_a_twitch_url)
-
     if is_it_a_twitch_url:
         # Start of Getting get_vid_resolutions threading.
         q = Queue()
