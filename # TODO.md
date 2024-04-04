@@ -23,6 +23,7 @@ THINK in the check new stream -- what to do for deleted /hidden vods on channels
 [TODO] make a combine segments (vids) ffmpeg via lists meth
 TRACK have it error when refreshing json vods file and non streamer name
 
+THINK older versions of sdu errors out if it has Newer settings file and loops???
 
 THINK do i add multi File processing? mp4 wav etc
 
