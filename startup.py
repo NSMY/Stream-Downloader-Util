@@ -1,10 +1,10 @@
 import os
+import sys
 import threading
 
 import init_dir.init_files as init_files
-from helpers import auth_skip_ads_, check_new_streams
+from helpers import auth_skip_ads_, check_new_streams, gql_main_call, tk_get_file_list
 from helpers import funcs as funcs
-from helpers import gql_main_call
 from helpers import help as hlp
 from helpers import tk_get_file_list
 from my_utils import get_single_vod_, video_data_cross_checker
@@ -31,7 +31,7 @@ def main_start(impt_data=None):
         main_dld_start(True)
 
     def exit_program():
-        exit()
+        sys.exit()
 
     def making_vods_list():
         gql_main_call.First_making_cmds()
