@@ -270,7 +270,6 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         get_res_opts = threading.Thread(target=reg_get_res, args=(slinkDir, url_, q))
         get_res_opts.start()
 
-    print("HERE............")
     if is_url_path_twitch_vod:
         q2 = Queue()
         m3u8 = threading.Thread(
