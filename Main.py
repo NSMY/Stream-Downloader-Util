@@ -14,8 +14,9 @@ from urllib.parse import urlparse, urlsplit
 
 from pyperclip import copy, paste
 
-from helpers import auth_skip_ads_, funcs, util_functions
+from helpers import auth_skip_ads_, funcs
 from helpers import get_vods_sizes_m3u8 as m3
+from helpers import util_functions
 from init_dir import init_files
 from my_utils import mux_vid as cpvs
 from my_utils import spinner as spn
@@ -244,14 +245,12 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         stream_reso.wait()
         out_pt, _ = stream_reso.communicate()
         result = re.sub(r"[^\w\s]", "", out_pt).split()[10:]
-        if len(result) > 7:    
-            if result[7] and result[7] == "Forbidden":
-                return queue.put(result[7])
+        if len(result) > 7 and result[7] == "Forbidden":
+            return queue.put(result[7])
         return queue.put(result)
 
     # Checks if a Twitch URL.
     twitch_netloc = ["www.twitch.tv", "usher.ttvnw.net"]
-
     url_netlock = urlparse(url_)[1]
 
     is_it_a_twitch_url = False
@@ -298,7 +297,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
 
     # TRACK Shouldn't be needed, as should be handled in
     # the get_vid_resolutions Func
-    if get_res_opts == 'Error' or get_res_opts == 'Forbidden':
+    if get_res_opts in ['Error', 'Forbidden']:
         os.system("cls")
         print('Error Retrieving Resolutions: Too many Retry attempts made(m3u8 Error)\nOR Forbidden URL, Try Again.\n')
         from startup import main_start
@@ -386,6 +385,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         This function compares two file sizes with a certain tolerance.
         """
         return abs(size1 - size2) <= tolerance
+
     # BUG there NO Remaining time if its fromfile MUST FIX BUG-MAYBE a FIX at :L154 https://vscode.dev/github/NSMY/Stream-Downloader-Util/blob/Future-Dev-Features/Main.py#L360.
     # BUG something is crashing once fin dld??? still dont know what it is.
     # FIX errors is Canceled find way to not enter if Canceled 
