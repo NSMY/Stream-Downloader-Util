@@ -1,5 +1,7 @@
 TODO
 
+[] make folder muxed into dynamic for user set a field in settings, but have a set default
+
 [] twitch vod username can be Mods (if making a highlight) add some bypass or rewrite the gql.py vod class
 
 [] in Main make the estimated Size of the vod appear b4 the choosing of resolution??????
