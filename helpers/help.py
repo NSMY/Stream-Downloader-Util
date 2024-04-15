@@ -14,9 +14,9 @@ def main():
     print("{:<35} {:<10}".format('\nCross-check Vods to Json Data:', 'Cross-checks Video Files properties (from selected Parent folder) with stored json data to check if the file is "downloaded"'))
     print("{:<35} {:<10}".format('', 'and sets to Json "downloaded" Status if criteria met.'))
     print("{:<35} {:<10}".format('Criteria', '[Not previously set, VideoUsername==JsonDisplayName, VideoTitle==JsonTitle, VideoLength==JsonLength]'))
-    print("{:<35} {:<10}".format('Naming Files Convention == ', '(Username) (YYYY-MM-DD) (TitleOfStream)_StreamCategory\n\n\n'))
+    print("{:<35} {:<10}".format('\nNaming Files Convention == ', '(Username) - (YYYY-MM-DD) (TitleOfStream)_StreamCategory\n'))
+    print("{:<35} {:<10}".format('Naming Muxed Folder:', "Folder Created when Mux'ing is Customizable in \\AppData\\Local\\Stream-Downloader-Util\\download_links.txt, change 'Mux_dir_name': 'Change_Me' \n\n\n"))
     return startup.main_start()
-
 
 if __name__ == '__main__':
     main()
