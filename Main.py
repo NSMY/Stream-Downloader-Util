@@ -14,9 +14,8 @@ from urllib.parse import urlparse, urlsplit
 
 from pyperclip import copy, paste
 
-from helpers import auth_skip_ads_, funcs
+from helpers import auth_skip_ads_, funcs, util_functions
 from helpers import get_vods_sizes_m3u8 as m3
-from helpers import util_functions
 from init_dir import init_files
 from my_utils import mux_vid as cpvs
 from my_utils import spinner as spn
@@ -96,6 +95,8 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
 
     url_ = url_bits[0]
 
+
+
     def start_at_specified_time(url) -> tuple:
         """-> Returns tup(url, timecode)"""
         timecode = input(
@@ -156,7 +157,6 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
 
     is_url_path_twitch_vod = url_bits[1].path.split("/", -1)[-1].isnumeric()
 
-
     urlchk = False
     (urlchk := funcs.is_url(url_))
     # FIX want this to be better upto date with my curr knowledge
@@ -183,7 +183,6 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     # Sub Only tested works but no est size of vod as Likely gql auth is
     # [] general oauth not personal key maybe can hackaround (sub only prints out (L GB)).
     # BUG Doesn't print that its a Sub only Vod thats making fail Repeat.
-    # BUG enters twitch auth if other than twitch url, find a way to still check but skpping twitch part
     def get_vid_resolutions(slinkDir, url_, queue, auth_String=""):
         # FIX later This Ugly POS is because theres a current twitch m3u8 bandwidth get Bug -> 0.
         # & in the Streamlink Code it double errors with Sub Only/w no access.
@@ -239,8 +238,6 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
             universal_newlines=True,
             cwd=slinkDir,
         )
-        stdout, stderr = stream_reso.communicate()
-
 
         stream_reso.wait()
         out_pt, _ = stream_reso.communicate()
@@ -260,18 +257,18 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
 
     if is_it_a_twitch_url:
         # Start of Getting get_vid_resolutions threading.
-        q = Queue()
-        get_res_opts = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, q))
+        resolution_return = Queue()
+        get_res_opts = threading.Thread(target=get_vid_resolutions, args=(slinkDir, url_, resolution_return))
         get_res_opts.start()
     else:
-        q = Queue()
-        get_res_opts = threading.Thread(target=reg_get_res, args=(slinkDir, url_, q))
+        resolution_return = Queue()
+        get_res_opts = threading.Thread(target=reg_get_res, args=(slinkDir, url_, resolution_return))
         get_res_opts.start()
 
     if is_url_path_twitch_vod:
-        q2 = Queue()
+        vod_size_return = Queue()
         m3u8 = threading.Thread(
-            target=get_urlm3u8_filesize, args=(url_, q2, minus_time)
+            target=get_urlm3u8_filesize, args=(url_, vod_size_return, minus_time)
         )
         m3u8.start()
 
@@ -293,7 +290,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     # Return of get_vid_resolutions threading.
     get_res_opts.join()
     spinner2.stop()
-    get_res_opts = q.get()
+    get_res_opts = resolution_return.get()
 
     # TRACK Shouldn't be needed, as should be handled in
     # the get_vid_resolutions Func
@@ -303,10 +300,25 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         from startup import main_start
         main_start()
 
-    my_choices = list(reversed(get_res_opts))
+    resoloution_choices_list = list(reversed(get_res_opts))
 
-    funcs.flush_cmd_input()
-    chosen_resolution = funcs.multi_choice_dialog("What Size to Download?", my_choices)
+    if is_url_path_twitch_vod:
+        spinner1 = spn.Spinner()
+        spinner1.start()
+        m3u8.join()
+        m3u8_data = vod_size_return.get()
+        spinner1.stop()
+
+        choises_list = []
+        for item in resoloution_choices_list:
+            choises_list.append(f'{item} - [Size {m3u8_data[item][0]}]') if item in m3u8_data.keys() else choises_list.append(item)
+        funcs.flush_cmd_input()
+        chosen_resolution = funcs.multi_choice_dialog("What Size to Download?", choises_list, return_options='str').split('-')[0].strip()
+        print("\n", chosen_resolution, "...\n")
+    else:
+        funcs.flush_cmd_input()
+        chosen_resolution = funcs.multi_choice_dialog("What Size to Download?", resoloution_choices_list)
+        print("\n", chosen_resolution, "...\n")
 
     # if not twitch netloc uses default, if twitch asks advanced Options.
     default_download_string = (
@@ -331,26 +343,6 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         elif twitch_options_choice == "Standard":
             download_string = default_download_string
 
-    if is_url_path_twitch_vod:
-        spinner1 = spn.Spinner()
-        spinner1.start()
-        m3u8.join()
-        m3u8_data = q2.get()
-        spinner1.stop()
-        # [] make this happen before choosing???? show GBs to inform decision????.
-        try:
-            if chosen_resolution == "best" or chosen_resolution == "source":
-                gb_of_vod = list(m3u8_data.values())[0][0]
-            elif chosen_resolution == "worst":
-                gb_of_vod = list(m3u8_data.values())[-1][0]
-            else:
-                gb_of_vod = m3u8_data[chosen_resolution][0]
-            print(f"\nQuality Chosen: {chosen_resolution},\t({gb_of_vod} GB)\n")
-        except (UnboundLocalError, KeyError) as e:
-            print(e, "\nQuality Chosen: ", chosen_resolution, "\n")
-    else:
-        print("\nQuality Chosen: ", chosen_resolution, "\n")
-
     # Main Download Process
     # TRACK Twitch BUG is Bugging out and returns no streams available but retry works
     # prob same m3u8 bandwidth -> 0 bug 21-12-2023.
@@ -360,7 +352,6 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
 
     print("\nCTRL + C to CANCEL Download early if necessary\n")
 
-    # Define a signal handler for SIGINT using a lambda function
     # changing ctrl+c to kill the subprocess instead of the terminal.
     handle_sigint = lambda signal, frame: funcs.kill_process(process)
 
@@ -368,14 +359,18 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
     signal.signal(signal.SIGINT, handle_sigint)
 
     # Start a thread to wait for the subprocess to complete
-    thread_popen = threading.Thread(target=funcs.wait_for_subprocess, args=(process,))
+    thread_popen = threading.Thread(target=funcs.wait_for_subprocess, args=(process,), daemon=True)
 
     thread_popen.start()
+
+    
     # Wait for the thread to finish
     thread_popen.join()
 
     # TRACK if i cancel i got a synatx error ??
 
+
+    funcs.flush_cmd_input()
     # Reset the signal handler for SIGINT to its default behavior (kill terminal)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -386,8 +381,6 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
         """
         return abs(size1 - size2) <= tolerance
 
-    # BUG there NO Remaining time if its fromfile MUST FIX BUG-MAYBE a FIX at :L154 https://vscode.dev/github/NSMY/Stream-Downloader-Util/blob/Future-Dev-Features/Main.py#L360.
-    # BUG something is crashing once fin dld??? still dont know what it is.
     # FIX errors is Canceled find way to not enter if Canceled 
     if is_url_path_twitch_vod and os.path.isfile(download_file_path):
         get_len_of_vod_file = subprocess.Popen(
