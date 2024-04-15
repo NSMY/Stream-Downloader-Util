@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from helpers import funcs as funcs
 
-version_number = 4.0
+version_number = 5.0
 
 
 def logger_setup():
@@ -68,7 +68,8 @@ def init_links_file():
             "_Version": "1.0",
             "FFMPEG_Link": "https://github.com/ffbinaries/ffbinaries-prebuilt/releases/download/v4.4.1/ffmpeg-4.4.1-win-64.zip",
             "FFPROBE_Link": "https://github.com/ffbinaries/ffbinaries-prebuilt/releases/download/v4.4.1/ffprobe-4.4.1-win-64.zip",
-            "STREAMLINK_Link": "https://github.com/streamlink/windows-builds/releases/latest"
+            "STREAMLINK_Link": "https://github.com/streamlink/windows-builds/releases/latest",
+            "Mux_dir_name": "FFMPEG__re-Muxed"
         }
         with open(links_file, "w") as f:
             json.dump(Links, f, indent=4)
