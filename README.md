@@ -6,10 +6,10 @@ README.md
 
 #  **Stream Downloader Util is a Compiled CLI (Onefile) that provides easier Streamlink (Twitch) usage.**
 
-## [Streamlink][streamlink-website] [FFMPEG][ffmpeg] & [FFPROBE][ffmpeg] **DEPENDENT** Downloader
+## [Streamlink][streamlink-website] **DEPENDENT** Downloader ([*FFMPEG*][ffmpeg] & [*FFPROBE*][ffmpeg])
 
 **Main Features**
-* Easier Streamlink Download use without need of remembering Streamlink flags/args
+* Easier Streamlink Download use without need of remembering Streamlink flags/args, or knowing how to use cmd utils.
 * [Muxing](https://forum.videohelp.com/threads/29900-what-is-muxing-and-demuxing) of video files with ffmpeg
 * Extraction of Audio & Video Channel/s ([DeMuxing](https://forum.videohelp.com/threads/29900-what-is-muxing-and-demuxing)) from File to separate files
     * Multi channel Files
@@ -109,6 +109,14 @@ Made this because i was sick of manually entering a string i had saved into Cmd,
 > ***All streamlink limitations are still enabled***
 
 > (***1st multi file script ever made***)
+
+# Transparency
+I have made everything i interact with purposely transparent i print nearly everything major i do, when the script deletes anything i specifically send Everything to **RECYCLE BIN** so the user can decide what to do with it (besides the settings when new settings are needed because i cant recycle files that are in use so they get os deleted).
+
+The only time This script (not streamlink) needs to interact with the internet is
+- If you don't have either ffmpeg or ffprobe installed, i show the links its using to download (if chosen) and even sends the (zipped) files to the Trash like previously stated.
+- To retrieve Estimated file sizes before download (it pings the x m3u8 url to retrieve details)
+- To make the json streamer vod list (if used) querys twitch api for details
 
 [streamlink-website]: https://github.com/streamlink/streamlink
 [clipboard(URL)]: https://github.com/NSMY/Stream-Downloader-Util/blob/d683041b21d277261a08d3cbba19f119bdab22cc/Main.py#L34
