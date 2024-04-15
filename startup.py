@@ -6,7 +6,6 @@ import init_dir.init_files as init_files
 from helpers import auth_skip_ads_, check_new_streams, gql_main_call, tk_get_file_list
 from helpers import funcs as funcs
 from helpers import help as hlp
-from helpers import tk_get_file_list
 from my_utils import get_single_vod_, video_data_cross_checker
 from my_utils.ffmpegExtract import ffmpegextract
 
@@ -72,13 +71,13 @@ def main_start(impt_data=None):
     # Define your dictionary
     switch = {
         "Standard Download": download,
+        "Vod from File": retrieve_saved_vod,
+        "Update Vods File": check_streams,
+        "Create New Vods File": making_vods_list,
+        "List View of File": list_view,
         "Re-Mux": remux,
         "Extract Audio/Video": extract,
         "Download W/ Shutdown": download_shutdown,
-        "Vod from File": retrieve_saved_vod,
-        "Update Vods File": check_streams,
-        "List View of File": list_view,
-        "Create New Vods File": making_vods_list,
         "Cross-check Vods to Json Data": crosscheck_vod_details,
         "Help": helpstr,
         "Exit": exit_program,
@@ -96,13 +95,13 @@ def main_start(impt_data=None):
     question = "Start Commands"
     responses = [
         "Standard Download",
-        "Re-Mux",
-        "Extract Audio/Video",
-        "Download W/ Shutdown",
         "Vod from File",
         "Update Vods File",
         "List View of File",
         "Create New Vods File",
+        "Re-Mux",
+        "Extract Audio/Video",
+        "Download W/ Shutdown",
         "Cross-check Vods to Json Data",
         "Help",
         "Exit",
