@@ -24,6 +24,7 @@ def mux(file_path_inpt=paste(), ran_as_main: bool = False):
         funcs.ffmpeg_factory_init(["mux_vid", "mux"])
         os.system("cls")
         return mux(file_path_inpt, ran_as_main)
+    new_dir_name = funcs.get_links(["Mux_dir_name"])
     ffpg = os.path.dirname(check_settings[1])
 
     file_path = funcs.file_path_get(file_path_inpt)
@@ -35,7 +36,7 @@ def mux(file_path_inpt=paste(), ran_as_main: bool = False):
     if file_path == '.':
         os.system("cls")
 
-    new_file_path = funcs.make_new_dir_from_input(file_path, 'FFMPEG__re-Muxed')
+    new_file_path = funcs.make_new_dir_from_input(file_path, new_dir_name)
     old_file_name = os.path.basename(file_path)
     new_file_path = os.path.join(new_file_path, old_file_name)
     print(old_file_name)
@@ -82,7 +83,7 @@ def mux(file_path_inpt=paste(), ran_as_main: bool = False):
                     winsound.SND_FILENAME)
                 print(
                     f'\nMoved: {view_fp} \nto Trash...'
-                    f'\nSaved in to: {view_nfp}\nRe-Muxed..\n'
+                    f'\nSaved in to: {view_nfp}\n{new_dir_name}..\n'
                 )
 
     funcs.open_directory_Force_front(new_file_path)
