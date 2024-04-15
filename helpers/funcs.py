@@ -440,7 +440,10 @@ def kill_process(process):
         parent.kill()
         print("Subprocess killed")
     except psutil.NoSuchProcess as e:
-        print("Subprocess already closed")
+        print("Subprocess already closed:", e)
+    finally:
+        from startup import main_start
+        main_start()
 
 
 def wait_for_subprocess(process):
@@ -448,7 +451,7 @@ def wait_for_subprocess(process):
     # Run some code after the subprocess has completed
 
 
-def get_download_links(keys: list[str]):
+def get_links(keys: list[str]):
     appdata_path = os.getenv("LOCALAPPDATA")
     links_file = os.path.join(str(appdata_path),
                                     "Stream-Downloader-Util", "download_links.txt")
@@ -464,7 +467,7 @@ def get_download_links(keys: list[str]):
 def ffprobepath_download_an_unzip():
     """calls dldURL() and Unzip() with all info inside"""
 
-    url = get_download_links(["FFPROBE_Link"])
+    url = get_links(["FFPROBE_Link"])
     last_segment = url.split('/')[-1]
 
     dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
@@ -493,11 +496,10 @@ def ffprobepath_download_an_unzip():
     else:
         return print('Canceled, unable to Run as Dependency missing')
 
-
 def ffmpegpath_download_an_unzip():
     """calls dldURL() and Unzip() with all info inside"""
 
-    urlmpg = get_download_links(["FFMPEG_Link"])
+    urlmpg = get_links(["FFMPEG_Link"])
     last_segment = urlmpg.split('/')[-1]
 
     dloadFilePath = os.path.join(
