@@ -142,6 +142,4 @@ pagination = "null"
 query = GET_VIDEO_COMMENTS_QUERY.format(
     video_id="2010087465", first=100, after=pagination
 )
-print("🐍 File: zextra_Funcs_/just a test.py | Line: 139 | undefined ~ query",query)
 resp = gql_query(query=query).json()
-print("🐍 File: zextra_Funcs_/just a test.py | Line: 126 | undefined ~ resp",resp)

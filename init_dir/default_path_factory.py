@@ -46,7 +46,7 @@ class DefaultPathFactory:
         return func()
 
     def streamlink_retrieve(self):
-        slinkURL = funcs.get_download_links(["STREAMLINK_Link"])
+        slinkURL = funcs.get_links(["STREAMLINK_Link"])
         print(
             "\nCannot find streamlink on your system please download and "
             "retry\nFind EG *streamlink-5.5.1-2-py311-x86_64.exe......\n\n"

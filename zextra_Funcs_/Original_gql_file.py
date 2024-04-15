@@ -133,7 +133,6 @@ def query_channel_vods(
 query = query_channel_vods(streamer_user_name, 100, "TIME")
 resp = gql_query(query=query).json()
 
-print("🐍 File: Desktop/gql.py | Line: 72 | undefined ~ resp",resp)
 # for item in resp:
 #     print(item['1'])
 
@@ -152,7 +151,6 @@ print("🐍 File: Desktop/gql.py | Line: 72 | undefined ~ resp",resp)
 #     item['title'] = filtered_title
 
 
-# print("🐍 File: New-twitch-mass-downloader/gql.py | Line: 124 | undefined ~ resp",resp)
 
 
 
@@ -201,7 +199,6 @@ file_check_path = os.path.exists(file_path)
 first_dict_check = vods_dict[0]
 first_gql_index_id = first_dict_check['id']
 gql_status_check = first_dict_check['status']
-print("🐍 File: New-twitch-mass-downloader/gql.py | Line: 161 | undefined ~ gql_status_check",gql_status_check)
 print(first_gql_index_id)
 
 
@@ -241,7 +238,6 @@ for vod in vods:
 
 # # # d = str(resp)
 # # # dd = d.split("{\'cursor\'")
-# # # print("🐍 File: Desktop/gql.py | Line: 97 | undefined ~ d",dd)
 # # with open(file_path, 'w') as json_file:
 # #     json.dump(vods, json_file, indent=4)
 

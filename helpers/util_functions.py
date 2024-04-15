@@ -141,7 +141,6 @@ def get_index_of_target_id(*, input_content, target_id: str):
     if isinstance(input_content, list):
         first_id = input_content[0].get("id")
         if first_id == target_id:
-            # print("🐍 File: utility_dir/util_functions.py | Line: 105 | get_index_of_target_id ~ first_id",first_id)
             return 0
         else:
             content = input_content

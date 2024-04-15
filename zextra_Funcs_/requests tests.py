@@ -20,10 +20,8 @@ r = requests.get(url, headers=headers)
 
 # Parse the HTML response
 soup = BeautifulSoup(r.text, 'html.parser',parse_only=SoupStrainer('head'))
-print("🐍 File: Desktop/requests tests.py | Line: 22 | undefined ~ soup",soup)
 
 s = soup.prettify(formatter='html')
-print("🐍 File: Desktop/requests tests.py | Line: 22 | undefined ~ s",s)
 
 # Find the video object by its tag name and get its 'name' attribute
 script_tag = soup.head.find("script", {"type": "application/ld+json"})
@@ -32,11 +30,9 @@ lol = kii.split('{"@type"')
 
 for item in lol:
     print('\n', item)
-# print("🐍 File: Desktop/requests tests.py | Line: 32 | undefined ~ lol",lol)
 
 
 # t= soup.
-# print("🐍 File: Desktop/requests tests.py | Line: 31 | undefined ~ t",t)
 
 # print(r.text)
 

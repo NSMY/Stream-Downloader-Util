@@ -38,7 +38,6 @@ class VideoBlueprint:
     def opus_factory(self):
         cmd = (f'ffmpeg -i "{self.filename}" -c:v copy -an '
                 f'"{self.output_name}{self.video_file_type}"')
-        print("🐍 File: Streamlink.Automated.Downloader/extraction_factory.py | Line: 41 | opus_factory ~ cmd",cmd)
         
         if self.selected_channel == "All":
             channels_list = "".join(
@@ -62,7 +61,6 @@ class VideoBlueprint:
 
     def specified_audio_channel(self):
         channel = int(self.selected_channel) - 1
-        print("🐍 File: Streamlink.Automated.Downloader/extraction_factory.py | Line: 63 | specified_audio_channel ~ self.copy_video_answer",self.copy_video_answer)
         if self.copy_video_answer == "No":
             return (f'ffmpeg -i "{self.filename}" -map 0:a:{channel}'
                     f' -c copy "{self.output_name}_{channel}{self.export_codec}"'

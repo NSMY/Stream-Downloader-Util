@@ -60,7 +60,6 @@ for index, items in enumerate(data):
     query = GET_VIDEO_CHAPTERS.format(
     id=items.get('id'), after=chapter_page
     )
-    # print("🐍 File: Stream-Downloader-Util/Testcode.py | Line: 705 | undefined ~ query",query)
     gql_queries.append((index, query))
     
 
