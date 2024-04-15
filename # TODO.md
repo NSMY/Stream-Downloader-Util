@@ -1,10 +1,9 @@
 TODO
 
-[] make folder muxed into dynamic for user set a field in settings, but have a set default
 
 [] twitch vod username can be Mods (if making a highlight) add some bypass or rewrite the gql.py vod class
 
-[] in Main make the estimated Size of the vod appear b4 the choosing of resolution??????
+[x] DONE but only for twitch -- in Main make the estimated Size of the vod appear b4 the choosing of resolution??????
 
 [TODO] make chapters in vods? using code > [Code](zextra_Funcs_/getChaptersCall.py) < will require a large rewrite, games will be
 in a list object and everywhere called will have to unpack, then also do u give option to set where to DL from?? 
@@ -20,7 +19,7 @@ more robust dependency searching and downloading (if deleted between settinggs C
 
 THINK maybe rework tkinter to be packs instead of grids somehow, as its laggy
 
-THINK in the check new stream -- what to do for deleted /hidden vods on channels? 
+THINK in the check new stream -- what to do for deleted /hidden vods on channels?
 
 [TODO] make a combine segments (vids) ffmpeg via lists meth
 TRACK have it error when refreshing json vods file and non streamer name
@@ -28,6 +27,8 @@ TRACK have it error when refreshing json vods file and non streamer name
 THINK older versions of sdu errors out if it has Newer settings file and loops???
 
 THINK do i add multi File processing? mp4 wav etc
+
+NOTE twitch m3u8 bitrate return 0 bug still exists 15-4-23 
 
 do i make Combine streams Aud/Vid
 make WEBP converter? New File?
