@@ -17,7 +17,7 @@ README.md
 
 
 ---
-![New UI](./media/New_UI_14-01-24.png)
+![New UI](./media/New_UI_17-04-24.png)
 
 
 ## DOWNLOAD
