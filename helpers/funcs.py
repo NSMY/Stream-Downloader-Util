@@ -438,11 +438,15 @@ def kill_process(process):
         for child in parent.children(recursive=True):
             child.kill()
         parent.kill()
-        print("Subprocess killed")
+        print("\nSubprocess killed\n")
     except psutil.NoSuchProcess as e:
-        print("Subprocess already closed:", e)
+        print("\nSubprocess already closed:", e, "\n")
     finally:
         from startup import main_start
+        winsound.PlaySound(
+            sound="C:\\Windows\\Media\\Windows Proximity Notification.wav",
+            flags=winsound.SND_FILENAME,
+        )
         main_start()
 
 
