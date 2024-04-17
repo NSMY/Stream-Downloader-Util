@@ -1,15 +1,14 @@
+
 import json
 import os
 import subprocess
 import sys
-import threading
-import time
 import tkinter as tk
 import winsound
 import zipfile
 from datetime import datetime, timedelta
-from tkinter import filedialog
-from urllib.parse import urlparse
+from tkinter import filedialog, messagebox
+from urllib.parse import urlparse, urlunparse
 
 import inquirer
 import psutil
@@ -18,49 +17,19 @@ from pyperclip import copy, paste
 from send2trash import send2trash
 from tqdm import tqdm
 
-import auth_skip_ads_
-import init_files
-from default_path_factory import DefaultPathFactory
+from init_dir.default_path_factory import DefaultPathFactory
+from my_utils import spinner
+from startup import main_start
 
 video_file_types = [".mp4", ".mov", ".mkv", ".ts"]
 
-def main_start():
-    os.system("title Stream Downloader Util")
-    
-    t1 = threading.Thread(target=auth_skip_ads_.auth_file_check)
-    t1.start()
-    t2 = threading.Thread(target=init_files.init_links_file)
-    t2.start()
-    
-    init_files.version_check()
 
-
-    rprog = multi_choice_dialog("Download, Re-Mux(Copy), Extract Streams or "
-                                "Download with PC Shutdown Command Once Finished"
-                                    , ["Download", "Remux", "Extract", "Download-Shutdown", "Exit"])
-
-    if rprog == "Download":
-        from Main import main_script
-        main_script()
-    elif rprog == "Remux":
-        from mux_vid import mux
-        mux(ran_as_main=True)
-    elif rprog == "Extract":
-        from ffmpegExtract import ffmpegextract
-        ffmpegextract()
-    elif rprog == "Download-Shutdown":
-        from Main import main_script
-        main_script(True)
-    else:
-        exit()
-
-
-def make_new_dir_from_input(input_file_path:str , new_dir_name_arg: str)-> str:
+def make_new_dir_from_input(input_file_path: str, new_dir_name_arg: str) -> str:
     '''Makes a directory from the input file path
     inline with input_file_path'''
     file_path_2 = os.path.dirname(input_file_path)
     new_folder_combine_path = os.path.join(file_path_2, new_dir_name_arg)
-    
+
     if not os.path.exists(new_folder_combine_path):
         os.makedirs(new_folder_combine_path)
     return os.path.join(new_folder_combine_path)
@@ -82,7 +51,7 @@ def shorten_path_name(file_path: str):
     Args:
         file_path (str):
     Returns:
-    
+
         str: _shorter_filepath_
     """
     dir_name = os.path.dirname(file_path)
@@ -90,7 +59,7 @@ def shorten_path_name(file_path: str):
     dir_parts = dir_name.split(os.sep)
     if len(dir_parts) > 2:
         short_dir = f"{dir_parts[0]}{os.sep}...{os.sep}{dir_parts[-1]}"
-    else:    
+    else:
         short_dir = dir_name
     return os.path.join(short_dir, base_name)
 
@@ -121,7 +90,7 @@ def multi_choice_dialog(mssg: str, choice_s: list,
 
     Returns:
         Str or Dict
-    """    
+    """
     questions = [
         inquirer.List(
             keys_name,
@@ -148,54 +117,61 @@ def openFile():
     """Opens File dialog box
     Returns:
         str:
-        
+
     loops if canceled
     """
     # print("Open File From:... \n")
     root = tk.Tk()
+    root.wm_attributes('-topmost', 1)
     root.withdraw()
-    filep = filedialog.askopenfilename(defaultextension=".*",
-                                    filetypes=[
-                                        ("All files", ".*"),
-                                        ("MP4 files", ".mp4"),
-                                        ("MOV files", ".mov"),
-                                        ("EXE files", ".exe"),
-                                    ])
+    filep = filedialog.askopenfilename(
+        parent=root,
+        defaultextension=".*",
+        filetypes=[
+            ("MP4 files", ".mp4"),
+            ("MOV files", ".mov"),
+            ("MKV files", ".mkv"),
+            ("MP3 files", ".mp3"),
+            ("All files", ".*"),
+        ])
     root.destroy()
     file = os.path.normpath(filep)
-    if not filep: #closes Program if No Save path is Entered
-        check = multi_choice_dialog("Canceled Open File: Try again?", 
-                                    ["yes", "no", "exit"])
+    if not filep:  # closes Program if No Save path is Entered
+        check = multi_choice_dialog("Canceled Open File: Try again?",
+                                    ["yes", "no"])
         if check == "yes":
             os.system("cls" if os.name == "nt" else "clear")
             openFile()
         elif check == "no":
             os.system("cls" if os.name == "nt" else "clear")
             main_start()
-        sys.exit()
     return file
 
 
-def saveFile():
+def saveFile(kwargs=''):
     """Opens: Save File Explorer
-    
     Returns:
         Save Path
     """
     print("Save File To:... \n")
     root = tk.Tk()
+    root.wm_attributes('-topmost', 1)
     root.withdraw()
-    filep = filedialog.asksaveasfilename(defaultextension=".mp4",
-                                        filetypes=[
-                                            ("MP4 files",".mp4"),    
-                                            ("MOV files",".mov"),    
-                                            ("MKV files",".mkv"),    
-                                            ("MP3 files",".mp3"),    
-                                            ("All files",".*"),
-                                        ])
+    filep = filedialog.asksaveasfilename(
+        parent=root,
+        initialfile=kwargs,
+        defaultextension=".mp4",
+        filetypes=[
+            ("MP4 files", ".mp4"),
+            ("MOV files", ".mov"),
+            ("MKV files", ".mkv"),
+            ("MP3 files", ".mp3"),
+            ("All files", ".*"),
+        ],
+        title='kwargs')
     root.destroy()
     file = os.path.normpath(filep)
-    if not filep: #closes Program if No Save path is Entered
+    if not filep:  # Closes Program if No Save path is Entered
         check = multi_choice_dialog("Canceled Save Path: Try again?",
                                     ["yes", "no", "exit"])
         if check == "yes":
@@ -204,7 +180,7 @@ def saveFile():
         elif check == "no":
             os.system("cls" if os.name == "nt" else "clear")
             main_start()
-        sys.exit ()
+        sys.exit()
     return (file)
 
 
@@ -225,10 +201,9 @@ def download_url(url: str, dloadFilePath: str, dlmssg: str = ""):
 
     Args:
         url (str): URLdownload link
-        
         dloadFilePath (str): Download Path
-        
-        dlmssg (str, optional): Transparency mssg whats 
+
+        dlmssg (str, optional): Transparency mssg whats
         happening. Defaults to "".
     """
     if os.path.exists(dloadFilePath):
@@ -237,12 +212,14 @@ def download_url(url: str, dloadFilePath: str, dlmssg: str = ""):
         response = requests.get(url, stream=True)
         total_size = int(response.headers.get("content-length", 0))
         block_size = 1024
-        
+
         print(dlmssg)
         with open(file=dloadFilePath, mode="wb") as f:
-            for data in tqdm(response.iter_content(chunk_size=block_size), 
-                                total=total_size//block_size, unit="KB"):
-                
+            for data in tqdm(
+                response.iter_content(chunk_size=block_size),
+                total=total_size//block_size, unit="KB"
+            ):
+
                 f.write(data)
         return True
     except requests.exceptions.HTTPError as errh:
@@ -259,22 +236,23 @@ def download_url(url: str, dloadFilePath: str, dlmssg: str = ""):
         return False
 
 
-def unzip_file_from_path(zip_file_path,
-                        outputDir,
-                        specific_filename_to_extract: str = "",
-                        mssg = ""
-                        ):
+def unzip_file_from_path(
+    zip_file_path,
+    outputDir,
+    specific_filename_to_extract: str = "",
+    mssg=""
+):
     """Unzips files or specific File into outputDir,
-    
+
     moves Old .zip to Bin if both exist.
-    
+
     Args:
         dloadFilePath (str): C:\\example\\file.type
-        
+
         outputDir (str): C:\\OutPutFolder\\
-        
+
         specificFile (str, optional): fileType.exe Defaults to " ".
-        
+
         mssg (str, optional): Trash mssg Defaults to "".
     """
     if not os.path.isfile(f"{outputDir}\\{specific_filename_to_extract}"):
@@ -289,24 +267,26 @@ def unzip_file_from_path(zip_file_path,
                 print(f"\nSuccessful Extraction To {output_dir}")
         except Exception:
             print(f"\n\nERROR: Could not extract {zip_file_path} \n")
-            fldr = zip_file_path.replace(specific_filename_to_extract,"")
+            fldr = zip_file_path.replace(specific_filename_to_extract, "")
             return os.startfile(fldr)
-        if (os.path.isfile(zip_file_path)
-            and os.path.isfile(f"{outputDir}\\{specific_filename_to_extract}")
-            ):
+        if os.path.isfile(zip_file_path) and os.path.isfile(
+            f"{outputDir}\\{specific_filename_to_extract}"
+        ):
             send_to_trash(zip_file_path)
             return True
     return True
 
 
-def send_to_trash(filename):
-            send2trash(filename)
-            if not os.path.isfile(filename):
-                print(f"sent {filename} to recycler")
-                winsound.PlaySound(sound="C:\\Windows\\Media\\Recycle.wav",
-                                    flags=winsound.SND_FILENAME)
-                return True   
-            return False
+def send_to_trash(input_name):
+    send2trash(input_name)
+    if not os.path.isfile(input_name) or os.path.isdir(input_name):
+        print(f"sent {input_name} to recycler")
+        winsound.PlaySound(
+            sound="C:\\Windows\\Media\\Recycle.wav",
+            flags=winsound.SND_FILENAME
+        )
+        return True
+    return False
 
 
 def file_search(extensionNam: str):
@@ -317,18 +297,17 @@ def file_search(extensionNam: str):
 
     Returns:
         _type_: str
-    """    
+    """
     appDataSubDirs = ["Local", "LocalLow", "Roaming"]
-    directories = (["C:\\ffmpeg\\", "C:\\Program Files", "C:\\Program Files (x86)"] 
-                    + [os.path.expanduser(f"~\\AppData\\{subDir}") 
-                        for subDir in appDataSubDirs]
-                    )
+    directories = ["C:\\ffmpeg\\", "C:\\Program Files", "C:\\Program Files (x86)"] + [
+        os.path.expanduser(f"~\\AppData\\{subDir}") for subDir in appDataSubDirs
+    ]
     found = False
     exePth = ""
     for directory in directories:
         if found:
             return str(exePth)
-            
+
         for root, dirs, files in os.walk(directory):
             if extensionNam in files:
                 exePth = (os.path.join(root, extensionNam))
@@ -343,23 +322,30 @@ def audio_channel_get_info(fprobeDir, filename):
         print(f'\nCould Not Find "{fprobeDir}" on your Computer\n')
         while True:
             try:
-                audChannels = int(input(f'Couldn"t Auto retrieve Maximum'
+                audChannels = int(input('Couldn"t Auto retrieve Maximum'
                                         'number of Audio Channels, How Many '
-                                        'Channels does {filename} have?:'))
+                                        f'Channels does {filename} have?:'))
                 channels_list = []
-                for i in range(1, audChannels+1):
+                for i in range(1, audChannels + 1):
                     channels_list.append(i)
                 return channels_list
             except ValueError:
                 print("Please enter a numerical value(int) EG: 3.")
     else:
-        command = (f"ffprobe -v error -show_entries stream=index"
-                    fr' -select_streams a -of csv=p=0 "{filename}"')
-        opusCmd = (f"ffprobe -v error -select_streams a:0 -show_entries "
-                "stream=codec_name -of "
-                fr'default=noprint_wrappers=1:nokey=1 "{filename}"')
-        output = (subprocess.check_output(f'{opusCmd} && {command}', shell=True, cwd=fprobeDir)
-                    .decode("utf-8").strip())
+        command = (
+            f"ffprobe -v error -show_entries stream=index"
+            rf' -select_streams a -of csv=p=0 "{filename}"'
+        )
+        opusCmd = (
+            f"ffprobe -v error -select_streams a:0 -show_entries "
+            "stream=codec_name -of "
+            rf'default=noprint_wrappers=1:nokey=1 "{filename}"'
+        )
+        output = (
+            subprocess.check_output(f"{opusCmd} && {command}", shell=True, cwd=fprobeDir)
+            .decode("utf-8")
+            .strip()
+        )
         codec_type = output.split()
         codec = (codec_type[0])
         channels = (codec_type[1:])
@@ -370,7 +356,7 @@ def file_path_get(passed_input_path: str = paste()):
     """Defaults to paste() if no Args specified,
     if input is not a file opens finder window and
     converts to norm path
-    
+
     returns normal path.
     """
     norm_file_path = os.path.normpath(passed_input_path)
@@ -379,36 +365,33 @@ def file_path_get(passed_input_path: str = paste()):
     return norm_file_path
 
 
-
-def saveSettings(key = None, value = None):
+def saveSettings(key=None, value=None):
     """To save new Settings Must Pass via Args
     Args:
     key (str, optional=No Change):
-    
+
     value (all, optional=No Change):
     """
     appdata_path = os.getenv("LOCALAPPDATA")
 
     settings_file = os.path.join(str(appdata_path),
-                                    "Stream-Downloader-Util", "SDUsettings.json")
-    
+                                 "Stream-Downloader-Util", "SDUsettings.json")
+
     with open(file=settings_file, mode="r") as f:
         settings = json.load(f)
-        
     if key is not None and value is not None:
         settings[key] = value
         LastSave = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         settings["LastSave"] = LastSave
-        
     with open(file=settings_file, mode="w") as f:
         json.dump(settings, f, indent=4)
 
 
-def loadSettings(keys: list[str])-> list[str]:
-    """iF Known pass in via Args the Key 
+def loadSettings(keys: list[str]) -> list[str]:
+    """iF Known pass in via Args the Key
     you want to know the Value of to call
     Keys must be in a "string"
-    
+
     '[LastSave]' = last save date
     """
     if keys is None:
@@ -419,7 +402,7 @@ def loadSettings(keys: list[str])-> list[str]:
 
     # Define the path to the settings file
     settings_file = os.path.join(str(appdata_path),
-                                    "Stream-Downloader-Util", "SDUsettings.json")
+                                 "Stream-Downloader-Util", "SDUsettings.json")
     answers = []
     for key in keys:
         # Load settings from the file
@@ -428,14 +411,14 @@ def loadSettings(keys: list[str])-> list[str]:
             # Return the value associated with the key if a key is provided
             answer = settings.get(key, None) if key is not None else settings
             answers.append(answer)
-            
+
     return answers
 
 
 def is_less_than_30days(datetime1st):
     """Must pass 1 (Past) Date Time in as STR
     %d/%m/%Y %H:%M:%S
-    
+
     True=<30d
     False=>30d"""
     datetimeNow = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -455,17 +438,24 @@ def kill_process(process):
         for child in parent.children(recursive=True):
             child.kill()
         parent.kill()
-        print("Subprocess killed")
+        print("\nSubprocess killed\n")
     except psutil.NoSuchProcess as e:
-        print("Subprocess already closed")
+        print("\nSubprocess already closed:", e, "\n")
+    finally:
+        from startup import main_start
+        winsound.PlaySound(
+            sound="C:\\Windows\\Media\\Windows Proximity Notification.wav",
+            flags=winsound.SND_FILENAME,
+        )
+        main_start()
 
 
 def wait_for_subprocess(process):
     process.wait()
     # Run some code after the subprocess has completed
-    
 
-def get_download_links(keys: list[str]):
+
+def get_links(keys: list[str]):
     appdata_path = os.getenv("LOCALAPPDATA")
     links_file = os.path.join(str(appdata_path),
                                     "Stream-Downloader-Util", "download_links.txt")
@@ -477,117 +467,139 @@ def get_download_links(keys: list[str]):
             # answers.append(answer)
     return answer
 
+
 def ffprobepath_download_an_unzip():
     """calls dldURL() and Unzip() with all info inside"""
-    
-    url = get_download_links(["FFPROBE_Link"])
+
+    url = get_links(["FFPROBE_Link"])
     last_segment = url.split('/')[-1]
-    
+
     dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
-                                f"{last_segment}")
+                                 f"{last_segment}")
+    print('Attempting to download FFPROBE')
+    if messagebox.askokcancel('Warning', 'Continue to download\nfrom Official Sources?', icon="warning"):
+        dlmssg = (
+            "\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
+            "link (45mb - 110mb Extracted) "
+            " LINK >>> https://ffbinaries.com/downloads <<<"
+            f"---------------\n ----------------to {dloadFilePath} "
+            "and will auto extract to C:\\ffmpeg\\ ------------------\n"
+        )
+        save_Dir = "C:\\ffmpeg\\"
+        spefFile = "ffprobe.exe"
+        zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
 
-    dlmssg = ("\n---------------Downloading ffprobe from OFFICIAL FFMPEG "
-                "link (45mb - 110mb Extracted) "
-                " LINK >>> https://ffbinaries.com/downloads <<<"
-                f"---------------\n ----------------to {dloadFilePath} "
-                "and will auto extract to C:\\ffmpeg\\ ------------------\n")
+        dld = download_url(url, dloadFilePath, dlmssg)
+        zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", spefFile, mssg=zipmssg)
+        if dld and zp is True:
+            Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
+            saveSettings("ffprobepath", Fprobe_Path)
+            return Fprobe_Path
 
-    save_Dir = "C:\\ffmpeg\\"
-    spefFile = "ffprobe.exe"
-    zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
-    
-    dld = download_url(url, dloadFilePath, dlmssg)
-    zp = unzip_file_from_path(dloadFilePath, "C:\\ffmpeg\\", spefFile, mssg=zipmssg)
-    if dld and zp ==True:
-        Fprobe_Path = ("C:\\ffmpeg\\ffprobe.exe")
-        saveSettings("ffprobepath", Fprobe_Path)
-        return Fprobe_Path
-    
-    return f"{save_Dir}ffmpeg.exe"
-
+        return f"{save_Dir}ffprobe.exe"
+    else:
+        return print('Canceled, unable to Run as Dependency missing')
 
 def ffmpegpath_download_an_unzip():
     """calls dldURL() and Unzip() with all info inside"""
-    
-    urlmpg = get_download_links(["FFMPEG_Link"])
+
+    urlmpg = get_links(["FFMPEG_Link"])
     last_segment = urlmpg.split('/')[-1]
-        
-    dloadFilePath = os.path.join(os.path.expanduser("~\\Desktop"),
-                                    f"{last_segment}")
 
-    dlmssg = ("\n---------------Downloading ffmpeg from OFFICIAL FFMPEG "
-                "link (45mb - 110mb Extracted) LINK >>> "
-                "https://ffbinaries.com/downloads <<<---------------\n "
-                f"----------------to {dloadFilePath} "
-                "and will auto extract to C:\\ffmpeg\\ ------------------\n")
-    save_Dir = "C:\\ffmpeg\\"
-    spefFile = "ffmpeg.exe"
-    zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
-    
-    dld = download_url(urlmpg, dloadFilePath, dlmssg)
-    zp = unzip_file_from_path(dloadFilePath, save_Dir, spefFile, zipmssg)
-    if dld and zp ==True:
-        ffm_Path = ("C:\\ffmpeg\\ffmpeg.exe") #only needs the dir to cmd into
-        saveSettings("ffmpegpath", ffm_Path)
-        return ffm_Path
+    dloadFilePath = os.path.join(
+        os.path.expanduser("~\\Desktop"),
+        f"{last_segment}"
+    )
+    print('Attempting to download FFMPEG')
+    if messagebox.askokcancel(
+        'Warning', 'Continue to download\nfrom Official Sources?', icon="warning"
+    ):
+        dlmssg = (
+            "\n---------------Downloading ffmpeg from OFFICIAL FFMPEG "
+            "link (45mb - 110mb Extracted) LINK >>> "
+            "https://ffbinaries.com/downloads <<<---------------\n "
+            f"----------------to {dloadFilePath} "
+            "and will auto extract to C:\\ffmpeg\\ ------------------\n"
+        )
+        save_Dir = "C:\\ffmpeg\\"
+        spefFile = "ffmpeg.exe"
+        zipmssg = "\nSent .zip to Recycle Bin (no longer required)\n"
 
-    return f"{save_Dir}ffmpeg.exe"
+        dld = download_url(urlmpg, dloadFilePath, dlmssg)
+        zp = unzip_file_from_path(dloadFilePath, save_Dir, spefFile, zipmssg)
+        if dld and zp == True:
+            ffm_Path = ("C:\\ffmpeg\\ffmpeg.exe")  # only needs the dir to cmd into
+            saveSettings("ffmpegpath", ffm_Path)
+            return ffm_Path
+
+        return f"{save_Dir}ffmpeg.exe"
+    else:
+        return print('Canceled, unable to Run as Dependency missing')
 
 
 def ffmpeg_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
-    ["Main", "main_script"]'''
-    
+    ["Main", "main_dld_start"]'''
+    spinner5 = spinner.Spinner(message="Initialize Settings")
+    spinner5.start()
     default_ffPath = ("C:\\Program Files\\Streamlink\\ffmpeg\\ffmpeg.exe")
     saveTo1 = "ffmpegpath"
     exename = "ffmpeg.exe"
 
-    init_factory = DefaultPathFactory(default_Path=default_ffPath,
-                                    settings_save_Key=saveTo1,
-                                    extension_name_Lookup=exename,
-                                    parent_func_Callback=callback_info
-                                    )
+    init_factory = DefaultPathFactory(
+        default_Path=default_ffPath,
+        settings_save_Key=saveTo1,
+        extension_name_Lookup=exename,
+        parent_func_Callback=callback_info
+    )
+    spinner5.stop()
     return init_factory.set_default_path()
 
 
 def ffprobe_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
-    ["Main", "main_script"]'''
-
+    ["Main", "main_dld_start"]'''
+    spinner4 = spinner.Spinner(message="Initialize Settings")
+    spinner4.start()
     default_ffprobePath = ("C:\\ffmpeg\\ffprbe.exe")
     saveTo = "ffprobepath"
     exename = "ffprobe.exe"
 
-    init_factory = DefaultPathFactory(default_Path=default_ffprobePath,
-                                        settings_save_Key=saveTo,
-                                        extension_name_Lookup=exename,
-                                        parent_func_Callback=callback_info
-                                        )
+    init_factory = DefaultPathFactory(
+        default_Path=default_ffprobePath,
+        settings_save_Key=saveTo,
+        extension_name_Lookup=exename,
+        parent_func_Callback=callback_info
+    )
+    spinner4.stop()
     return init_factory.set_default_path()
 
 
 def streamlink_factory_init(callback_info: list[str]):
     '''callback_info is module then the parent function from calling
-    ["Main", "main_script"]'''
+    ["Main", "main_dld_start"]'''
 
     default_slinkPath = ("C:\\Program Files\\Streamlink\\bin\\streamlink.exe")
     saveTo = "streamlinkPath"
     exename = "streamlink.exe"
 
-    init_factory = DefaultPathFactory(default_Path=default_slinkPath,
-                                        settings_save_Key=saveTo,
-                                        extension_name_Lookup=exename,
-                                        parent_func_Callback=callback_info
-                                        )
+    init_factory = DefaultPathFactory(
+        default_Path=default_slinkPath,
+        settings_save_Key=saveTo,
+        extension_name_Lookup=exename,
+        parent_func_Callback=callback_info
+    )
     return init_factory.set_default_path()
 
 
 def manual_shutdown_timer():
-    time = input("\nEnter the time until shutdown in the format '1h &/or 45m'"
-                " (EG: 1h, 1h 45m or 45m)\nTo cancel "
-                "the shutdown command if nessecary\nOpen a "
-                "Windows Command Prompt Or Shell\nand type "
-                "[shutdown -a] without Brackets [] then enter to Cancel: ")
+    time = input(
+        "\nEnter the time until shutdown in the format '1h &/or 45m'"
+        " (EG: 1h, 1h 45m or 45m)\nTo cancel "
+        "the shutdown command if necessary\nOpen a "
+        "Windows Command Prompt Or Shell\nand type "
+        "[shutdown -a] without Brackets [] then enter to Cancel: "
+    )
 
     time = time.split()
 
@@ -600,7 +612,31 @@ def manual_shutdown_timer():
         elif 'm' in t:
             minutes = int(t.replace('m', ''))
 
-    seconds = (hours * 3600) + (minutes * 60)    
+    seconds = (hours * 3600) + (minutes * 60)
     os.system(f"shutdown -s -t {seconds}")
     print(f"Shutdown in {seconds} seconds")
 
+
+def parse_url_twitch(url):
+    urlparsed = urlparse(url)
+    if not urlparsed.path.split('/')[-1].isnumeric():
+        return urlunparse(urlparsed), urlparsed
+    if urlparsed.query.startswith(('t=', 'acmb=')):
+        return url, urlparsed
+    elif urlparsed.query.startswith('filter='):
+        new_url_parts = (urlparsed.scheme, urlparsed.netloc, urlparsed.path, '', '', '')
+        return urlunparse(new_url_parts), urlparsed
+    else:
+        return url, urlparsed
+
+
+def flush_cmd_input():
+    """Clears the input buffer."""
+    if os.name == 'nt':  # For Windows
+        import msvcrt
+        while msvcrt.kbhit():
+            msvcrt.getch()
+    # else:  # For Unix/Linux/MacOS
+    #     import fcntl
+    #     import termios
+    #     termios.tcflush(sys.stdin, termios.TCIOFLUSH)

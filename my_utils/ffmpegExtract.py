@@ -3,13 +3,13 @@ import subprocess
 
 from numpy import append
 
-import funcs
-import init_files
-from extraction_factory import VideoBlueprint
+import helpers.funcs as funcs
+from helpers.extraction_factory import VideoBlueprint
+from init_dir import init_files
 
 
 def ffmpegextract():
-    #FIXIT if file is NOT muxed it returns [ALL 0 0 Exit] channels
+    #FIXIT if file is NOT originally (straight from streamlink) muxed it returns [ALL 0 0 Exit] channels
     try:
         check_settings = funcs.loadSettings(['LastSave', 'ffprobepath', 'ffmpegpath'])
     except FileNotFoundError as e:
@@ -31,9 +31,9 @@ def ffmpegextract():
                 for media_type in funcs.video_file_types)):
         print("\nNot a Valid File type to Extract Streams From Try again.")
         ffmpegextract()
-        
+
     file_type = funcs.video_file_exetension_return(filename)
-    
+
     mxChann = []
     opus = ""
     try:
@@ -53,33 +53,35 @@ def ffmpegextract():
 
     if selected_channels == "Exit":
         os.system("cls")
-        funcs.main_start()
+        from startup import main_start
+        main_start()
 
     message = "Do you want to extract the video stream?"
     video_answers = funcs.multi_choice_dialog(message, ["Yes", "No"], "int")
     copy_video = video_answers["Key"]
-    
+
     # creates adjacent Dir
     name = os.path.splitext(os.path.basename(filename))[0]
-    outname = os.path.join(os.path.dirname(filename),
-                            f"{name} audio streams", name)
+    outname = os.path.join(
+        os.path.dirname(filename),
+        f"{name} audio streams", name
+    )
     os.makedirs(os.path.dirname(outname), exist_ok=True)
-    
+
     num_channels = int(mxChann[-1])
-    
+
     ###########factory Here<<<<<<<<<
     vid_initializer = VideoBlueprint(
-    filename=filename,
-    output_name=outname,
-    copy_video_answer=copy_video,
-    selected_channel=selected_channels,
-    total_num_channels=num_channels,
-    input_audio_codec_type=opus,
-    video_file_type=file_type,
-    export_codec=".aac", #non implemented choice export codec
+        filename=filename,
+        output_name=outname,
+        copy_video_answer=copy_video,
+        selected_channel=selected_channels,
+        total_num_channels=num_channels,
+        input_audio_codec_type=opus,
+        video_file_type=file_type,
+        export_codec=".aac",  # non implemented choice export codec
     )
-    
-    
+
     if opus == "opus":
         command = vid_initializer.opus_factory()
     elif copy_video == "Yes":
@@ -88,8 +90,12 @@ def ffmpegextract():
         command = vid_initializer.non_video_extraction()
 
     try:
-        extct = subprocess.Popen(command, shell=True, universal_newlines=True,
-                                    cwd=ffmpeg_dir)
+        extct = subprocess.Popen(
+            command,
+            shell=True,
+            universal_newlines=True,
+            cwd=ffmpeg_dir
+        )
         extct.wait()
         os.startfile(os.path.dirname(fr'{outname}'))
     except subprocess.CalledProcessError as ce:
@@ -97,8 +103,9 @@ def ffmpegextract():
     except Exception:
         print("Extracting Failed")
 
+    from startup import main_start
+    main_start()
 
-    funcs.main_start()
 
 if __name__ == "__main__":
     ffmpegextract()
