@@ -204,7 +204,7 @@ def main_dld_start(download_with_Shutdown=None, fromfile=None):
                 for line in iter(stream_reso.stdout.readline, ''):
                     # print(line.rstrip())
                     if 'error: No play' in line.rstrip():
-                        logging.info("File: Stream-Downloader-Util/Main.py | Line: 208 | get_vid_resolutions ~ line rw_stream %s", line.rstrip())
+                        # logging.info("File: Stream-Downloader-Util/Main.py | Line: 208 | get_vid_resolutions ~ line rw_stream %s", line.rstrip())
                         raise ValueError
                     elif 'error: This plugin' in line.rstrip():
                         os.system('cls')

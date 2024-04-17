@@ -90,7 +90,7 @@ def main_start(impt_data=None):
     t2.start()
 
     init_files.version_check()
-    init_files.logger_setup()
+    # init_files.logger_setup()
 
     question = "Start Commands"
     responses = [

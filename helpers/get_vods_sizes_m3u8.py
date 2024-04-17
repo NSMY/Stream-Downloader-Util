@@ -71,10 +71,10 @@ def get_playlist_uris(
             print("\nMax attempts reached, request failed, Bandwidth == 0")
             return {"Failed retrieving Bandwidth ": "N/A"}
         elif bandwidth == 0: # Maybe a Temp Twitch Bug sometimes m3u8 Bandwidth Fails to populate retrying fixes
-            logging.info(f'{os.path.basename(__file__)} | data | ' '%s', data)
-            logging.info(f'{os.path.basename(__file__)} | get_variant_url | ' '%s', stream_info)
-            logging.info(f'{os.path.basename(__file__)} | bandwidth | ' '%s', bandwidth)
-            print(f"M3u8 Bandwidth == 0 Error, Attempt {attempt} failed, retrying...")
+            # logging.info(f'{os.path.basename(__file__)} | data | ' '%s', data)
+            # logging.info(f'{os.path.basename(__file__)} | get_variant_url | ' '%s', stream_info)
+            # logging.info(f'{os.path.basename(__file__)} | bandwidth | ' '%s', bandwidth)
+            print(f"M3u8 Bandwidth field == 0 (Twitch Backend Error), Attempt {attempt} failed, retrying...")
             attempt += 1
             return get_playlist_uris(
                 attempt=attempt,
